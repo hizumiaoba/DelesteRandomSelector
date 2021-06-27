@@ -1,2 +1,4 @@
 # DelesteRandomSelector
-デレステの課題曲をよりスムーズに決定できます（Apache License 2.0)
+デレステの課題曲をよりスムーズに決定できます
+
+THIS SOFTWARE DEPENDS ON APACHE LICENSE 2.0 BECAUSE THIS USED SOME LIBRARIES WHICH DEPENDS ON IT.
