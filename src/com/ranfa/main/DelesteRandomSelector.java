@@ -41,7 +41,7 @@ public class DelesteRandomSelector extends JFrame {
 	private JCheckBox chckbxNewCheckBox_5;
 	private JCheckBox chckbxNewCheckBox_6;
 	private JPanel panelEast;
-	private JPanel panel_1;
+	private JPanel panelCentre;
 	private JButton btnImport;
 	private JButton btnStart;
 	private JButton btnExit;
@@ -178,13 +178,13 @@ public class DelesteRandomSelector extends JFrame {
 		btnExit = new JButton("終了");
 		panelEast.add(btnExit, "1, 11");
 
-		panel_1 = new JPanel();
-		contentPane.add(panel_1, BorderLayout.CENTER);
-		panel_1.setLayout(new BorderLayout(0, 0));
+		panelCentre = new JPanel();
+		contentPane.add(panelCentre, BorderLayout.CENTER);
+		panelCentre.setLayout(new BorderLayout(0, 0));
 
 		textPane = new JTextPane();
 		textPane.setEditable(false);
-		panel_1.add(textPane);
+		panelCentre.add(textPane);
 	}
 
 
