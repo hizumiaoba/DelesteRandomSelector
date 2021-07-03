@@ -2,12 +2,22 @@ package com.ranfa.main;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.util.ArrayList;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
 
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
+import com.jgoodies.forms.layout.RowSpec;
 import com.ranfa.lib.Scraping;
 import com.ranfa.lib.Song;
 import com.ranfa.lib.Version;
@@ -16,6 +26,26 @@ import com.ranfa.lib.Version;
 public class DelesteRandomSelector extends JFrame {
 
 	private JPanel contentPane;
+	private JPanel panelNorth;
+	private JPanel panelWest;
+	private JLabel labelVersion;
+	private JLabel labelTitle;
+	private JCheckBox chkDEBUT;
+	private JCheckBox chkREGULAR;
+	private JCheckBox chkPRO;
+	private JCheckBox chkMASTER;
+	private JLabel labelDifficulty;
+	private JCheckBox chkMASTERPLUS;
+	private JLabel labelLevel;
+	private JSpinner spinnerLevel;
+	private JCheckBox chckbxNewCheckBox_5;
+	private JCheckBox chckbxNewCheckBox_6;
+	private JPanel panelEast;
+	private JPanel panel_1;
+	private JButton btnImport;
+	private JButton btnStart;
+	private JButton btnExit;
+	private JTextPane textPane;
 
 	/**
 	 * Launch the application.
@@ -43,11 +73,118 @@ public class DelesteRandomSelector extends JFrame {
 			System.out.println(tmp.get(i).toString());
 		}
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 640, 360);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
+		contentPane.setLayout(new BorderLayout(0, 0));
+
+		panelNorth = new JPanel();
+		contentPane.add(panelNorth, BorderLayout.NORTH);
+		panelNorth.setLayout(new FormLayout(new ColumnSpec[] {
+				ColumnSpec.decode("max(285dlu;default)"),
+				FormSpecs.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("81px"),},
+			new RowSpec[] {
+				RowSpec.decode("20px"),}));
+
+		labelTitle = new JLabel("デレステ課題曲セレクター");
+		labelTitle.setFont(new Font("Dialog", Font.BOLD, 16));
+		panelNorth.add(labelTitle, "1, 1, center, top");
+
+		labelVersion = new JLabel(getVersion());
+		panelNorth.add(labelVersion, "3, 1, left, top");
+
+		panelWest = new JPanel();
+		contentPane.add(panelWest, BorderLayout.WEST);
+		panelWest.setLayout(new FormLayout(new ColumnSpec[] {
+				FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+				ColumnSpec.decode("112px:grow"),},
+			new RowSpec[] {
+				FormSpecs.LINE_GAP_ROWSPEC,
+				RowSpec.decode("19px"),
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("max(12dlu;default)"),
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("max(12dlu;default)"),
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("12dlu"),
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("max(12dlu;default)"),
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("max(12dlu;default)"),
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("max(12dlu;default)"),
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,}));
+
+		labelDifficulty = new JLabel("難易度選択");
+		panelWest.add(labelDifficulty, "2, 2, center, default");
+
+		chkDEBUT = new JCheckBox("DEBUT");
+		panelWest.add(chkDEBUT, "2, 4, left, top");
+
+		chkREGULAR = new JCheckBox("REGULAR");
+		panelWest.add(chkREGULAR, "2, 6");
+
+		chkPRO = new JCheckBox("PRO");
+		panelWest.add(chkPRO, "2, 8");
+
+		chkMASTER = new JCheckBox("MASTER");
+		panelWest.add(chkMASTER, "2, 10");
+
+		chkMASTERPLUS = new JCheckBox("MASTER+");
+		panelWest.add(chkMASTERPLUS, "2, 12");
+
+		labelLevel = new JLabel("楽曲レベル");
+		panelWest.add(labelLevel, "2, 14, center, default");
+
+		spinnerLevel = new JSpinner();
+		panelWest.add(spinnerLevel, "2, 16");
+
+		chckbxNewCheckBox_6 = new JCheckBox("指定レベル以下");
+		panelWest.add(chckbxNewCheckBox_6, "2, 18");
+
+		chckbxNewCheckBox_5 = new JCheckBox("指定レベル以上");
+		panelWest.add(chckbxNewCheckBox_5, "2, 20");
+
+		panelEast = new JPanel();
+		contentPane.add(panelEast, BorderLayout.EAST);
+		panelEast.setLayout(new FormLayout(new ColumnSpec[] {
+				ColumnSpec.decode("98px"),},
+			new RowSpec[] {
+				RowSpec.decode("26px"),
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("max(50dlu;default)"),
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("max(50dlu;default)"),
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("max(15dlu;default)"),
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("max(11dlu;default)"),}));
+
+		btnImport = new JButton("<html><body>楽曲<br>取り込み</body></html>");
+		panelEast.add(btnImport, "1, 3, fill, fill");
+
+		btnStart = new JButton("開始！");
+		panelEast.add(btnStart, "1, 7, fill, fill");
+
+		btnExit = new JButton("終了");
+		panelEast.add(btnExit, "1, 11");
+
+		panel_1 = new JPanel();
+		contentPane.add(panel_1, BorderLayout.CENTER);
+		panel_1.setLayout(new BorderLayout(0, 0));
+
+		textPane = new JTextPane();
+		textPane.setEditable(false);
+		panel_1.add(textPane);
 	}
 
 
@@ -78,5 +215,4 @@ public class DelesteRandomSelector extends JFrame {
 		Version version = (Version) DelesteRandomSelector.class.getAnnotation(Version.class);
 		return version.patch();
 	}
-
 }
