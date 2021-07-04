@@ -83,7 +83,7 @@ public class DelesteRandomSelector extends JFrame {
 		} catch (ExecutionException e) {
 			JOptionPane.showMessageDialog(this, "例外:ExecutionException\n内容:非同期処理中に例外が発生しました。。詳細を確認する場合は、batファイルからアプリケーションを起動しスタックトレースを確認してください。 \n" + e.getStackTrace());
 			e.printStackTrace();
-			e.getCause();
+			System.err.println(e.getCause());
 		}
 		System.out.println("Version:" + getVersion());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
