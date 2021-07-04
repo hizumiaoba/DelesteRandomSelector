@@ -6,8 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-import javax.swing.JOptionPane;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -69,7 +67,6 @@ public class Scraping {
 
 	public static ArrayList<Song> getSpecificAttributeSongs(ArrayList<Song> data, String attribute) {
 		if(!attribute.equals(ALL) && !attribute.equals(CUTE) && !attribute.equals(COOL) && !attribute.equals(PASSION)) {
-			JOptionPane.showMessageDialog(null, "例外:IllegalArgumentException\n内容:不正な値です。詳細を確認する場合は、batファイルからアプリケーションを起動しスタックトレースを確認してください。 " + attribute);
 			throw new IllegalArgumentException("Illegal attribute value: " + attribute);
 		}
 		if(data.isEmpty())
