@@ -82,18 +82,18 @@ public class DelesteRandomSelector extends JFrame {
 		panelNorth = new JPanel();
 		contentPane.add(panelNorth, BorderLayout.NORTH);
 		panelNorth.setLayout(new FormLayout(new ColumnSpec[] {
-				ColumnSpec.decode("max(285dlu;default)"),
+				ColumnSpec.decode("max(302dlu;default)"),
 				FormSpecs.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("81px"),},
+				ColumnSpec.decode("40px"),},
 			new RowSpec[] {
 				RowSpec.decode("20px"),}));
 
 		labelTitle = new JLabel("デレステ課題曲セレクター");
-		labelTitle.setFont(new Font("Dialog", Font.BOLD, 16));
+		labelTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 16));
 		panelNorth.add(labelTitle, "1, 1, center, top");
 
 		labelVersion = new JLabel(getVersion());
-		panelNorth.add(labelVersion, "3, 1, left, top");
+		panelNorth.add(labelVersion, "3, 1, right, top");
 
 		panelWest = new JPanel();
 		contentPane.add(panelWest, BorderLayout.WEST);
@@ -140,16 +140,18 @@ public class DelesteRandomSelector extends JFrame {
 		chkMASTERPLUS = new JCheckBox("MASTER+");
 		panelWest.add(chkMASTERPLUS, "2, 12");
 
-		labelLevel = new JLabel("楽曲レベル");
+		labelLevel = new JLabel("楽曲Lv");
 		panelWest.add(labelLevel, "2, 14, center, default");
 
 		spinnerLevel = new JSpinner();
 		panelWest.add(spinnerLevel, "2, 16");
 
-		chckbxNewCheckBox_6 = new JCheckBox("指定レベル以下");
+		chckbxNewCheckBox_6 = new JCheckBox("指定Lv以下");
+		chckbxNewCheckBox_6.setFont(new Font("ＭＳ Ｐゴシック", Font.BOLD, 12));
 		panelWest.add(chckbxNewCheckBox_6, "2, 18");
 
-		chckbxNewCheckBox_5 = new JCheckBox("指定レベル以上");
+		chckbxNewCheckBox_5 = new JCheckBox("指定Lv以上");
+		chckbxNewCheckBox_5.setFont(new Font("ＭＳ Ｐゴシック", Font.BOLD, 12));
 		panelWest.add(chckbxNewCheckBox_5, "2, 20");
 
 		panelEast = new JPanel();
