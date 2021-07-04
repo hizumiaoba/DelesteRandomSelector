@@ -6,6 +6,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -30,7 +32,7 @@ public class Scraping {
 		return Files.exists(path);
 	}
 
-	public static synchronized ArrayList<Song> getWholeData() {
+	public static ArrayList<Song> getWholeData() {
 		// if(databaseExists())
 		// 	return null;
 		ArrayList<Song> res = new ArrayList<>();
@@ -65,9 +67,11 @@ public class Scraping {
 		return res;
 	}
 
-	public static synchronized ArrayList<Song> getSpecificAttributeSongs(ArrayList<Song> data, String attribute) {
-		if(!attribute.equals(ALL) && !attribute.equals(CUTE) && !attribute.equals(COOL) && !attribute.equals(PASSION))
-			throw new IllegalArgumentException("Illegal attribute value.");
+	public static ArrayList<Song> getSpecificAttributeSongs(ArrayList<Song> data, String attribute) {
+		if(!attribute.equals(ALL) && !attribute.equals(CUTE) && !attribute.equals(COOL) && !attribute.equals(PASSION)) {
+			JOptionPane.showMessageDialog(null, "例外:IllegalArgumentException\n内容:不正な値です。詳細を確認する場合は、batファイルからアプリケーションを起動しスタックトレースを確認してください。 " + attribute);
+			throw new IllegalArgumentException("Illegal attribute value: " + attribute);
+		}
 		if(data.isEmpty())
 			throw new IllegalArgumentException("ArrayList must not empty.");
 		ArrayList<Song> res = new ArrayList<Song>();
@@ -78,7 +82,7 @@ public class Scraping {
 		return res;
 	}
 
-	public static synchronized ArrayList<Song> getSpecificDifficultySongs(ArrayList<Song> data, String difficulty) {
+	public static  ArrayList<Song> getSpecificDifficultySongs(ArrayList<Song> data, String difficulty) {
 		if(!difficulty.equals(DEBUT) && !difficulty.equals(REGULAR) && !difficulty.equals(PRO) && !difficulty.equals(MASTER) && !difficulty.equals(MASTERPLUS) && !difficulty.equals(LEGACYMASTERPLUS))
 			throw new IllegalArgumentException("Illegal difficulty value.");
 		if(data.isEmpty())
@@ -91,7 +95,7 @@ public class Scraping {
 		return res;
 	}
 
-	public static synchronized ArrayList<Song> getSpecificLevelSongs(ArrayList<Song> data, int level, boolean isLess, boolean isOnly) {
+	public static  ArrayList<Song> getSpecificLevelSongs(ArrayList<Song> data, int level, boolean isLess, boolean isOnly) {
 		if(level <= 0)
 			throw new IllegalArgumentException("Level must not negative.");
 		if(data.isEmpty())
@@ -113,7 +117,7 @@ public class Scraping {
 		return res;
 	}
 
-	private static synchronized ArrayList<Song> getOnlyLevelSongs(ArrayList<Song> data, int level) {
+	private static ArrayList<Song> getOnlyLevelSongs(ArrayList<Song> data, int level) {
 		if(level < 0)
 			throw new IllegalArgumentException("Level must not negative.");
 		if(data.isEmpty())

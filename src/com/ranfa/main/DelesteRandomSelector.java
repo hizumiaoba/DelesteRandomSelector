@@ -4,11 +4,16 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextPane;
@@ -67,11 +72,20 @@ public class DelesteRandomSelector extends JFrame {
 	 * Create the frame.
 	 */
 	public DelesteRandomSelector() {
-		System.out.println(getVersion());
-		ArrayList<Song> tmp = Scraping.getWholeData();
-		for(int i = 0; i < tmp.size(); i++) {
-			System.out.println(tmp.get(i).toString());
+		ExecutorService es = Executors.newWorkStealingPool();
+		CompletableFuture<ArrayList<Song>> getWholedataFuture = CompletableFuture.supplyAsync(() -> Scraping.getWholeData(), es);
+		try {
+			System.out.println("総楽曲数：" + getWholedataFuture.get().size());
+		} catch (InterruptedException e) {
+			JOptionPane.showMessageDialog(this, "例外:InterruptedException\n内容:非同期処理中に割り込みが発生しました。詳細を確認する場合は、batファイルからアプリケーションを起動してください。 \n" + e.getStackTrace());
+			e.printStackTrace();
+			e.getCause();
+		} catch (ExecutionException e) {
+			JOptionPane.showMessageDialog(this, "例外:ExecutionException\n内容:非同期処理中に例外が発生しました。。詳細を確認する場合は、batファイルからアプリケーションを起動しスタックトレースを確認してください。 \n" + e.getStackTrace());
+			e.printStackTrace();
+			e.getCause();
 		}
+		System.out.println("Version:" + getVersion());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 640, 360);
 		contentPane = new JPanel();
