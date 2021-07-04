@@ -74,23 +74,8 @@ public class DelesteRandomSelector extends JFrame {
 	public DelesteRandomSelector() {
 		ExecutorService es = Executors.newWorkStealingPool();
 		CompletableFuture<ArrayList<Song>> getWholedataFuture = CompletableFuture.supplyAsync(() -> Scraping.getWholeData(), es);
-		CompletableFuture<ArrayList<Song>> getSpecificAttributeSongsFuture = CompletableFuture.supplyAsync(() -> {
-			try {
-				return Scraping.getSpecificAttributeSongs(getWholedataFuture.get(), "WITCH");
-			} catch (InterruptedException e1) {
-				JOptionPane.showMessageDialog(this, "例外:InterruptedException\n内容:非同期処理中に割り込みが発生しました。詳細を確認する場合は、batファイルからアプリケーションを起動してください。 \n" + e1.getLocalizedMessage());
-				e1.printStackTrace();
-			} catch (ExecutionException e1) {
-				JOptionPane.showMessageDialog(this, "例外:ExecutionException\n内容:非同期処理中に例外が発生しました。詳細を確認する場合は、batファイルからアプリケーションを起動しスタックトレースを確認してください。 \n" + e1.getLocalizedMessage());
-				e1.printStackTrace();
-			}
-			return null;
-		}, es);
 		try {
 			System.out.println("総楽曲数：" + getWholedataFuture.get().size());
-			for(int i = 0; i < getSpecificAttributeSongsFuture.get().size(); i++) {
-				System.out.println(getSpecificAttributeSongsFuture.get().get(i).toString());
-			}
 		} catch (InterruptedException e) {
 			JOptionPane.showMessageDialog(this, "例外:InterruptedException\n内容:非同期処理中に割り込みが発生しました。詳細を確認する場合は、batファイルからアプリケーションを起動してください。 \n" + e.getLocalizedMessage());
 			e.printStackTrace();
