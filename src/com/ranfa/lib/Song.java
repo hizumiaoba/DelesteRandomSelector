@@ -8,33 +8,56 @@ public class Song {
 	private int level;
 	private int notes;
 
-	public Song(String attribute, String name, String difficulty, int level, int notes) {
-		this.attribute = attribute;
-		this.name = name;
-		this.difficulty = difficulty;
-		this.level = level;
+
+	public String getAttribute() {
+		return attribute;
+	}
+
+
+	public String getName() {
+		return name;
+	}
+
+
+	public String getDifficulty() {
+		return difficulty;
+	}
+
+
+	public int getLevel() {
+		return level;
+	}
+
+
+	public int getNotes() {
+		return notes;
+	}
+
+
+	public void setNotes(int notes) {
 		this.notes = notes;
 	}
 
-	public String getAttribute() {
-		return this.attribute;
+
+	public void setLevel(int level) {
+		this.level = level;
 	}
 
-	public String getName() {
-		return this.name;
+
+	public void setDifficulty(String difficulty) {
+		this.difficulty = difficulty;
 	}
 
-	public String getDifficulty() {
-		return this.difficulty;
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public int getLevel() {
-		return this.level;
+
+	public void setAttribute(String attribute) {
+		this.attribute = attribute;
 	}
 
-	public int getNotes() {
-		return this.notes;
-	}
 
 	public String toString() {
 		return "Attribute: " + getAttribute()
@@ -43,4 +66,5 @@ public class Song {
 				+ ", Level :" + String.valueOf(getLevel())
 				+ ", Notes :" + String.valueOf(getNotes());
 	}
+
 }
