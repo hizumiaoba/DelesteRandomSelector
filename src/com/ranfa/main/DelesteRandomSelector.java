@@ -73,11 +73,11 @@ public class DelesteRandomSelector extends JFrame {
 	 */
 	public DelesteRandomSelector() {
 		ExecutorService es = Executors.newWorkStealingPool();
-		CompletableFuture<ArrayList<Song>> getWholedataFuture = CompletableFuture.supplyAsync(() -> Scraping.getWholeData(), es);
+		CompletableFuture<ArrayList<Song>> getWholeDataFuture = CompletableFuture.supplyAsync(() -> Scraping.getWholeData(), es);
 		try {
-			System.out.println("総楽曲数：" + getWholedataFuture.get().size());
+			System.out.println("総楽曲数：" + getWholeDataFuture.get().size());
 		} catch (InterruptedException e) {
-			JOptionPane.showMessageDialog(this, "例外:InterruptedException\n内容:非同期処理中に割り込みが発生しました。詳細を確認する場合は、batファイルからアプリケーションを起動してください。 \n" + e.getLocalizedMessage());
+			JOptionPane.showMessageDialog(this, "例外:InterruptedException\n内容:非同期処理待機中に割り込みが発生しました。詳細を確認する場合は、batファイルからアプリケーションを起動してください。 \n" + e.getLocalizedMessage());
 			e.printStackTrace();
 			System.err.println(e.getCause());
 		} catch (ExecutionException e) {
