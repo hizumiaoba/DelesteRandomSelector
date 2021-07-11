@@ -9,8 +9,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -35,12 +37,7 @@ public class DelesteRandomSelector extends JFrame {
 	private JPanel panelWest;
 	private JLabel labelVersion;
 	private JLabel labelTitle;
-	private JCheckBox chkDEBUT;
-	private JCheckBox chkREGULAR;
-	private JCheckBox chkPRO;
-	private JCheckBox chkMASTER;
 	private JLabel labelDifficulty;
-	private JCheckBox chkMASTERPLUS;
 	private JLabel labelLevel;
 	private JSpinner spinnerLevel;
 	private JCheckBox chckbxNewCheckBox_5;
@@ -51,6 +48,8 @@ public class DelesteRandomSelector extends JFrame {
 	private JButton btnStart;
 	private JButton btnExit;
 	private JTextPane textPane;
+	private JComboBox comboDifficultySelect;
+	private JLabel labelLvCaution;
 
 	/**
 	 * Launch the application.
@@ -130,43 +129,31 @@ public class DelesteRandomSelector extends JFrame {
 				FormSpecs.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("max(12dlu;default)"),
 				FormSpecs.RELATED_GAP_ROWSPEC,
-				FormSpecs.DEFAULT_ROWSPEC,
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				FormSpecs.DEFAULT_ROWSPEC,
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				FormSpecs.DEFAULT_ROWSPEC,}));
+				RowSpec.decode("max(52dlu;default)"),}));
 
 		labelDifficulty = new JLabel("難易度選択");
 		panelWest.add(labelDifficulty, "2, 2, center, default");
 
-		chkDEBUT = new JCheckBox("DEBUT");
-		panelWest.add(chkDEBUT, "2, 4, left, top");
+		comboDifficultySelect = new JComboBox();
+		comboDifficultySelect.setModel(new DefaultComboBoxModel(new String[] {"DEBUT", "REGULAR", "PRO", "MASTER", "MASTER+", "ⓁMASTER+", "LIGHT", "TRICK", "PIANO", "FORTE", "WITCH"}));
+		panelWest.add(comboDifficultySelect, "2, 4, fill, default");
 
-		chkREGULAR = new JCheckBox("REGULAR");
-		panelWest.add(chkREGULAR, "2, 6");
+				labelLevel = new JLabel("楽曲Lv");
+				panelWest.add(labelLevel, "2, 8, center, default");
 
-		chkPRO = new JCheckBox("PRO");
-		panelWest.add(chkPRO, "2, 8");
+				spinnerLevel = new JSpinner();
+				panelWest.add(spinnerLevel, "2, 10");
 
-		chkMASTER = new JCheckBox("MASTER");
-		panelWest.add(chkMASTER, "2, 10");
+				chckbxNewCheckBox_6 = new JCheckBox("指定Lv以下");
+				chckbxNewCheckBox_6.setFont(new Font("ＭＳ Ｐゴシック", Font.BOLD, 12));
+				panelWest.add(chckbxNewCheckBox_6, "2, 12");
 
-		chkMASTERPLUS = new JCheckBox("MASTER+");
-		panelWest.add(chkMASTERPLUS, "2, 12");
+				chckbxNewCheckBox_5 = new JCheckBox("指定Lv以上");
+				chckbxNewCheckBox_5.setFont(new Font("ＭＳ Ｐゴシック", Font.BOLD, 12));
+				panelWest.add(chckbxNewCheckBox_5, "2, 14");
 
-		labelLevel = new JLabel("楽曲Lv");
-		panelWest.add(labelLevel, "2, 14, center, default");
-
-		spinnerLevel = new JSpinner();
-		panelWest.add(spinnerLevel, "2, 16");
-
-		chckbxNewCheckBox_6 = new JCheckBox("指定Lv以下");
-		chckbxNewCheckBox_6.setFont(new Font("ＭＳ Ｐゴシック", Font.BOLD, 12));
-		panelWest.add(chckbxNewCheckBox_6, "2, 18");
-
-		chckbxNewCheckBox_5 = new JCheckBox("指定Lv以上");
-		chckbxNewCheckBox_5.setFont(new Font("ＭＳ Ｐゴシック", Font.BOLD, 12));
-		panelWest.add(chckbxNewCheckBox_5, "2, 20");
+				labelLvCaution = new JLabel("<html><body>※以下以上両方にチェックをつけることで指定レベルのみ絞り込むことができます</body></html>");
+				panelWest.add(labelLvCaution, "2, 16, fill, fill");
 
 		panelEast = new JPanel();
 		contentPane.add(panelEast, BorderLayout.EAST);
@@ -185,7 +172,7 @@ public class DelesteRandomSelector extends JFrame {
 				FormSpecs.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("max(11dlu;default)"),}));
 
-		btnImport = new JButton("<html><body>楽曲<br>取り込み</body></html>");
+		btnImport = new JButton("<html><body>楽曲<br>絞り込み</body></html>");
 		panelEast.add(btnImport, "1, 3, fill, fill");
 
 		btnStart = new JButton("開始！");
