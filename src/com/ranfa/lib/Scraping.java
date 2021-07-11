@@ -162,10 +162,10 @@ public class Scraping {
 		return res;
 	}
 
-	public static boolean writeToJson() {
+	public static boolean writeToJson(ArrayList<Song> list) {
 		boolean res = true;
 		SongJSONProperty property = new SongJSONProperty();
-		property.setList(getWholeData());
+		property.setList(list);
 		ObjectWriter writer = new ObjectMapper().writer(new DefaultPrettyPrinter());
 		try {
 			writer.writeValue(Paths.get(DBPATH).toFile(), property);

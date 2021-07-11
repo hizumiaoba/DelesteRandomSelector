@@ -35,6 +35,8 @@ import com.ranfa.lib.Version;
 @Version(major = 1, minor = 0, patch = 0)
 public class DelesteRandomSelector extends JFrame {
 
+	private static ArrayList<Song> selectedSongsList;
+
 	private JPanel contentPane;
 	private JPanel panelNorth;
 	private JPanel panelWest;
@@ -54,6 +56,14 @@ public class DelesteRandomSelector extends JFrame {
 	private JComboBox comboDifficultySelect;
 	private JLabel labelLvCaution;
 	private JComboBox comboAttribute;
+
+	private int wholeDataSize;
+
+	private ArrayList<Song> wholeDataList;
+
+	private ArrayList<Song> fromJsonList;
+
+	private Integer fromJsonSize;
 
 	/**
 	 * Launch the application.
@@ -86,17 +96,19 @@ public class DelesteRandomSelector extends JFrame {
 			return null;
 		}, es);
 		CompletableFuture<ArrayList<Song>> getWholeDataFuture = CompletableFuture.supplyAsync(() -> Scraping.getWholeData(), es);
-		try {
-			System.out.println("総楽曲数：" + getWholeDataFuture.get().size());
-		} catch (InterruptedException e) {
-			JOptionPane.showMessageDialog(this, "例外:InterruptedException\n内容:非同期処理待機中に割り込みが発生しました。詳細を確認する場合は、batファイルからアプリケーションを起動してください。 \n" + e.getLocalizedMessage());
-			e.printStackTrace();
-			System.err.println(e.getCause());
-		} catch (ExecutionException e) {
-			JOptionPane.showMessageDialog(this, "例外:ExecutionException\n内容:非同期処理中に例外が発生しました。詳細を確認する場合は、batファイルからアプリケーションを起動しスタックトレースを確認してください。 \n" + e.getLocalizedMessage());
-			e.printStackTrace();
-			System.err.println(e.getCause());
-		}
+		getWholeDataFuture.thenAcceptAsync(list -> System.out.println(list.size()), es);
+		getFromJsonFuture.thenAcceptAsync(list -> System.out.println(list.size()), es);
+		getWholeDataFuture.thenAcceptAsync(list -> {
+			wholeDataList.addAll(list);
+		}, es);
+		getFromJsonFuture.thenAcceptAsync(list -> {
+			fromJsonList.addAll(list);
+			if(getWholeDataFuture.isDone())
+				if(wholeDataList.size() != list.size()) {
+					fromJsonList.clear();
+					fromJsonList.addAll(wholeDataList);
+				}
+		}, es);
 		System.out.println("Version:" + getVersion());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 640, 360);
@@ -199,13 +211,18 @@ public class DelesteRandomSelector extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				ArrayList<Song> limitedList = new ArrayList<>();
 				ArrayList<Song> fromJson = new ArrayList<Song>();
-				try {
-					fromJson = getFromJsonFuture.get();
-				} catch (InterruptedException | ExecutionException e1) {
-					// TODO 自動生成された catch ブロック
-					e1.printStackTrace();
-				}
-				limitedList.addAll(Scraping.getSpecificAttributeSongs(Scraping.getSpecificDifficultySongs(Scraping.getSpecificLevelSongs(fromJson, (Integer)spinnerLevel.getValue(), checkLessLv, rootPaneCheckingEnabled), getName()), getName()));
+					try {
+						fromJson.addAll(getFromJsonFuture.get());
+					} catch (InterruptedException e1) {
+						JOptionPane.showMessageDialog(null, "例外：InterruptedException\n非同期処理待機中に割り込みが発生しました。\n" + e1.getLocalizedMessage());
+						e1.printStackTrace();
+					} catch (ExecutionException e1) {
+						JOptionPane.showMessageDialog(null, "例外：ExecutionException\n非同期処理中に例外が発生しました。\n" + e1.getLocalizedMessage());
+						e1.printStackTrace();
+					}
+				limitedList.addAll(Scraping.getSpecificAttributeSongs(Scraping.getSpecificDifficultySongs(Scraping.getSpecificLevelSongs(fromJson, (Integer)spinnerLevel.getValue(), checkLessLv.isSelected(), checkMoreLv.isSelected()), comboDifficultySelect.getSelectedItem().toString()), comboAttribute.getSelectedItem().toString()));
+				selectedSongsList.addAll(limitedList);
+				System.out.println("Songs are selected.We are Ready to go.");
 			}
 		});
 		btnImport.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
