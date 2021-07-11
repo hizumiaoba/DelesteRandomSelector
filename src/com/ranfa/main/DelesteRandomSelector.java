@@ -3,6 +3,9 @@ package com.ranfa.main;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -40,8 +43,8 @@ public class DelesteRandomSelector extends JFrame {
 	private JLabel labelDifficulty;
 	private JLabel labelLevel;
 	private JSpinner spinnerLevel;
-	private JCheckBox chckbxNewCheckBox_5;
-	private JCheckBox chckbxNewCheckBox_6;
+	private JCheckBox checkMoreLv;
+	private JCheckBox checkLessLv;
 	private JPanel panelEast;
 	private JPanel panelCentre;
 	private JButton btnImport;
@@ -50,6 +53,7 @@ public class DelesteRandomSelector extends JFrame {
 	private JTextPane textPane;
 	private JComboBox comboDifficultySelect;
 	private JLabel labelLvCaution;
+	private JComboBox comboAttribute;
 
 	/**
 	 * Launch the application.
@@ -72,6 +76,15 @@ public class DelesteRandomSelector extends JFrame {
 	 */
 	public DelesteRandomSelector() {
 		ExecutorService es = Executors.newWorkStealingPool();
+		CompletableFuture<ArrayList<Song>> getFromJsonFuture = CompletableFuture.supplyAsync(() -> {
+			try {
+				return Scraping.getFromJson();
+			} catch (IOException e1) {
+				// TODO 自動生成された catch ブロック
+				e1.printStackTrace();
+			}
+			return null;
+		}, es);
 		CompletableFuture<ArrayList<Song>> getWholeDataFuture = CompletableFuture.supplyAsync(() -> Scraping.getWholeData(), es);
 		try {
 			System.out.println("総楽曲数：" + getWholeDataFuture.get().size());
@@ -140,6 +153,11 @@ public class DelesteRandomSelector extends JFrame {
 		comboDifficultySelect.setModel(new DefaultComboBoxModel(new String[] {"DEBUT", "REGULAR", "PRO", "MASTER", "MASTER+", "ⓁMASTER+", "LIGHT", "TRICK", "PIANO", "FORTE", "WITCH"}));
 		panelWest.add(comboDifficultySelect, "2, 4, fill, default");
 
+				comboAttribute = new JComboBox();
+				comboAttribute.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+				comboAttribute.setModel(new DefaultComboBoxModel(new String[] {"全タイプ", "キュート", "クール", "パッション"}));
+				panelWest.add(comboAttribute, "2, 6, fill, default");
+
 				labelLevel = new JLabel("楽曲Lv");
 				labelLevel.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 				panelWest.add(labelLevel, "2, 8, center, default");
@@ -147,13 +165,13 @@ public class DelesteRandomSelector extends JFrame {
 				spinnerLevel = new JSpinner();
 				panelWest.add(spinnerLevel, "2, 10");
 
-				chckbxNewCheckBox_6 = new JCheckBox("指定Lv以下");
-				chckbxNewCheckBox_6.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-				panelWest.add(chckbxNewCheckBox_6, "2, 12");
+				checkLessLv = new JCheckBox("指定Lv以下");
+				checkLessLv.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+				panelWest.add(checkLessLv, "2, 12");
 
-				chckbxNewCheckBox_5 = new JCheckBox("指定Lv以上");
-				chckbxNewCheckBox_5.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-				panelWest.add(chckbxNewCheckBox_5, "2, 14");
+				checkMoreLv = new JCheckBox("指定Lv以上");
+				checkMoreLv.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+				panelWest.add(checkMoreLv, "2, 14");
 
 				labelLvCaution = new JLabel("<html><body>※以下以上両方にチェックをつけることで指定レベルのみ絞り込むことができます</body></html>");
 				labelLvCaution.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
@@ -177,6 +195,19 @@ public class DelesteRandomSelector extends JFrame {
 				RowSpec.decode("max(11dlu;default)"),}));
 
 		btnImport = new JButton("<html><body>楽曲<br>絞り込み</body></html>");
+		btnImport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ArrayList<Song> limitedList = new ArrayList<>();
+				ArrayList<Song> fromJson = new ArrayList<Song>();
+				try {
+					fromJson = getFromJsonFuture.get();
+				} catch (InterruptedException | ExecutionException e1) {
+					// TODO 自動生成された catch ブロック
+					e1.printStackTrace();
+				}
+				limitedList.addAll(Scraping.getSpecificAttributeSongs(Scraping.getSpecificDifficultySongs(Scraping.getSpecificLevelSongs(fromJson, (Integer)spinnerLevel.getValue(), checkLessLv, rootPaneCheckingEnabled), getName()), getName()));
+			}
+		});
 		btnImport.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 		panelEast.add(btnImport, "1, 3, fill, fill");
 
@@ -185,6 +216,16 @@ public class DelesteRandomSelector extends JFrame {
 		panelEast.add(btnStart, "1, 7, fill, fill");
 
 		btnExit = new JButton("終了");
+		btnExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Requested Exit by Button");
+				if(getWholeDataFuture.isDone()) {
+					System.exit(0);
+				} else {
+					JOptionPane.showMessageDialog(null, "非同期処理が完了していません。少し時間が経ってからやり直してください。");
+				}
+			}
+		});
 		btnExit.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 		panelEast.add(btnExit, "1, 11");
 
