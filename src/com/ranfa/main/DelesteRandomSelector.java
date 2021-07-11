@@ -106,6 +106,7 @@ public class DelesteRandomSelector extends JFrame {
 		panelNorth.add(labelTitle, "1, 1, center, top");
 
 		labelVersion = new JLabel(getVersion());
+		labelVersion.setFont(new Font("SansSerif", Font.BOLD, 12));
 		panelNorth.add(labelVersion, "3, 1, right, top");
 
 		panelWest = new JPanel();
@@ -132,6 +133,7 @@ public class DelesteRandomSelector extends JFrame {
 				RowSpec.decode("max(52dlu;default)"),}));
 
 		labelDifficulty = new JLabel("難易度選択");
+		labelDifficulty.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 		panelWest.add(labelDifficulty, "2, 2, center, default");
 
 		comboDifficultySelect = new JComboBox();
@@ -139,20 +141,22 @@ public class DelesteRandomSelector extends JFrame {
 		panelWest.add(comboDifficultySelect, "2, 4, fill, default");
 
 				labelLevel = new JLabel("楽曲Lv");
+				labelLevel.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 				panelWest.add(labelLevel, "2, 8, center, default");
 
 				spinnerLevel = new JSpinner();
 				panelWest.add(spinnerLevel, "2, 10");
 
 				chckbxNewCheckBox_6 = new JCheckBox("指定Lv以下");
-				chckbxNewCheckBox_6.setFont(new Font("ＭＳ Ｐゴシック", Font.BOLD, 12));
+				chckbxNewCheckBox_6.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 				panelWest.add(chckbxNewCheckBox_6, "2, 12");
 
 				chckbxNewCheckBox_5 = new JCheckBox("指定Lv以上");
-				chckbxNewCheckBox_5.setFont(new Font("ＭＳ Ｐゴシック", Font.BOLD, 12));
+				chckbxNewCheckBox_5.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 				panelWest.add(chckbxNewCheckBox_5, "2, 14");
 
 				labelLvCaution = new JLabel("<html><body>※以下以上両方にチェックをつけることで指定レベルのみ絞り込むことができます</body></html>");
+				labelLvCaution.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 				panelWest.add(labelLvCaution, "2, 16, fill, fill");
 
 		panelEast = new JPanel();
@@ -173,12 +177,15 @@ public class DelesteRandomSelector extends JFrame {
 				RowSpec.decode("max(11dlu;default)"),}));
 
 		btnImport = new JButton("<html><body>楽曲<br>絞り込み</body></html>");
+		btnImport.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 		panelEast.add(btnImport, "1, 3, fill, fill");
 
 		btnStart = new JButton("開始！");
+		btnStart.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 		panelEast.add(btnStart, "1, 7, fill, fill");
 
 		btnExit = new JButton("終了");
+		btnExit.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 		panelEast.add(btnExit, "1, 11");
 
 		panelCentre = new JPanel();
