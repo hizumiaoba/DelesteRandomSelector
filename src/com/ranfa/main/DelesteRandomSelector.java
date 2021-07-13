@@ -57,13 +57,9 @@ public class DelesteRandomSelector extends JFrame {
 	private JLabel labelLvCaution;
 	private JComboBox comboAttribute;
 
-	private int wholeDataSize;
-
 	private ArrayList<Song> wholeDataList;
 
 	private ArrayList<Song> fromJsonList;
-
-	private Integer fromJsonSize;
 
 	/**
 	 * Launch the application.
