@@ -300,7 +300,7 @@ public class DelesteRandomSelector extends JFrame {
 		btnExit = new JButton("終了");
 		btnExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[LEVEL]: " +"Requested Exit by Button");
+				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " +"Requested Exit by Button");
 				if(getWholeDataFuture.isDone()) {
 					System.exit(0);
 				} else {
