@@ -7,6 +7,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -86,8 +88,10 @@ public class Scraping {
 				&& !attribute.equals(COOL)
 				&& !attribute.equals(PASSION))
 			throw new IllegalArgumentException("Illegal attribute value: " + attribute);
-		if(data.isEmpty())
+		if(data.isEmpty()) {
+			JOptionPane.showMessageDialog(null, "指定された属性の曲は存在しません。\n条件を変えてみてください");
 			throw new IllegalArgumentException("ArrayList must not empty.");
+		}
 		ArrayList<Song> res = new ArrayList<Song>();
 		for(int i = 0; i < data.size(); i ++) {
 			if(data.get(i).getAttribute().equals(attribute))

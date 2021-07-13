@@ -36,7 +36,7 @@ import com.ranfa.lib.Settings;
 import com.ranfa.lib.Song;
 import com.ranfa.lib.Version;
 
-@Version(major = 1, minor = 0, patch = 0)
+@Version(major = 0, minor = 0, patch = 0)
 public class DelesteRandomSelector extends JFrame {
 
 	private static ArrayList<Song> selectedSongsList = new ArrayList<Song>();
@@ -282,7 +282,8 @@ public class DelesteRandomSelector extends JFrame {
 				Random random = new Random(System.currentTimeMillis());
 				String[] tmp = new String[property.getSongLimit()];
 				for(int i = 0; i < property.getSongLimit(); i++) {
-					tmp[i] = (i + 1) + "曲目：「" + selectedSongsList.get(random.nextInt(selectedSongsList.size())).getName() + "」！\n\n";
+					int randomInt = random.nextInt(selectedSongsList.size());
+					tmp[i] = (i + 1) + "曲目：[" + selectedSongsList.get(randomInt).getDifficulty() + "]「" + selectedSongsList.get(randomInt).getName() + "」！\n\n";
 				}
 				String paneString = "";
 				for (int i = 0; i < tmp.length; i++) {
@@ -299,7 +300,7 @@ public class DelesteRandomSelector extends JFrame {
 		btnExit = new JButton("終了");
 		btnExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " +"Requested Exit by Button");
+				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[LEVEL]: " +"Requested Exit by Button");
 				if(getWholeDataFuture.isDone()) {
 					System.exit(0);
 				} else {
