@@ -89,7 +89,7 @@ public class Settings {
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			JsonNode node = mapper.readTree(new File(FILEPATH));
-			res = node.get("songsLimit").asInt();
+			res = node.get("songLimit").asInt();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -83,7 +83,8 @@ public class DelesteRandomSelector extends JFrame {
 	}
 
 	/**
-	 * log file prefix: "[" + Thread.currentThread().toString() + "]:" + this.getClass() + ": "
+	 * log file prefix:
+	 *  "[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[LEVEL]: " +
 	 */
 
 	/**
@@ -94,6 +95,22 @@ public class DelesteRandomSelector extends JFrame {
 			JOptionPane.showMessageDialog(this, "Exception:NullPointerException\nCannot Keep up! Please re-download this Application!");
 			throw new NullPointerException("FATAL: cannot continue!");
 		}
+		LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "Loading Settings...");
+		property.setCheckLibraryUpdates(Settings.needToCheckLibraryUpdates());
+		property.setCheckVersion(Settings.needToCheckVersion());
+		property.setWindowWidth(Settings.getWindowWidth());
+		property.setWindowHeight(Settings.getWindowHeight());
+		property.setSongLimit(Settings.getSongsLimit());
+		property.setSaveScoreLog(Settings.saveScoreLog());
+		property.setOutputDebugSentences(Settings.outputDebugSentences());
+		LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[DEBUG]: " + "Loading Settings done."
+				+ "\nVersion Check: " + property.isCheckVersion()
+				+ "\nLibrary Update Check: " + property.isCheckLibraryUpdates()
+				+ "\nWindow Width: " + property.getWindowWidth()
+				+ "\nWindow Height: " + property.getWindowHeight()
+				+ "\nSong Limit: " + property.getSongLimit()
+				+ "\nSaveScoreLog: " + property.isSaveScoreLog()
+				+ "\nOutputDebugSentences: " + property.isOutputDebugSentences());
 		if(!Scraping.databaseExists()) {
 			JOptionPane.showMessageDialog(this, "楽曲データベースが見つかりませんでした。自動的に作成されます…\n注意：初回起動ではなく、かつ、Jarファイルと同じ階層に\"database.json\"というファイルが存在するにも関わらず\nこのポップアップが出た場合、開発者までご一報ください。\nGithub URL: https://github.com/hizumiaoba/DelesteRandomSelector/issues");
 			if(!Scraping.writeToJson(Scraping.getWholeData())) {
@@ -112,8 +129,8 @@ public class DelesteRandomSelector extends JFrame {
 			return null;
 		}, es);
 		CompletableFuture<ArrayList<Song>> getWholeDataFuture = CompletableFuture.supplyAsync(() -> Scraping.getWholeData(), es);
-		getWholeDataFuture.thenAcceptAsync(list -> LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ": Scraping data size:" + list.size()), es);
-		getFromJsonFuture.thenAcceptAsync(list -> LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ": Currently database size:" + list.size()), es);
+		getWholeDataFuture.thenAcceptAsync(list -> LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: Scraping data size:" + list.size()), es);
+		getFromJsonFuture.thenAcceptAsync(list -> LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO] Currently database size:" + list.size()), es);
 		getWholeDataFuture.thenAcceptAsync(list -> {
 			wholeDataList.addAll(list);
 		}, es);
@@ -132,7 +149,7 @@ public class DelesteRandomSelector extends JFrame {
 				e1.printStackTrace();
 			}
 		}, es);
-		System.out.println("Version:" + getVersion());
+		LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[DEBUG]: " + "Version:" + getVersion());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 640, 360);
 		contentPane = new JPanel();
