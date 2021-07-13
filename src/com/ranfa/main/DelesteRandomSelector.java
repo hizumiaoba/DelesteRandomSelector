@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -95,7 +96,7 @@ public class DelesteRandomSelector extends JFrame {
 			JOptionPane.showMessageDialog(this, "Exception:NullPointerException\nCannot Keep up! Please re-download this Application!");
 			throw new NullPointerException("FATAL: cannot continue!");
 		}
-		LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "Loading Settings...");
+		LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[DEBUG]: " + "Loading Settings...");
 		property.setCheckLibraryUpdates(Settings.needToCheckLibraryUpdates());
 		property.setCheckVersion(Settings.needToCheckVersion());
 		property.setWindowWidth(Settings.getWindowWidth());
@@ -142,11 +143,13 @@ public class DelesteRandomSelector extends JFrame {
 					fromJsonList.addAll(wholeDataList);
 				}
 			} catch (InterruptedException e1) {
-				// TODO 自動生成された catch ブロック
+				JOptionPane.showMessageDialog(null, "例外：InterruptedException\n非同期処理待機中に割り込みが発生しました。\n" + e1.getLocalizedMessage());
 				e1.printStackTrace();
+				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[FATAL]: " + e1.getLocalizedMessage());
 			} catch (ExecutionException e1) {
-				// TODO 自動生成された catch ブロック
+				JOptionPane.showMessageDialog(null, "例外：ExecutionException\n非同期処理中に例外をキャッチしました。\n" + e1.getLocalizedMessage());
 				e1.printStackTrace();
+				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[WARN]: " + e1.getLocalizedMessage());
 			}
 		}, es);
 		LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[DEBUG]: " + "Version:" + getVersion());
@@ -255,9 +258,11 @@ public class DelesteRandomSelector extends JFrame {
 					} catch (InterruptedException e1) {
 						JOptionPane.showMessageDialog(null, "例外：InterruptedException\n非同期処理待機中に割り込みが発生しました。\n" + e1.getLocalizedMessage());
 						e1.printStackTrace();
+						LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[FATAL]: " + e1.getLocalizedMessage());
 					} catch (ExecutionException e1) {
-						JOptionPane.showMessageDialog(null, "例外：ExecutionException\n非同期処理中に例外が発生しました。\n" + e1.getLocalizedMessage());
+						JOptionPane.showMessageDialog(null, "例外：ExecutionException\n非同期処理中に例外をキャッチしました。\n" + e1.getLocalizedMessage());
 						e1.printStackTrace();
+						LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[WARN]: " + e1.getLocalizedMessage());
 					}
 					ArrayList<Song> specificlevelList = Scraping.getSpecificLevelSongs(fromJson, (Integer)spinnerLevel.getValue(), checkLessLv.isSelected(), checkMoreLv.isSelected());
 					ArrayList<Song> specificDifficultyList = Scraping.getSpecificDifficultySongs(specificlevelList, comboDifficultySelect.getSelectedItem().toString());
@@ -265,20 +270,36 @@ public class DelesteRandomSelector extends JFrame {
 					if(!selectedSongsList.isEmpty())
 					selectedSongsList.clear();
 				selectedSongsList.addAll(specificAttributeList);
-				LimitedLog.println("Songs are selected.We are Ready to go.");
+				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " +"Songs are selected.We are Ready to go.");
 			}
 		});
 		btnImport.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 		panelEast.add(btnImport, "1, 3, fill, fill");
 
 		btnStart = new JButton("開始！");
+		btnStart.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Random random = new Random(System.currentTimeMillis());
+				String[] tmp = new String[property.getSongLimit()];
+				for(int i = 0; i < property.getSongLimit(); i++) {
+					tmp[i] = (i + 1) + "曲目：「" + selectedSongsList.get(random.nextInt(selectedSongsList.size())).getName() + "」！\n\n";
+				}
+				String paneString = "";
+				for (int i = 0; i < tmp.length; i++) {
+					paneString = paneString + tmp[i];
+				}
+				paneString = paneString + "この" + tmp.length + "曲をプレイしましょう！！！";
+				textPane.setText(paneString);
+				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "show up completed.");
+			}
+		});
 		btnStart.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 		panelEast.add(btnStart, "1, 7, fill, fill");
 
 		btnExit = new JButton("終了");
 		btnExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Requested Exit by Button");
+				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " +"Requested Exit by Button");
 				if(getWholeDataFuture.isDone()) {
 					System.exit(0);
 				} else {
