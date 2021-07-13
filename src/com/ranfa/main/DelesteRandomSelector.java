@@ -35,7 +35,7 @@ import com.ranfa.lib.Version;
 @Version(major = 1, minor = 0, patch = 0)
 public class DelesteRandomSelector extends JFrame {
 
-	private static ArrayList<Song> selectedSongsList;
+	private static ArrayList<Song> selectedSongsList = new ArrayList<Song>();
 
 	private JPanel contentPane;
 	private JPanel panelNorth;
