@@ -78,9 +78,16 @@ public class DelesteRandomSelector extends JFrame {
 	}
 
 	/**
+	 * log file prefix: "[" + Thread.currentThread().toString() + "]:" + Thread.currentThread().getClass() + ": "
+	 */
+
+	/**
 	 * Create the frame.
 	 */
 	public DelesteRandomSelector() {
+		if(!Scraping.databaseExists()) {
+			JOptionPane.showMessageDialog(this, "楽曲データベースが見つかりませんでした。\n注意：初回起動ではなく、かつ、Jarファイルと同じ階層に\"database.json\"というファイルが存在するにも関わらず\nこのポップアップが出た場合、開発者までご一報ください。\nGithub URL: https://github.com/hizumiaoba/DelesteRandomSelector/issues");
+		}
 		ExecutorService es = Executors.newWorkStealingPool();
 		CompletableFuture<ArrayList<Song>> getFromJsonFuture = CompletableFuture.supplyAsync(() -> {
 			try {
@@ -92,8 +99,8 @@ public class DelesteRandomSelector extends JFrame {
 			return null;
 		}, es);
 		CompletableFuture<ArrayList<Song>> getWholeDataFuture = CompletableFuture.supplyAsync(() -> Scraping.getWholeData(), es);
-		getWholeDataFuture.thenAcceptAsync(list -> System.out.println(list.size()), es);
-		getFromJsonFuture.thenAcceptAsync(list -> System.out.println(list.size()), es);
+		getWholeDataFuture.thenAcceptAsync(list -> System.out.println("[" + Thread.currentThread().toString() + "]:" + Thread.currentThread().getClass() + ": Scraping data size:" + list.size()), es);
+		getFromJsonFuture.thenAcceptAsync(list -> System.out.println("[" + Thread.currentThread().toString() + "]:" + Thread.currentThread().getClass() + ": Currently database size:" + list.size()), es);
 		getWholeDataFuture.thenAcceptAsync(list -> {
 			wholeDataList.addAll(list);
 		}, es);
