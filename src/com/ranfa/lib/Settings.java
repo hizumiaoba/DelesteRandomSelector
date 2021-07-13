@@ -2,9 +2,14 @@ package com.ranfa.lib;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
 /**
  * 「settings.json」ファイルから各種設定を読み込みます
@@ -25,6 +30,11 @@ public class Settings {
 
 	// 設定ファイルパス
 	private final static String FILEPATH = "settings.json";
+
+	public static boolean fileExists() {
+		Path path = Paths.get(FILEPATH);
+		return Files.exists(path);
+	}
 
 	public static boolean needToCheckVersion() {
 		boolean res = true;
@@ -79,7 +89,7 @@ public class Settings {
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			JsonNode node = mapper.readTree(new File(FILEPATH));
-			res = node.get("songsLimit").asInt();
+			res = node.get("songLimit").asInt();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -106,6 +116,25 @@ public class Settings {
 			res = node.get("outputDebugSentences").asBoolean();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+		return res;
+	}
+
+	public static boolean writeDownJSON() {
+		boolean res = true;
+		SettingJSONProperty property = new SettingJSONProperty();
+		property.setCheckVersion(true);
+		property.setCheckLibraryUpdates(true);
+		property.setWindowWidth(640);
+		property.setWindowHeight(480);
+		property.setSongLimit(3);
+		property.setSaveScoreLog(false);
+		property.setOutputDebugSentences(false);
+		ObjectWriter writer = new ObjectMapper().writer(new DefaultPrettyPrinter());
+		try {
+			writer.writeValue(Paths.get(FILEPATH).toFile(), property);
+		} catch (IOException e) {
+			res = false;
 		}
 		return res;
 	}

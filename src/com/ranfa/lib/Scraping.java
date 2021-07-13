@@ -1,14 +1,21 @@
 package com.ranfa.lib;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
 public class Scraping {
 
@@ -24,13 +31,18 @@ public class Scraping {
 	public final static String MASTER = "MASTER";
 	public final static String MASTERPLUS = "MASTER+";
 	public final static String LEGACYMASTERPLUS = "ⓁMASTER+";
+	public final static String LIGHT = "LIGHT";
+	public final static String TRICK = "TRICK";
+	public final static String PIANO = "PIANO";
+	public final static String FORTE = "FORTE";
+	public final static String WITCH = "WITCH";
 
 	public static boolean databaseExists() {
 		Path path = Paths.get(DBPATH);
 		return Files.exists(path);
 	}
 
-	public static synchronized ArrayList<Song> getWholeData() {
+	public static ArrayList<Song> getWholeData() {
 		// if(databaseExists())
 		// 	return null;
 		ArrayList<Song> res = new ArrayList<>();
@@ -56,7 +68,12 @@ public class Scraping {
 					String end = temp.substring(temp.indexOf(",") + 1);
 					notes = Integer.parseInt(first + end);
 				}
-				Song tmp = new Song(attribute, name, difficulty, level, notes);
+				Song tmp = new Song();
+				tmp.setAttribute(attribute);
+				tmp.setName(name);
+				tmp.setDifficulty(difficulty);
+				tmp.setLevel(level);
+				tmp.setNotes(notes);
 				res.add(tmp);
 			}
 		} catch (IOException e) {
@@ -65,11 +82,16 @@ public class Scraping {
 		return res;
 	}
 
-	public static synchronized ArrayList<Song> getSpecificAttributeSongs(ArrayList<Song> data, String attribute) {
-		if(!attribute.equals(ALL) && !attribute.equals(CUTE) && !attribute.equals(COOL) && !attribute.equals(PASSION))
-			throw new IllegalArgumentException("Illegal attribute value.");
-		if(data.isEmpty())
+	public static ArrayList<Song> getSpecificAttributeSongs(ArrayList<Song> data, String attribute) {
+		if(!attribute.equals(ALL)
+				&& !attribute.equals(CUTE)
+				&& !attribute.equals(COOL)
+				&& !attribute.equals(PASSION))
+			throw new IllegalArgumentException("Illegal attribute value: " + attribute);
+		if(data.isEmpty()) {
+			JOptionPane.showMessageDialog(null, "指定された属性の曲は存在しません。\n条件を変えてみてください");
 			throw new IllegalArgumentException("ArrayList must not empty.");
+		}
 		ArrayList<Song> res = new ArrayList<Song>();
 		for(int i = 0; i < data.size(); i ++) {
 			if(data.get(i).getAttribute().equals(attribute))
@@ -78,8 +100,18 @@ public class Scraping {
 		return res;
 	}
 
-	public static synchronized ArrayList<Song> getSpecificDifficultySongs(ArrayList<Song> data, String difficulty) {
-		if(!difficulty.equals(DEBUT) && !difficulty.equals(REGULAR) && !difficulty.equals(PRO) && !difficulty.equals(MASTER) && !difficulty.equals(MASTERPLUS) && !difficulty.equals(LEGACYMASTERPLUS))
+	public static  ArrayList<Song> getSpecificDifficultySongs(ArrayList<Song> data, String difficulty) {
+		if(!difficulty.equals(DEBUT)
+				&& !difficulty.equals(REGULAR)
+				&& !difficulty.equals(PRO)
+				&& !difficulty.equals(MASTER)
+				&& !difficulty.equals(MASTERPLUS)
+				&& !difficulty.equals(LEGACYMASTERPLUS)
+				&& !difficulty.equals(LIGHT)
+				&& !difficulty.equals(TRICK)
+				&& !difficulty.equals(PIANO)
+				&& !difficulty.equals(FORTE)
+				&& !difficulty.equals(WITCH))
 			throw new IllegalArgumentException("Illegal difficulty value.");
 		if(data.isEmpty())
 			throw new IllegalArgumentException("ArrayList must not empty.");
@@ -91,12 +123,14 @@ public class Scraping {
 		return res;
 	}
 
-	public static synchronized ArrayList<Song> getSpecificLevelSongs(ArrayList<Song> data, int level, boolean isLess, boolean isOnly) {
+	public static  ArrayList<Song> getSpecificLevelSongs(ArrayList<Song> data, int level, boolean isLess, boolean isMore) {
 		if(level <= 0)
 			throw new IllegalArgumentException("Level must not negative.");
 		if(data.isEmpty())
 			throw new IllegalArgumentException("ArrayList must not empty.");
-		if(isOnly)
+		if(!(isLess || isMore))
+			throw new IllegalArgumentException("Illegal boolean value.");
+		if(isLess && isMore)
 			return getOnlyLevelSongs(data, level);
 		ArrayList<Song> res = new ArrayList<Song>();
 		if(isLess) {
@@ -104,7 +138,7 @@ public class Scraping {
 				if(data.get(i).getLevel() < level)
 					res.add(data.get(i));
 			}
-		} else {
+		} else if (isMore) {
 			for (int i = 0; i < data.size(); i++) {
 				if(data.get(i).getLevel() > level)
 					res.add(data.get(i));
@@ -113,11 +147,7 @@ public class Scraping {
 		return res;
 	}
 
-	private static synchronized ArrayList<Song> getOnlyLevelSongs(ArrayList<Song> data, int level) {
-		if(level < 0)
-			throw new IllegalArgumentException("Level must not negative.");
-		if(data.isEmpty())
-			throw new IllegalArgumentException("ArrayList must not empty");
+	private static ArrayList<Song> getOnlyLevelSongs(ArrayList<Song> data, int level) {
 		ArrayList<Song> res = new ArrayList<Song>();
 		for(int i = 0; i < data.size(); i++) {
 			if(data.get(i).getLevel() == level)
@@ -125,5 +155,25 @@ public class Scraping {
 		}
 		return res;
 
+	}
+
+	public static ArrayList<Song> getFromJson() throws IOException {
+		SongJSONProperty property = new ObjectMapper().readValue(new File(DBPATH), SongJSONProperty.class);
+		ArrayList<Song> res = new ArrayList<Song>();
+		res.addAll(property.getList());
+		return res;
+	}
+
+	public static boolean writeToJson(ArrayList<Song> list) {
+		boolean res = true;
+		SongJSONProperty property = new SongJSONProperty();
+		property.setList(list);
+		ObjectWriter writer = new ObjectMapper().writer(new DefaultPrettyPrinter());
+		try {
+			writer.writeValue(Paths.get(DBPATH).toFile(), property);
+		} catch (IOException e) {
+			res = false;
+		}
+		return res;
 	}
 }

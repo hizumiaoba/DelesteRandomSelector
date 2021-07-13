@@ -3,12 +3,23 @@ package com.ranfa.main;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextPane;
@@ -18,34 +29,43 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
+import com.ranfa.lib.LimitedLog;
 import com.ranfa.lib.Scraping;
+import com.ranfa.lib.SettingJSONProperty;
+import com.ranfa.lib.Settings;
 import com.ranfa.lib.Song;
 import com.ranfa.lib.Version;
 
-@Version(major = 1, minor = 0, patch = 0)
+@Version(major = 0, minor = 0, patch = 0)
 public class DelesteRandomSelector extends JFrame {
+
+	private static ArrayList<Song> selectedSongsList = new ArrayList<Song>();
 
 	private JPanel contentPane;
 	private JPanel panelNorth;
 	private JPanel panelWest;
 	private JLabel labelVersion;
 	private JLabel labelTitle;
-	private JCheckBox chkDEBUT;
-	private JCheckBox chkREGULAR;
-	private JCheckBox chkPRO;
-	private JCheckBox chkMASTER;
 	private JLabel labelDifficulty;
-	private JCheckBox chkMASTERPLUS;
 	private JLabel labelLevel;
 	private JSpinner spinnerLevel;
-	private JCheckBox chckbxNewCheckBox_5;
-	private JCheckBox chckbxNewCheckBox_6;
+	private JCheckBox checkMoreLv;
+	private JCheckBox checkLessLv;
 	private JPanel panelEast;
 	private JPanel panelCentre;
 	private JButton btnImport;
 	private JButton btnStart;
 	private JButton btnExit;
 	private JTextPane textPane;
+	private JComboBox comboDifficultySelect;
+	private JLabel labelLvCaution;
+	private JComboBox comboAttribute;
+
+	private ArrayList<Song> wholeDataList;
+
+	private ArrayList<Song> fromJsonList;
+
+	private SettingJSONProperty property = new SettingJSONProperty();
 
 	/**
 	 * Launch the application.
@@ -64,14 +84,75 @@ public class DelesteRandomSelector extends JFrame {
 	}
 
 	/**
+	 * log file prefix:
+	 *  "[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[LEVEL]: " +
+	 */
+
+	/**
 	 * Create the frame.
 	 */
 	public DelesteRandomSelector() {
-		System.out.println(getVersion());
-		ArrayList<Song> tmp = Scraping.getWholeData();
-		for(int i = 0; i < tmp.size(); i++) {
-			System.out.println(tmp.get(i).toString());
+		if(!Settings.fileExists() && !Settings.writeDownJSON()) {
+			JOptionPane.showMessageDialog(this, "Exception:NullPointerException\nCannot Keep up! Please re-download this Application!");
+			throw new NullPointerException("FATAL: cannot continue!");
 		}
+		LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[DEBUG]: " + "Loading Settings...");
+		property.setCheckLibraryUpdates(Settings.needToCheckLibraryUpdates());
+		property.setCheckVersion(Settings.needToCheckVersion());
+		property.setWindowWidth(Settings.getWindowWidth());
+		property.setWindowHeight(Settings.getWindowHeight());
+		property.setSongLimit(Settings.getSongsLimit());
+		property.setSaveScoreLog(Settings.saveScoreLog());
+		property.setOutputDebugSentences(Settings.outputDebugSentences());
+		LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[DEBUG]: " + "Loading Settings done."
+				+ "\nVersion Check: " + property.isCheckVersion()
+				+ "\nLibrary Update Check: " + property.isCheckLibraryUpdates()
+				+ "\nWindow Width: " + property.getWindowWidth()
+				+ "\nWindow Height: " + property.getWindowHeight()
+				+ "\nSong Limit: " + property.getSongLimit()
+				+ "\nSaveScoreLog: " + property.isSaveScoreLog()
+				+ "\nOutputDebugSentences: " + property.isOutputDebugSentences());
+		if(!Scraping.databaseExists()) {
+			JOptionPane.showMessageDialog(this, "楽曲データベースが見つかりませんでした。自動的に作成されます…\n注意：初回起動ではなく、かつ、Jarファイルと同じ階層に\"database.json\"というファイルが存在するにも関わらず\nこのポップアップが出た場合、開発者までご一報ください。\nGithub URL: https://github.com/hizumiaoba/DelesteRandomSelector/issues");
+			if(!Scraping.writeToJson(Scraping.getWholeData())) {
+				JOptionPane.showMessageDialog(this, "Exception:NullPointerException\\nCannot Keep up! Please re-download this Application!");
+				throw new NullPointerException("FATAL: cannot continue!");
+			}
+		}
+		ExecutorService es = Executors.newWorkStealingPool();
+		CompletableFuture<ArrayList<Song>> getFromJsonFuture = CompletableFuture.supplyAsync(() -> {
+			try {
+				return Scraping.getFromJson();
+			} catch (IOException e1) {
+				// TODO 自動生成された catch ブロック
+				e1.printStackTrace();
+			}
+			return null;
+		}, es);
+		CompletableFuture<ArrayList<Song>> getWholeDataFuture = CompletableFuture.supplyAsync(() -> Scraping.getWholeData(), es);
+		getWholeDataFuture.thenAcceptAsync(list -> LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: Scraping data size:" + list.size()), es);
+		getFromJsonFuture.thenAcceptAsync(list -> LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO] Currently database size:" + list.size()), es);
+		getWholeDataFuture.thenAcceptAsync(list -> {
+			wholeDataList.addAll(list);
+		}, es);
+		getFromJsonFuture.thenAcceptAsync(list -> {
+			fromJsonList.addAll(list);
+			try {
+				if(getWholeDataFuture.get().size() != list.size()) {
+					fromJsonList.clear();
+					fromJsonList.addAll(wholeDataList);
+				}
+			} catch (InterruptedException e1) {
+				JOptionPane.showMessageDialog(null, "例外：InterruptedException\n非同期処理待機中に割り込みが発生しました。\n" + e1.getLocalizedMessage());
+				e1.printStackTrace();
+				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[FATAL]: " + e1.getLocalizedMessage());
+			} catch (ExecutionException e1) {
+				JOptionPane.showMessageDialog(null, "例外：ExecutionException\n非同期処理中に例外をキャッチしました。\n" + e1.getLocalizedMessage());
+				e1.printStackTrace();
+				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[WARN]: " + e1.getLocalizedMessage());
+			}
+		}, es);
+		LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[DEBUG]: " + "Version:" + getVersion());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 640, 360);
 		contentPane = new JPanel();
@@ -82,18 +163,19 @@ public class DelesteRandomSelector extends JFrame {
 		panelNorth = new JPanel();
 		contentPane.add(panelNorth, BorderLayout.NORTH);
 		panelNorth.setLayout(new FormLayout(new ColumnSpec[] {
-				ColumnSpec.decode("max(285dlu;default)"),
+				ColumnSpec.decode("max(302dlu;default)"),
 				FormSpecs.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("81px"),},
+				ColumnSpec.decode("40px"),},
 			new RowSpec[] {
 				RowSpec.decode("20px"),}));
 
 		labelTitle = new JLabel("デレステ課題曲セレクター");
-		labelTitle.setFont(new Font("Dialog", Font.BOLD, 16));
+		labelTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 16));
 		panelNorth.add(labelTitle, "1, 1, center, top");
 
 		labelVersion = new JLabel(getVersion());
-		panelNorth.add(labelVersion, "3, 1, left, top");
+		labelVersion.setFont(new Font("SansSerif", Font.BOLD, 12));
+		panelNorth.add(labelVersion, "3, 1, right, top");
 
 		panelWest = new JPanel();
 		contentPane.add(panelWest, BorderLayout.WEST);
@@ -116,41 +198,39 @@ public class DelesteRandomSelector extends JFrame {
 				FormSpecs.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("max(12dlu;default)"),
 				FormSpecs.RELATED_GAP_ROWSPEC,
-				FormSpecs.DEFAULT_ROWSPEC,
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				FormSpecs.DEFAULT_ROWSPEC,
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				FormSpecs.DEFAULT_ROWSPEC,}));
+				RowSpec.decode("max(52dlu;default)"),}));
 
 		labelDifficulty = new JLabel("難易度選択");
+		labelDifficulty.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 		panelWest.add(labelDifficulty, "2, 2, center, default");
 
-		chkDEBUT = new JCheckBox("DEBUT");
-		panelWest.add(chkDEBUT, "2, 4, left, top");
+		comboDifficultySelect = new JComboBox();
+		comboDifficultySelect.setModel(new DefaultComboBoxModel(new String[] {"DEBUT", "REGULAR", "PRO", "MASTER", "MASTER+", "ⓁMASTER+", "LIGHT", "TRICK", "PIANO", "FORTE", "WITCH"}));
+		panelWest.add(comboDifficultySelect, "2, 4, fill, default");
 
-		chkREGULAR = new JCheckBox("REGULAR");
-		panelWest.add(chkREGULAR, "2, 6");
+				comboAttribute = new JComboBox();
+				comboAttribute.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+				comboAttribute.setModel(new DefaultComboBoxModel(new String[] {"全タイプ", "キュート", "クール", "パッション"}));
+				panelWest.add(comboAttribute, "2, 6, fill, default");
 
-		chkPRO = new JCheckBox("PRO");
-		panelWest.add(chkPRO, "2, 8");
+				labelLevel = new JLabel("楽曲Lv");
+				labelLevel.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+				panelWest.add(labelLevel, "2, 8, center, default");
 
-		chkMASTER = new JCheckBox("MASTER");
-		panelWest.add(chkMASTER, "2, 10");
+				spinnerLevel = new JSpinner();
+				panelWest.add(spinnerLevel, "2, 10");
 
-		chkMASTERPLUS = new JCheckBox("MASTER+");
-		panelWest.add(chkMASTERPLUS, "2, 12");
+				checkLessLv = new JCheckBox("指定Lv以下");
+				checkLessLv.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+				panelWest.add(checkLessLv, "2, 12");
 
-		labelLevel = new JLabel("楽曲レベル");
-		panelWest.add(labelLevel, "2, 14, center, default");
+				checkMoreLv = new JCheckBox("指定Lv以上");
+				checkMoreLv.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+				panelWest.add(checkMoreLv, "2, 14");
 
-		spinnerLevel = new JSpinner();
-		panelWest.add(spinnerLevel, "2, 16");
-
-		chckbxNewCheckBox_6 = new JCheckBox("指定レベル以下");
-		panelWest.add(chckbxNewCheckBox_6, "2, 18");
-
-		chckbxNewCheckBox_5 = new JCheckBox("指定レベル以上");
-		panelWest.add(chckbxNewCheckBox_5, "2, 20");
+				labelLvCaution = new JLabel("<html><body>※以下以上両方にチェックをつけることで指定レベルのみ絞り込むことができます</body></html>");
+				labelLvCaution.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+				panelWest.add(labelLvCaution, "2, 16, fill, fill");
 
 		panelEast = new JPanel();
 		contentPane.add(panelEast, BorderLayout.EAST);
@@ -169,13 +249,66 @@ public class DelesteRandomSelector extends JFrame {
 				FormSpecs.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("max(11dlu;default)"),}));
 
-		btnImport = new JButton("<html><body>楽曲<br>取り込み</body></html>");
+		btnImport = new JButton("<html><body>楽曲<br>絞り込み</body></html>");
+		btnImport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ArrayList<Song> fromJson = new ArrayList<Song>();
+					try {
+						fromJson.addAll(getFromJsonFuture.get());
+					} catch (InterruptedException e1) {
+						JOptionPane.showMessageDialog(null, "例外：InterruptedException\n非同期処理待機中に割り込みが発生しました。\n" + e1.getLocalizedMessage());
+						e1.printStackTrace();
+						LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[FATAL]: " + e1.getLocalizedMessage());
+					} catch (ExecutionException e1) {
+						JOptionPane.showMessageDialog(null, "例外：ExecutionException\n非同期処理中に例外をキャッチしました。\n" + e1.getLocalizedMessage());
+						e1.printStackTrace();
+						LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[WARN]: " + e1.getLocalizedMessage());
+					}
+					ArrayList<Song> specificlevelList = Scraping.getSpecificLevelSongs(fromJson, (Integer)spinnerLevel.getValue(), checkLessLv.isSelected(), checkMoreLv.isSelected());
+					ArrayList<Song> specificDifficultyList = Scraping.getSpecificDifficultySongs(specificlevelList, comboDifficultySelect.getSelectedItem().toString());
+					ArrayList<Song> specificAttributeList = Scraping.getSpecificAttributeSongs(specificDifficultyList, comboAttribute.getSelectedItem().toString());
+					if(!selectedSongsList.isEmpty())
+					selectedSongsList.clear();
+				selectedSongsList.addAll(specificAttributeList);
+				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " +"Songs are selected.We are Ready to go.");
+			}
+		});
+		btnImport.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 		panelEast.add(btnImport, "1, 3, fill, fill");
 
 		btnStart = new JButton("開始！");
+		btnStart.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Random random = new Random(System.currentTimeMillis());
+				String[] tmp = new String[property.getSongLimit()];
+				for(int i = 0; i < property.getSongLimit(); i++) {
+					int randomInt = random.nextInt(selectedSongsList.size());
+					tmp[i] = (i + 1) + "曲目：[" + selectedSongsList.get(randomInt).getDifficulty() + "]「" + selectedSongsList.get(randomInt).getName() + "」！\n\n";
+				}
+				String paneString = "";
+				for (int i = 0; i < tmp.length; i++) {
+					paneString = paneString + tmp[i];
+				}
+				paneString = paneString + "この" + tmp.length + "曲をプレイしましょう！！！";
+				textPane.setText(paneString);
+				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "show up completed.");
+			}
+		});
+		btnStart.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 		panelEast.add(btnStart, "1, 7, fill, fill");
 
 		btnExit = new JButton("終了");
+		btnExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " +"Requested Exit by Button");
+				if(getWholeDataFuture.isDone()) {
+					System.exit(0);
+				} else {
+					JOptionPane.showMessageDialog(null, "非同期処理が完了していません。少し時間が経ってからやり直してください。");
+				}
+			}
+		});
+		btnExit.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 		panelEast.add(btnExit, "1, 11");
 
 		panelCentre = new JPanel();
@@ -183,6 +316,7 @@ public class DelesteRandomSelector extends JFrame {
 		panelCentre.setLayout(new BorderLayout(0, 0));
 
 		textPane = new JTextPane();
+		textPane.setText("楽曲選択の手順\r\n１．難易度、属性、レベルを選択する\r\n２．「楽曲取り込み」ボタンを押す！\r\n３．「開始」ボタンを押す！\r\n４．選択された楽曲がここに表示されます！\r\n現在設定されている楽曲選択の最大数：" + property.getSongLimit());
 		textPane.setEditable(false);
 		panelCentre.add(textPane);
 	}
