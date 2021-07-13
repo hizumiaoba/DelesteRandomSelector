@@ -78,7 +78,7 @@ public class DelesteRandomSelector extends JFrame {
 	}
 
 	/**
-	 * log file prefix: "[" + Thread.currentThread().toString() + "]:" + Thread.currentThread().getClass() + ": "
+	 * log file prefix: "[" + Thread.currentThread().toString() + "]:" + this.getClass() + ": "
 	 */
 
 	/**
@@ -99,8 +99,8 @@ public class DelesteRandomSelector extends JFrame {
 			return null;
 		}, es);
 		CompletableFuture<ArrayList<Song>> getWholeDataFuture = CompletableFuture.supplyAsync(() -> Scraping.getWholeData(), es);
-		getWholeDataFuture.thenAcceptAsync(list -> System.out.println("[" + Thread.currentThread().toString() + "]:" + Thread.currentThread().getClass() + ": Scraping data size:" + list.size()), es);
-		getFromJsonFuture.thenAcceptAsync(list -> System.out.println("[" + Thread.currentThread().toString() + "]:" + Thread.currentThread().getClass() + ": Currently database size:" + list.size()), es);
+		getWholeDataFuture.thenAcceptAsync(list -> System.out.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ": Scraping data size:" + list.size()), es);
+		getFromJsonFuture.thenAcceptAsync(list -> System.out.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ": Currently database size:" + list.size()), es);
 		getWholeDataFuture.thenAcceptAsync(list -> {
 			wholeDataList.addAll(list);
 		}, es);
