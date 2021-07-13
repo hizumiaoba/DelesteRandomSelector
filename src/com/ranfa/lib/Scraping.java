@@ -119,12 +119,14 @@ public class Scraping {
 		return res;
 	}
 
-	public static  ArrayList<Song> getSpecificLevelSongs(ArrayList<Song> data, int level, boolean isLess, boolean isOnly) {
+	public static  ArrayList<Song> getSpecificLevelSongs(ArrayList<Song> data, int level, boolean isLess, boolean isMore) {
 		if(level <= 0)
 			throw new IllegalArgumentException("Level must not negative.");
 		if(data.isEmpty())
 			throw new IllegalArgumentException("ArrayList must not empty.");
-		if(isOnly)
+		if(!(isLess && isMore))
+			throw new IllegalArgumentException("Illegal boolean value.");
+		if(isLess && isMore)
 			return getOnlyLevelSongs(data, level);
 		ArrayList<Song> res = new ArrayList<Song>();
 		if(isLess) {
@@ -132,7 +134,7 @@ public class Scraping {
 				if(data.get(i).getLevel() < level)
 					res.add(data.get(i));
 			}
-		} else {
+		} else if (isMore) {
 			for (int i = 0; i < data.size(); i++) {
 				if(data.get(i).getLevel() > level)
 					res.add(data.get(i));
@@ -142,10 +144,6 @@ public class Scraping {
 	}
 
 	private static ArrayList<Song> getOnlyLevelSongs(ArrayList<Song> data, int level) {
-		if(level < 0)
-			throw new IllegalArgumentException("Level must not negative.");
-		if(data.isEmpty())
-			throw new IllegalArgumentException("ArrayList must not empty");
 		ArrayList<Song> res = new ArrayList<Song>();
 		for(int i = 0; i < data.size(); i++) {
 			if(data.get(i).getLevel() == level)
