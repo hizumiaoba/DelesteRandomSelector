@@ -97,6 +97,10 @@ public class DelesteRandomSelector extends JFrame {
 		if(!Scraping.databaseExists()) {
 			JOptionPane.showMessageDialog(this, "楽曲データベースが見つかりませんでした。自動的に作成されます…\n注意：初回起動ではなく、かつ、Jarファイルと同じ階層に\"database.json\"というファイルが存在するにも関わらず\nこのポップアップが出た場合、開発者までご一報ください。\nGithub URL: https://github.com/hizumiaoba/DelesteRandomSelector/issues");
 		}
+		if(!Scraping.writeToJson(Scraping.getWholeData())) {
+			JOptionPane.showMessageDialog(this, "Exception:NullPointerException\\nCannot Keep up! Please re-download this Application!");
+			throw new NullPointerException("FATAL: cannot continue!");
+		}
 		ExecutorService es = Executors.newWorkStealingPool();
 		CompletableFuture<ArrayList<Song>> getFromJsonFuture = CompletableFuture.supplyAsync(() -> {
 			try {
