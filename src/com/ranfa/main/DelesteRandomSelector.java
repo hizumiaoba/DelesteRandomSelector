@@ -28,7 +28,10 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
+import com.ranfa.lib.LimitedLog;
 import com.ranfa.lib.Scraping;
+import com.ranfa.lib.SettingJSONProperty;
+import com.ranfa.lib.Settings;
 import com.ranfa.lib.Song;
 import com.ranfa.lib.Version;
 
@@ -61,6 +64,8 @@ public class DelesteRandomSelector extends JFrame {
 
 	private ArrayList<Song> fromJsonList;
 
+	private SettingJSONProperty property = new SettingJSONProperty();
+
 	/**
 	 * Launch the application.
 	 */
@@ -85,8 +90,12 @@ public class DelesteRandomSelector extends JFrame {
 	 * Create the frame.
 	 */
 	public DelesteRandomSelector() {
+		if(!Settings.fileExists() && !Settings.writeDownJSON()) {
+			JOptionPane.showMessageDialog(this, "Exception:NullPointerException\nCannot Keep up! Please re-download this Application!");
+			throw new NullPointerException("FATAL: cannot continue!");
+		}
 		if(!Scraping.databaseExists()) {
-			JOptionPane.showMessageDialog(this, "楽曲データベースが見つかりませんでした。\n注意：初回起動ではなく、かつ、Jarファイルと同じ階層に\"database.json\"というファイルが存在するにも関わらず\nこのポップアップが出た場合、開発者までご一報ください。\nGithub URL: https://github.com/hizumiaoba/DelesteRandomSelector/issues");
+			JOptionPane.showMessageDialog(this, "楽曲データベースが見つかりませんでした。自動的に作成されます…\n注意：初回起動ではなく、かつ、Jarファイルと同じ階層に\"database.json\"というファイルが存在するにも関わらず\nこのポップアップが出た場合、開発者までご一報ください。\nGithub URL: https://github.com/hizumiaoba/DelesteRandomSelector/issues");
 		}
 		ExecutorService es = Executors.newWorkStealingPool();
 		CompletableFuture<ArrayList<Song>> getFromJsonFuture = CompletableFuture.supplyAsync(() -> {
@@ -99,18 +108,25 @@ public class DelesteRandomSelector extends JFrame {
 			return null;
 		}, es);
 		CompletableFuture<ArrayList<Song>> getWholeDataFuture = CompletableFuture.supplyAsync(() -> Scraping.getWholeData(), es);
-		getWholeDataFuture.thenAcceptAsync(list -> System.out.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ": Scraping data size:" + list.size()), es);
-		getFromJsonFuture.thenAcceptAsync(list -> System.out.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ": Currently database size:" + list.size()), es);
+		getWholeDataFuture.thenAcceptAsync(list -> LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ": Scraping data size:" + list.size()), es);
+		getFromJsonFuture.thenAcceptAsync(list -> LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ": Currently database size:" + list.size()), es);
 		getWholeDataFuture.thenAcceptAsync(list -> {
 			wholeDataList.addAll(list);
 		}, es);
 		getFromJsonFuture.thenAcceptAsync(list -> {
 			fromJsonList.addAll(list);
-			if(getWholeDataFuture.isDone())
-				if(wholeDataList.size() != list.size()) {
+			try {
+				if(getWholeDataFuture.get().size() != list.size()) {
 					fromJsonList.clear();
 					fromJsonList.addAll(wholeDataList);
 				}
+			} catch (InterruptedException e1) {
+				// TODO 自動生成された catch ブロック
+				e1.printStackTrace();
+			} catch (ExecutionException e1) {
+				// TODO 自動生成された catch ブロック
+				e1.printStackTrace();
+			}
 		}, es);
 		System.out.println("Version:" + getVersion());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
