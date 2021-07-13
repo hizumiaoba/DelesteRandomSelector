@@ -294,6 +294,7 @@ public class DelesteRandomSelector extends JFrame {
 		panelCentre.setLayout(new BorderLayout(0, 0));
 
 		textPane = new JTextPane();
+		textPane.setText("楽曲選択の手順\r\n１．難易度、属性、レベルを選択する\r\n２．「楽曲取り込み」ボタンを押す！\r\n３．「開始」ボタンを押す！\r\n４．選択された楽曲がここに表示されます！\r\n現在設定されている楽曲選択の最大数：" + property.getSongLimit());
 		textPane.setEditable(false);
 		panelCentre.add(textPane);
 	}
