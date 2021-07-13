@@ -221,6 +221,8 @@ public class DelesteRandomSelector extends JFrame {
 						e1.printStackTrace();
 					}
 				limitedList.addAll(Scraping.getSpecificAttributeSongs(Scraping.getSpecificDifficultySongs(Scraping.getSpecificLevelSongs(fromJson, (Integer)spinnerLevel.getValue(), checkLessLv.isSelected(), checkMoreLv.isSelected()), comboDifficultySelect.getSelectedItem().toString()), comboAttribute.getSelectedItem().toString()));
+				if(!selectedSongsList.isEmpty())
+					selectedSongsList.clear();
 				selectedSongsList.addAll(limitedList);
 				System.out.println("Songs are selected.We are Ready to go.");
 			}
