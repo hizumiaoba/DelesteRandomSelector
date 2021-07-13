@@ -124,7 +124,7 @@ public class Scraping {
 			throw new IllegalArgumentException("Level must not negative.");
 		if(data.isEmpty())
 			throw new IllegalArgumentException("ArrayList must not empty.");
-		if(!(isLess && isMore))
+		if(!(isLess || isMore))
 			throw new IllegalArgumentException("Illegal boolean value.");
 		if(isLess && isMore)
 			return getOnlyLevelSongs(data, level);

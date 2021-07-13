@@ -249,7 +249,6 @@ public class DelesteRandomSelector extends JFrame {
 		btnImport = new JButton("<html><body>楽曲<br>絞り込み</body></html>");
 		btnImport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ArrayList<Song> limitedList = new ArrayList<>();
 				ArrayList<Song> fromJson = new ArrayList<Song>();
 					try {
 						fromJson.addAll(getFromJsonFuture.get());
@@ -260,11 +259,13 @@ public class DelesteRandomSelector extends JFrame {
 						JOptionPane.showMessageDialog(null, "例外：ExecutionException\n非同期処理中に例外が発生しました。\n" + e1.getLocalizedMessage());
 						e1.printStackTrace();
 					}
-				limitedList.addAll(Scraping.getSpecificAttributeSongs(Scraping.getSpecificDifficultySongs(Scraping.getSpecificLevelSongs(fromJson, (Integer)spinnerLevel.getValue(), checkLessLv.isSelected(), checkMoreLv.isSelected()), comboDifficultySelect.getSelectedItem().toString()), comboAttribute.getSelectedItem().toString()));
-				if(!selectedSongsList.isEmpty())
+					ArrayList<Song> specificlevelList = Scraping.getSpecificLevelSongs(fromJson, (Integer)spinnerLevel.getValue(), checkLessLv.isSelected(), checkMoreLv.isSelected());
+					ArrayList<Song> specificDifficultyList = Scraping.getSpecificDifficultySongs(specificlevelList, comboDifficultySelect.getSelectedItem().toString());
+					ArrayList<Song> specificAttributeList = Scraping.getSpecificAttributeSongs(specificDifficultyList, comboAttribute.getSelectedItem().toString());
+					if(!selectedSongsList.isEmpty())
 					selectedSongsList.clear();
-				selectedSongsList.addAll(limitedList);
-				System.out.println("Songs are selected.We are Ready to go.");
+				selectedSongsList.addAll(specificAttributeList);
+				LimitedLog.println("Songs are selected.We are Ready to go.");
 			}
 		});
 		btnImport.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
