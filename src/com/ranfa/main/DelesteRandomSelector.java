@@ -153,6 +153,48 @@ public class DelesteRandomSelector extends JFrame {
 			}
 		}, es);
 		LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[DEBUG]: " + "Version:" + getVersion());
+		if(property.isCheckLibraryUpdates()) {
+			LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "Checking for library updates...");
+			ArrayList<Song> updatesWebTmp = new ArrayList<Song>();
+			ArrayList<Song> updatesLocalTmp = new ArrayList<Song>();
+			if(getWholeDataFuture.isDone()) {
+				updatesWebTmp = wholeDataList;
+			} else {
+				try {
+					updatesWebTmp = getWholeDataFuture.get();
+				} catch (InterruptedException e) {
+					LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[FATAL]: " + e.getLocalizedMessage());
+					JOptionPane.showMessageDialog(null, "[InterruptedException]Exception in Thread:" + Thread.currentThread() + "\n" + e.getLocalizedMessage());
+				} catch (ExecutionException e) {
+					LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[WARN]: " + e.getLocalizedMessage());
+					JOptionPane.showMessageDialog(null, "[ExecutionException]Exception in Thread:" + Thread.currentThread() + "\n" + e.getLocalizedMessage());
+				}
+			}
+			LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "Web data scan completed.\nSize:" + updatesWebTmp.size());
+			if(getFromJsonFuture.isDone()) {
+				updatesLocalTmp = fromJsonList;
+			} else {
+				try {
+					updatesLocalTmp = getFromJsonFuture.get();
+				} catch (InterruptedException e) {
+					LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[FATAL]: " + e.getLocalizedMessage());
+					JOptionPane.showMessageDialog(null, "[InterruptedException]Exception in Thread:" + Thread.currentThread() + "\n" + e.getLocalizedMessage());
+				} catch (ExecutionException e) {
+					LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[WARN]: " + e.getLocalizedMessage());
+					JOptionPane.showMessageDialog(null, "[ExecutionException]Exception in Thread:" + Thread.currentThread() + "\n" + e.getLocalizedMessage());
+				}
+			}
+			LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "Current json data scan completed.\nSize:" + updatesLocalTmp.size());
+			if(updatesWebTmp.size() > updatesLocalTmp.size()) {
+				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "Song update detected.\nInitiate update progress...");
+				Scraping.writeToJson(updatesWebTmp);
+				fromJsonList.clear();
+				fromJsonList.addAll(updatesWebTmp);
+				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "Update progress compeleted.Initiate GUI.");
+			} else {
+				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "No updates found.Initiate GUI.");
+			}
+		}
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 640, 360);
 		contentPane = new JPanel();
