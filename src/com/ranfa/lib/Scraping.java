@@ -42,6 +42,10 @@ public class Scraping {
 		return Files.exists(path);
 	}
 
+	public static String getDBPath() {
+		return DBPATH;
+	}
+
 	public static ArrayList<Song> getWholeData() {
 		// if(databaseExists())
 		// 	return null;
@@ -157,8 +161,14 @@ public class Scraping {
 
 	}
 
-	public static ArrayList<Song> getFromJson() throws IOException {
-		SongJSONProperty property = new ObjectMapper().readValue(new File(DBPATH), SongJSONProperty.class);
+	public static ArrayList<Song> getFromJson() {
+		SongJSONProperty property = null;
+		try {
+			property = new ObjectMapper().readValue(new File(DBPATH), SongJSONProperty.class);
+		} catch (IOException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
 		ArrayList<Song> res = new ArrayList<Song>();
 		res.addAll(property.getList());
 		return res;

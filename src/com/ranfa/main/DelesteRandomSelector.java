@@ -6,10 +6,12 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -60,10 +62,6 @@ public class DelesteRandomSelector extends JFrame {
 	private JComboBox comboDifficultySelect;
 	private JLabel labelLvCaution;
 	private JComboBox comboAttribute;
-
-	private ArrayList<Song> wholeDataList;
-
-	private ArrayList<Song> fromJsonList;
 
 	private SettingJSONProperty property = new SettingJSONProperty();
 
@@ -118,83 +116,24 @@ public class DelesteRandomSelector extends JFrame {
 				JOptionPane.showMessageDialog(this, "Exception:NullPointerException\\nCannot Keep up! Please re-download this Application!");
 				throw new NullPointerException("FATAL: cannot continue!");
 			}
+		} else if(Scraping.getFromJson().size() < Scraping.getWholeData().size()) {
+			LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "Update detected.Initiate update process...");
+			Path path = Paths.get(Scraping.getDBPath());
+			try {
+				Files.delete(path);
+			} catch (IOException e1) {
+				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[FATAL]: " + "Exception while updating library.\n" + e1.getLocalizedMessage());
+				JOptionPane.showMessageDialog(null, "データベースファイルをアップデートできませんでした。ファイルの削除権限があるかどうか確認してください。\n" + e1.getLocalizedMessage());
+			}
+			Scraping.writeToJson(Scraping.getWholeData());
+			LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "Library update completed.");
 		}
 		ExecutorService es = Executors.newWorkStealingPool();
-		CompletableFuture<ArrayList<Song>> getFromJsonFuture = CompletableFuture.supplyAsync(() -> {
-			try {
-				return Scraping.getFromJson();
-			} catch (IOException e1) {
-				// TODO 自動生成された catch ブロック
-				e1.printStackTrace();
-			}
-			return null;
-		}, es);
+		CompletableFuture<ArrayList<Song>> getFromJsonFuture = CompletableFuture.supplyAsync(() -> Scraping.getFromJson(), es);
 		CompletableFuture<ArrayList<Song>> getWholeDataFuture = CompletableFuture.supplyAsync(() -> Scraping.getWholeData(), es);
 		getWholeDataFuture.thenAcceptAsync(list -> LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: Scraping data size:" + list.size()), es);
 		getFromJsonFuture.thenAcceptAsync(list -> LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO] Currently database size:" + list.size()), es);
-		getWholeDataFuture.thenAcceptAsync(list -> {
-			wholeDataList.addAll(list);
-		}, es);
-		getFromJsonFuture.thenAcceptAsync(list -> {
-			fromJsonList.addAll(list);
-			try {
-				if(getWholeDataFuture.get().size() != list.size()) {
-					fromJsonList.clear();
-					fromJsonList.addAll(wholeDataList);
-				}
-			} catch (InterruptedException e1) {
-				JOptionPane.showMessageDialog(null, "例外：InterruptedException\n非同期処理待機中に割り込みが発生しました。\n" + e1.getLocalizedMessage());
-				e1.printStackTrace();
-				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[FATAL]: " + e1.getLocalizedMessage());
-			} catch (ExecutionException e1) {
-				JOptionPane.showMessageDialog(null, "例外：ExecutionException\n非同期処理中に例外をキャッチしました。\n" + e1.getLocalizedMessage());
-				e1.printStackTrace();
-				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[WARN]: " + e1.getLocalizedMessage());
-			}
-		}, es);
 		LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[DEBUG]: " + "Version:" + getVersion());
-		if(property.isCheckLibraryUpdates()) {
-			LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "Checking for library updates...");
-			ArrayList<Song> updatesWebTmp = new ArrayList<Song>();
-			ArrayList<Song> updatesLocalTmp = new ArrayList<Song>();
-			if(getWholeDataFuture.isDone()) {
-				updatesWebTmp = wholeDataList;
-			} else {
-				try {
-					updatesWebTmp = getWholeDataFuture.get();
-				} catch (InterruptedException e) {
-					LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[FATAL]: " + e.getLocalizedMessage());
-					JOptionPane.showMessageDialog(null, "[InterruptedException]Exception in Thread:" + Thread.currentThread() + "\n" + e.getLocalizedMessage());
-				} catch (ExecutionException e) {
-					LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[WARN]: " + e.getLocalizedMessage());
-					JOptionPane.showMessageDialog(null, "[ExecutionException]Exception in Thread:" + Thread.currentThread() + "\n" + e.getLocalizedMessage());
-				}
-			}
-			LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "Web data scan completed.\nSize:" + updatesWebTmp.size());
-			if(getFromJsonFuture.isDone()) {
-				updatesLocalTmp = fromJsonList;
-			} else {
-				try {
-					updatesLocalTmp = getFromJsonFuture.get();
-				} catch (InterruptedException e) {
-					LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[FATAL]: " + e.getLocalizedMessage());
-					JOptionPane.showMessageDialog(null, "[InterruptedException]Exception in Thread:" + Thread.currentThread() + "\n" + e.getLocalizedMessage());
-				} catch (ExecutionException e) {
-					LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[WARN]: " + e.getLocalizedMessage());
-					JOptionPane.showMessageDialog(null, "[ExecutionException]Exception in Thread:" + Thread.currentThread() + "\n" + e.getLocalizedMessage());
-				}
-			}
-			LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "Current json data scan completed.\nSize:" + updatesLocalTmp.size());
-			if(updatesWebTmp.size() > updatesLocalTmp.size()) {
-				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "Song update detected.\nInitiate update progress...");
-				Scraping.writeToJson(updatesWebTmp);
-				fromJsonList.clear();
-				fromJsonList.addAll(updatesWebTmp);
-				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "Update progress compeleted.Initiate GUI.");
-			} else {
-				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "No updates found.Initiate GUI.");
-			}
-		}
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 640, 360);
 		contentPane = new JPanel();
@@ -294,18 +233,7 @@ public class DelesteRandomSelector extends JFrame {
 		btnImport = new JButton("<html><body>楽曲<br>絞り込み</body></html>");
 		btnImport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ArrayList<Song> fromJson = new ArrayList<Song>();
-					try {
-						fromJson.addAll(getFromJsonFuture.get());
-					} catch (InterruptedException e1) {
-						JOptionPane.showMessageDialog(null, "例外：InterruptedException\n非同期処理待機中に割り込みが発生しました。\n" + e1.getLocalizedMessage());
-						e1.printStackTrace();
-						LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[FATAL]: " + e1.getLocalizedMessage());
-					} catch (ExecutionException e1) {
-						JOptionPane.showMessageDialog(null, "例外：ExecutionException\n非同期処理中に例外をキャッチしました。\n" + e1.getLocalizedMessage());
-						e1.printStackTrace();
-						LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[WARN]: " + e1.getLocalizedMessage());
-					}
+				ArrayList<Song> fromJson = Scraping.getFromJson();
 					ArrayList<Song> specificlevelList = Scraping.getSpecificLevelSongs(fromJson, (Integer)spinnerLevel.getValue(), checkLessLv.isSelected(), checkMoreLv.isSelected());
 					ArrayList<Song> specificDifficultyList = Scraping.getSpecificDifficultySongs(specificlevelList, comboDifficultySelect.getSelectedItem().toString());
 					ArrayList<Song> specificAttributeList = Scraping.getSpecificAttributeSongs(specificDifficultyList, comboAttribute.getSelectedItem().toString());

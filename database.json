@@ -11663,5 +11663,47 @@
     "difficulty" : "WITCH",
     "level" : 25,
     "notes" : 481
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "Life is HaRMONY",
+    "difficulty" : "MASTER+",
+    "level" : 28,
+    "notes" : 886
+  }, {
+    "attribute" : "クール",
+    "name" : "あこがれステッチ",
+    "difficulty" : "MASTER+",
+    "level" : 27,
+    "notes" : 757
+  }, {
+    "attribute" : "パッション",
+    "name" : "パ・リ・ラ",
+    "difficulty" : "DEBUT",
+    "level" : 7,
+    "notes" : 117
+  }, {
+    "attribute" : "パッション",
+    "name" : "パ・リ・ラ",
+    "difficulty" : "REGULAR",
+    "level" : 13,
+    "notes" : 199
+  }, {
+    "attribute" : "パッション",
+    "name" : "パ・リ・ラ",
+    "difficulty" : "PRO",
+    "level" : 19,
+    "notes" : 449
+  }, {
+    "attribute" : "パッション",
+    "name" : "パ・リ・ラ",
+    "difficulty" : "MASTER",
+    "level" : 26,
+    "notes" : 668
+  }, {
+    "attribute" : "パッション",
+    "name" : "パ・リ・ラ",
+    "difficulty" : "MASTER+",
+    "level" : 29,
+    "notes" : 999
   } ]
 }
