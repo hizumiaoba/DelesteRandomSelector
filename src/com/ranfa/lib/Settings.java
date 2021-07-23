@@ -73,7 +73,7 @@ public class Settings {
 	}
 
 	public static int getWindowHeight() {
-		int res = 480;
+		int res = 360;
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			JsonNode node = mapper.readTree(new File(FILEPATH));
@@ -126,7 +126,7 @@ public class Settings {
 		property.setCheckVersion(true);
 		property.setCheckLibraryUpdates(true);
 		property.setWindowWidth(640);
-		property.setWindowHeight(480);
+		property.setWindowHeight(360);
 		property.setSongLimit(3);
 		property.setSaveScoreLog(false);
 		property.setOutputDebugSentences(false);

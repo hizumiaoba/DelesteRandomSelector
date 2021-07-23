@@ -2,8 +2,8 @@
   "checkVersion" : true,
   "checkLibraryUpdates" : true,
   "windowWidth" : 640,
-  "windowHeight" : 480,
+  "windowHeight" : 360,
   "songLimit" : 3,
   "saveScoreLog" : false,
-  "outputDebugSentences" : true
+  "outputDebugSentences" : false
 }
