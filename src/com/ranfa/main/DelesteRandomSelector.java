@@ -38,7 +38,7 @@ import com.ranfa.lib.Settings;
 import com.ranfa.lib.Song;
 import com.ranfa.lib.Version;
 
-@Version(major = 0, minor = 2, patch = 0)
+@Version(major = 0, minor = 2, patch = 1)
 public class DelesteRandomSelector extends JFrame {
 
 	private static ArrayList<Song> selectedSongsList = new ArrayList<Song>();
