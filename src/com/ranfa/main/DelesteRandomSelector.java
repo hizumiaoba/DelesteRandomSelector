@@ -38,7 +38,7 @@ import com.ranfa.lib.Settings;
 import com.ranfa.lib.Song;
 import com.ranfa.lib.Version;
 
-@Version(major = 0, minor = 1, patch = 1)
+@Version(major = 0, minor = 2, patch = 0)
 public class DelesteRandomSelector extends JFrame {
 
 	private static ArrayList<Song> selectedSongsList = new ArrayList<Song>();
@@ -186,12 +186,13 @@ public class DelesteRandomSelector extends JFrame {
 		panelWest.add(labelDifficulty, "2, 2, center, default");
 
 		comboDifficultySelect = new JComboBox();
-		comboDifficultySelect.setModel(new DefaultComboBoxModel(new String[] {"DEBUT", "REGULAR", "PRO", "MASTER", "MASTER+", "ⓁMASTER+", "LIGHT", "TRICK", "PIANO", "FORTE", "WITCH"}));
+		comboDifficultySelect.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+		comboDifficultySelect.setModel(new DefaultComboBoxModel(new String[] {"指定なし", "DEBUT", "REGULAR", "PRO", "MASTER", "MASTER+", "ⓁMASTER+", "LIGHT", "TRICK", "PIANO", "FORTE", "WITCH"}));
 		panelWest.add(comboDifficultySelect, "2, 4, fill, default");
 
 				comboAttribute = new JComboBox();
 				comboAttribute.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-				comboAttribute.setModel(new DefaultComboBoxModel(new String[] {"全タイプ", "キュート", "クール", "パッション"}));
+				comboAttribute.setModel(new DefaultComboBoxModel(new String[] {"指定なし", "全タイプ", "キュート", "クール", "パッション"}));
 				panelWest.add(comboAttribute, "2, 6, fill, default");
 
 				labelLevel = new JLabel("楽曲Lv");
@@ -253,7 +254,7 @@ public class DelesteRandomSelector extends JFrame {
 				String[] tmp = new String[property.getSongLimit()];
 				for(int i = 0; i < property.getSongLimit(); i++) {
 					int randomInt = random.nextInt(selectedSongsList.size());
-					tmp[i] = (i + 1) + "曲目：[" + selectedSongsList.get(randomInt).getDifficulty() + "]「" + selectedSongsList.get(randomInt).getName() + "」！\n\n";
+					tmp[i] = (i + 1) + "曲目： " + selectedSongsList.get(randomInt).getAttribute() + " [" + selectedSongsList.get(randomInt).getDifficulty() + "]「" + selectedSongsList.get(randomInt).getName() + "」！(Lv:" + selectedSongsList.get(randomInt).getLevel() + ")\n\n";
 				}
 				String paneString = "";
 				for (int i = 0; i < tmp.length; i++) {

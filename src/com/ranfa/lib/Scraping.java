@@ -21,6 +21,7 @@ public class Scraping {
 
 	private final static String URI = "https://imascg-slstage-wiki.gamerch.com/%E6%A5%BD%E6%9B%B2%E8%A9%B3%E7%B4%B0%E4%B8%80%E8%A6%A7";
 	private final static String DBPATH = "database.json";
+	public final static String NONSELECTED = "指定なし";
 	public final static String ALL = "全タイプ";
 	public final static String CUTE = "キュート";
 	public final static String COOL = "クール";
@@ -90,16 +91,21 @@ public class Scraping {
 		if(!attribute.equals(ALL)
 				&& !attribute.equals(CUTE)
 				&& !attribute.equals(COOL)
-				&& !attribute.equals(PASSION))
+				&& !attribute.equals(PASSION)
+				&& !attribute.equals(NONSELECTED))
 			throw new IllegalArgumentException("Illegal attribute value: " + attribute);
 		if(data.isEmpty()) {
 			JOptionPane.showMessageDialog(null, "指定された属性の曲は存在しません。\n条件を変えてみてください");
 			throw new IllegalArgumentException("ArrayList must not empty.");
 		}
 		ArrayList<Song> res = new ArrayList<Song>();
-		for(int i = 0; i < data.size(); i ++) {
-			if(data.get(i).getAttribute().equals(attribute))
-				res.add(data.get(i));
+		if(attribute.equals(NONSELECTED)) {
+			res = data;
+		} else {
+			for(int i = 0; i < data.size(); i ++) {
+				if(data.get(i).getAttribute().equals(attribute))
+					res.add(data.get(i));
+			}
 		}
 		return res;
 	}
@@ -115,14 +121,19 @@ public class Scraping {
 				&& !difficulty.equals(TRICK)
 				&& !difficulty.equals(PIANO)
 				&& !difficulty.equals(FORTE)
-				&& !difficulty.equals(WITCH))
+				&& !difficulty.equals(WITCH)
+				&& !difficulty.equals(NONSELECTED))
 			throw new IllegalArgumentException("Illegal difficulty value.");
 		if(data.isEmpty())
 			throw new IllegalArgumentException("ArrayList must not empty.");
 		ArrayList<Song> res = new ArrayList<Song>();
-		for(int i = 0; i < data.size(); i++) {
-			if(data.get(i).getDifficulty().equals(difficulty))
-				res.add(data.get(i));
+		if(difficulty.equals(NONSELECTED)) {
+			res = data;
+		} else {
+			for(int i = 0; i < data.size(); i++) {
+				if(data.get(i).getDifficulty().equals(difficulty))
+					res.add(data.get(i));
+			}
 		}
 		return res;
 	}
