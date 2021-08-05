@@ -288,7 +288,7 @@ public class DelesteRandomSelector extends JFrame {
 						boolean authorizationStatus = TwitterIntegration.authorization();
 						System.out.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "Permission Verifying completed.\nStatus: " + authorizationStatus);
 						System.out.print("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "Construction status message...");
-						String updatedStatus = "【TEST】デレステ課題曲セレクターで\n";
+						String updatedStatus = "デレステ課題曲セレクターで\n";
 						int lengthLimit = updatedStatus.length();
 						boolean isBroken = false;
 						if(!integratorBool) {
