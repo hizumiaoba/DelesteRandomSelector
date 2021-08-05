@@ -307,7 +307,7 @@ public class DelesteRandomSelector extends JFrame {
 						if(isBroken) {
 							updatedStatus = updatedStatus + "…その他数曲\nをプレイしました！\n#DelesteRandomSelector #デレステ ";
 						} else {
-							updatedStatus = updatedStatus + "\nをプレイしました！\n#DelesteRandomSelector #デレステ ";
+							updatedStatus = updatedStatus + "をプレイしました！\n#DelesteRandomSelector #デレステ ";
 						}
 						System.out.println("completed.\n" + updatedStatus);
 						lengthLimit = updatedStatus.length();
