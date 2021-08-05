@@ -132,7 +132,7 @@ public class DelesteRandomSelector extends JFrame {
 		CompletableFuture<ArrayList<Song>> getFromJsonFuture = CompletableFuture.supplyAsync(() -> Scraping.getFromJson(), es);
 		CompletableFuture<ArrayList<Song>> getWholeDataFuture = CompletableFuture.supplyAsync(() -> Scraping.getWholeData(), es);
 		getWholeDataFuture.thenAcceptAsync(list -> LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: Scraping data size:" + list.size()), es);
-		getFromJsonFuture.thenAcceptAsync(list -> LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO] Currently database size:" + list.size()), es);
+		getFromJsonFuture.thenAcceptAsync(list -> LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: Currently database size:" + list.size()), es);
 		LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[DEBUG]: " + "Version:" + getVersion());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 640, 360);
@@ -242,6 +242,7 @@ public class DelesteRandomSelector extends JFrame {
 					selectedSongsList.clear();
 				selectedSongsList.addAll(specificAttributeList);
 				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " +"Songs are selected.We are Ready to go.");
+				JOptionPane.showMessageDialog(null, "絞り込み完了！「開始」をクリックすることで選曲できます！");
 			}
 		});
 		btnImport.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
