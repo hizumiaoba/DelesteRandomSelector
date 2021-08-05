@@ -5,3 +5,8 @@
 
 #Ignore binary files
 bin/
+
+#Ignore Twitter Consumer keys
+twitterToken.json
+TwitterIntegration.java
+TwitterToken.java

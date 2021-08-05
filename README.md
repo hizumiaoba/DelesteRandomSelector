@@ -23,10 +23,10 @@ THIS SOFTWARE DEPENDS ON APACHE LICENSE 2.0 BECAUSE THIS USED SOME LIBRARIES WHI
 
 |設定項目|値|デフォルト|説明|
 |:--:|:--:|:--:|:--:|
-|`checkVersion`|`true`/`false`|`true`|アプリケーションのバージョンをチェックします|
+|`checkVersion`|`true`/`false`|`true`|アプリケーションのバージョンをチェックします(機能作成中のためこの値は使用していません）|
 |`checkLibaryUpdates`|`true`/`false`|`true`|楽曲ライブラリの更新を毎回チェックします|
-|`windowWidth`|1以上の整数値|`640`|ウィンドウの横長さを指定します|
-|`windowHeight`|1以上の整数値|`360`|ウィンドウの縦長さを指定します|
+|`windowWidth`|1以上の整数値|`640`|ウィンドウの横長さを指定します(機能作成中のためこの値は使用していません）|
+|`windowHeight`|1以上の整数値|`360`|ウィンドウの縦長さを指定します(機能作成中のためこの値は使用していません）|
 |`songLimit`|1以上の整数値|`3`|ランダム選曲する最大曲数を指定します|
-|`saveScoreLog`|`true`/`false`|`false`|スコアデータを保存するかどうか指定します|
+|`saveScoreLog`|`true`/`false`|`false`|スコアデータを保存するかどうか指定します(機能作成中のためこの値は使用していません）|
 |`outputDebugSentences`|`true`/`false`|`false`|標準出力へログを流すかどうか指定します

@@ -11312,7 +11312,7 @@
   }, {
     "attribute" : "全タイプ",
     "name" : "イケナイGO AHEAD",
-    "difficulty" : "MASTER+",
+    "difficulty" : "ⓁMASTER+",
     "level" : 29,
     "notes" : 973
   }, {
@@ -11705,5 +11705,71 @@
     "difficulty" : "MASTER+",
     "level" : 29,
     "notes" : 999
+  }, {
+    "attribute" : "パッション",
+    "name" : "モーレツ★世直しギルティ！",
+    "difficulty" : "LIGHT",
+    "level" : 8,
+    "notes" : 219
+  }, {
+    "attribute" : "パッション",
+    "name" : "モーレツ★世直しギルティ！",
+    "difficulty" : "TRICK",
+    "level" : 17,
+    "notes" : 417
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "With Love",
+    "difficulty" : "LIGHT",
+    "level" : 6,
+    "notes" : 139
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "With Love",
+    "difficulty" : "TRICK",
+    "level" : 16,
+    "notes" : 329
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "イケナイGO AHEAD",
+    "difficulty" : "MASTER+",
+    "level" : 29,
+    "notes" : 975
+  }, {
+    "attribute" : "パッション",
+    "name" : "思い出じゃない今日を",
+    "difficulty" : "MASTER+",
+    "level" : 28,
+    "notes" : 896
+  }, {
+    "attribute" : "キュート",
+    "name" : "Secret Mirage",
+    "difficulty" : "DEBUT",
+    "level" : 6,
+    "notes" : 80
+  }, {
+    "attribute" : "キュート",
+    "name" : "Secret Mirage",
+    "difficulty" : "REGULAR",
+    "level" : 13,
+    "notes" : 185
+  }, {
+    "attribute" : "キュート",
+    "name" : "Secret Mirage",
+    "difficulty" : "PRO",
+    "level" : 17,
+    "notes" : 370
+  }, {
+    "attribute" : "キュート",
+    "name" : "Secret Mirage",
+    "difficulty" : "MASTER",
+    "level" : 25,
+    "notes" : 558
+  }, {
+    "attribute" : "キュート",
+    "name" : "Secret Mirage",
+    "difficulty" : "MASTER+",
+    "level" : 28,
+    "notes" : 757
   } ]
 }

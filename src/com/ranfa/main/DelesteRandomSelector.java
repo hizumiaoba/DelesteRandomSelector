@@ -36,9 +36,10 @@ import com.ranfa.lib.Scraping;
 import com.ranfa.lib.SettingJSONProperty;
 import com.ranfa.lib.Settings;
 import com.ranfa.lib.Song;
+import com.ranfa.lib.TwitterIntegration;
 import com.ranfa.lib.Version;
 
-@Version(major = 0, minor = 2, patch = 1)
+@Version(major = 1, minor = 0, patch = 0)
 public class DelesteRandomSelector extends JFrame {
 
 	private static ArrayList<Song> selectedSongsList = new ArrayList<Song>();
@@ -62,8 +63,10 @@ public class DelesteRandomSelector extends JFrame {
 	private JComboBox comboDifficultySelect;
 	private JLabel labelLvCaution;
 	private JComboBox comboAttribute;
-
 	private SettingJSONProperty property = new SettingJSONProperty();
+	private JButton btnTwitterIntegration;
+	private String[] integratorArray;
+	private boolean integratorBool = false;
 
 	/**
 	 * Launch the application.
@@ -132,7 +135,7 @@ public class DelesteRandomSelector extends JFrame {
 		CompletableFuture<ArrayList<Song>> getFromJsonFuture = CompletableFuture.supplyAsync(() -> Scraping.getFromJson(), es);
 		CompletableFuture<ArrayList<Song>> getWholeDataFuture = CompletableFuture.supplyAsync(() -> Scraping.getWholeData(), es);
 		getWholeDataFuture.thenAcceptAsync(list -> LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: Scraping data size:" + list.size()), es);
-		getFromJsonFuture.thenAcceptAsync(list -> LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO] Currently database size:" + list.size()), es);
+		getFromJsonFuture.thenAcceptAsync(list -> LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: Currently database size:" + list.size()), es);
 		LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[DEBUG]: " + "Version:" + getVersion());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 640, 360);
@@ -221,15 +224,21 @@ public class DelesteRandomSelector extends JFrame {
 			new RowSpec[] {
 				RowSpec.decode("26px"),
 				FormSpecs.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("max(50dlu;default)"),
+				RowSpec.decode("max(36dlu;default)"),
 				FormSpecs.RELATED_GAP_ROWSPEC,
 				FormSpecs.DEFAULT_ROWSPEC,
 				FormSpecs.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("max(50dlu;default)"),
+				RowSpec.decode("max(30dlu;default)"),
 				FormSpecs.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("max(15dlu;default)"),
 				FormSpecs.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("max(11dlu;default)"),}));
+				RowSpec.decode("max(11dlu;default)"),
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,}));
 
 		btnImport = new JButton("<html><body>楽曲<br>絞り込み</body></html>");
 		btnImport.addActionListener(new ActionListener() {
@@ -242,6 +251,7 @@ public class DelesteRandomSelector extends JFrame {
 					selectedSongsList.clear();
 				selectedSongsList.addAll(specificAttributeList);
 				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " +"Songs are selected.We are Ready to go.");
+				JOptionPane.showMessageDialog(null, "絞り込み完了！「開始」をクリックすることで選曲できます！");
 			}
 		});
 		btnImport.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
@@ -252,9 +262,11 @@ public class DelesteRandomSelector extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				Random random = new Random(System.currentTimeMillis());
 				String[] tmp = new String[property.getSongLimit()];
+				integratorArray = new String[property.getSongLimit()];
 				for(int i = 0; i < property.getSongLimit(); i++) {
 					int randomInt = random.nextInt(selectedSongsList.size());
 					tmp[i] = (i + 1) + "曲目： " + selectedSongsList.get(randomInt).getAttribute() + " [" + selectedSongsList.get(randomInt).getDifficulty() + "]「" + selectedSongsList.get(randomInt).getName() + "」！(Lv:" + selectedSongsList.get(randomInt).getLevel() + ")\n\n";
+					integratorArray[i] = selectedSongsList.get(randomInt).getName() + "\n";
 				}
 				String paneString = "";
 				for (int i = 0; i < tmp.length; i++) {
@@ -262,25 +274,81 @@ public class DelesteRandomSelector extends JFrame {
 				}
 				paneString = paneString + "この" + tmp.length + "曲をプレイしましょう！！！";
 				textPane.setText(paneString);
+				integratorBool = true;
 				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "show up completed.");
 			}
 		});
 		btnStart.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 		panelEast.add(btnStart, "1, 7, fill, fill");
 
-		btnExit = new JButton("終了");
-		btnExit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " +"Requested Exit by Button");
-				if(getWholeDataFuture.isDone()) {
-					System.exit(0);
-				} else {
-					JOptionPane.showMessageDialog(null, "非同期処理が完了していません。少し時間が経ってからやり直してください。");
-				}
-			}
-		});
-		btnExit.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-		panelEast.add(btnExit, "1, 11");
+				btnTwitterIntegration = new JButton("Twitter連携");
+				btnTwitterIntegration.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						System.out.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "Twitter Integration requested.Verify permission status.");
+						boolean authorizationStatus = TwitterIntegration.authorization();
+						System.out.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "Permission Verifying completed.\nStatus: " + authorizationStatus);
+						System.out.print("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "Construction status message...");
+						String updatedStatus = "デレステ課題曲セレクターで\n";
+						int lengthLimit = updatedStatus.length();
+						boolean isBroken = false;
+						if(!integratorBool) {
+							JOptionPane.showMessageDialog(null, "ちひろ「まだプレイを始めていないみたいですね」");
+							System.out.println();
+							return;
+						}
+						for(int i = 0; i < integratorArray.length; i++) {
+							updatedStatus = updatedStatus + integratorArray[i];
+							lengthLimit += integratorArray[i].length();
+							if(lengthLimit > 69) {
+								isBroken = true;
+								break;
+							}
+						}
+						if(isBroken) {
+							updatedStatus = updatedStatus + "…その他数曲\nをプレイしました！\n#DelesteRandomSelector #デレステ ";
+						} else {
+							updatedStatus = updatedStatus + "をプレイしました！\n#DelesteRandomSelector #デレステ ";
+						}
+						System.out.println("completed.\n" + updatedStatus);
+						lengthLimit = updatedStatus.length();
+						if(authorizationStatus) {
+							int option = JOptionPane.showConfirmDialog(null, "Twitterへ以下の内容を投稿します。よろしいですか？\n\n" + updatedStatus + "\n\n文字数：" + lengthLimit);
+							System.out.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "User selected " + option);
+							switch(option) {
+								case JOptionPane.OK_OPTION:
+									TwitterIntegration.PostTwitter(updatedStatus);
+									System.out.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "Success to update the status.");
+									JOptionPane.showMessageDialog(null, "投稿が完了しました。");
+									break;
+								case JOptionPane.NO_OPTION:
+									System.out.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "There is no will to post.");
+									break;
+								case JOptionPane.CANCEL_OPTION:
+									System.out.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "The Operation was canceled by user.");
+									break;
+								default:
+									break;
+							}
+						} else {
+							System.out.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[WARN]: " + "seems to reject the permission.it should need try again.");
+						}
+					}
+				});
+				panelEast.add(btnTwitterIntegration, "1, 11");
+
+								btnExit = new JButton("終了");
+								btnExit.addActionListener(new ActionListener() {
+									public void actionPerformed(ActionEvent e) {
+										LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " +"Requested Exit by Button");
+										if(getWholeDataFuture.isDone()) {
+											System.exit(0);
+										} else {
+											JOptionPane.showMessageDialog(null, "非同期処理が完了していません。少し時間が経ってからやり直してください。");
+										}
+									}
+								});
+								btnExit.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+								panelEast.add(btnExit, "1, 13");
 
 		panelCentre = new JPanel();
 		contentPane.add(panelCentre, BorderLayout.CENTER);
