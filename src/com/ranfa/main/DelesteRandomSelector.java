@@ -282,6 +282,7 @@ public class DelesteRandomSelector extends JFrame {
 		panelEast.add(btnStart, "1, 7, fill, fill");
 
 				btnTwitterIntegration = new JButton("Twitter連携");
+				btnTwitterIntegration.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 11));
 				btnTwitterIntegration.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						System.out.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "Twitter Integration requested.Verify permission status.");
