@@ -39,7 +39,7 @@ import com.ranfa.lib.Song;
 import com.ranfa.lib.TwitterIntegration;
 import com.ranfa.lib.Version;
 
-@Version(major = 1, minor = 0, patch = 0)
+@Version(major = 1, minor = 0, patch = 1)
 public class DelesteRandomSelector extends JFrame {
 
 	private static ArrayList<Song> selectedSongsList = new ArrayList<Song>();
@@ -189,7 +189,7 @@ public class DelesteRandomSelector extends JFrame {
 		panelWest.add(labelDifficulty, "2, 2, center, default");
 
 		comboDifficultySelect = new JComboBox();
-		comboDifficultySelect.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+		comboDifficultySelect.setFont(new Font("Dialog", Font.BOLD, 12));
 		comboDifficultySelect.setModel(new DefaultComboBoxModel(new String[] {"指定なし", "DEBUT", "REGULAR", "PRO", "MASTER", "MASTER+", "ⓁMASTER+", "LIGHT", "TRICK", "PIANO", "FORTE", "WITCH"}));
 		panelWest.add(comboDifficultySelect, "2, 4, fill, default");
 
