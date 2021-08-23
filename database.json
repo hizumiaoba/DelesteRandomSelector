@@ -11450,7 +11450,7 @@
   }, {
     "attribute" : "キュート",
     "name" : "とんでいっちゃいたいの",
-    "difficulty" : "MASTER+",
+    "difficulty" : "ⓁMASTER+",
     "level" : 27,
     "notes" : 706
   }, {
@@ -11771,5 +11771,173 @@
     "difficulty" : "MASTER+",
     "level" : 28,
     "notes" : 757
+  }, {
+    "attribute" : "キュート",
+    "name" : "とんでいっちゃいたいの",
+    "difficulty" : "MASTER+",
+    "level" : 27,
+    "notes" : 709
+  }, {
+    "attribute" : "キュート",
+    "name" : "満願成就♪巫女の神頼み！",
+    "difficulty" : "MASTER+",
+    "level" : 29,
+    "notes" : 999
+  }, {
+    "attribute" : "パッション",
+    "name" : "PANDEMIC ALONE",
+    "difficulty" : "DEBUT",
+    "level" : 9,
+    "notes" : 142
+  }, {
+    "attribute" : "パッション",
+    "name" : "PANDEMIC ALONE",
+    "difficulty" : "REGULAR",
+    "level" : 14,
+    "notes" : 232
+  }, {
+    "attribute" : "パッション",
+    "name" : "PANDEMIC ALONE",
+    "difficulty" : "PRO",
+    "level" : 19,
+    "notes" : 435
+  }, {
+    "attribute" : "パッション",
+    "name" : "PANDEMIC ALONE",
+    "difficulty" : "MASTER",
+    "level" : 28,
+    "notes" : 898
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "ハレ晴レユカイ",
+    "difficulty" : "DEBUT",
+    "level" : 8,
+    "notes" : 124
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "ハレ晴レユカイ",
+    "difficulty" : "REGULAR",
+    "level" : 13,
+    "notes" : 200
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "ハレ晴レユカイ",
+    "difficulty" : "PRO",
+    "level" : 18,
+    "notes" : 434
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "ハレ晴レユカイ",
+    "difficulty" : "MASTER",
+    "level" : 26,
+    "notes" : 718
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "ハレ晴レユカイ",
+    "difficulty" : "WITCH",
+    "level" : 27,
+    "notes" : 804
+  }, {
+    "attribute" : "キュート",
+    "name" : "冒険でしょでしょ？",
+    "difficulty" : "DEBUT",
+    "level" : 8,
+    "notes" : 121
+  }, {
+    "attribute" : "キュート",
+    "name" : "冒険でしょでしょ？",
+    "difficulty" : "REGULAR",
+    "level" : 13,
+    "notes" : 197
+  }, {
+    "attribute" : "キュート",
+    "name" : "冒険でしょでしょ？",
+    "difficulty" : "PRO",
+    "level" : 17,
+    "notes" : 392
+  }, {
+    "attribute" : "キュート",
+    "name" : "冒険でしょでしょ？",
+    "difficulty" : "MASTER",
+    "level" : 25,
+    "notes" : 618
+  }, {
+    "attribute" : "クール",
+    "name" : "レッド・ソール",
+    "difficulty" : "DEBUT",
+    "level" : 9,
+    "notes" : 145
+  }, {
+    "attribute" : "クール",
+    "name" : "レッド・ソール",
+    "difficulty" : "REGULAR",
+    "level" : 13,
+    "notes" : 226
+  }, {
+    "attribute" : "クール",
+    "name" : "レッド・ソール",
+    "difficulty" : "PRO",
+    "level" : 18,
+    "notes" : 421
+  }, {
+    "attribute" : "クール",
+    "name" : "レッド・ソール",
+    "difficulty" : "MASTER",
+    "level" : 26,
+    "notes" : 717
+  }, {
+    "attribute" : "クール",
+    "name" : "レッド・ソール",
+    "difficulty" : "MASTER+",
+    "level" : 29,
+    "notes" : 900
+  }, {
+    "attribute" : "クール",
+    "name" : "God knows...",
+    "difficulty" : "DEBUT",
+    "level" : 8,
+    "notes" : 149
+  }, {
+    "attribute" : "クール",
+    "name" : "God knows...",
+    "difficulty" : "REGULAR",
+    "level" : 14,
+    "notes" : 244
+  }, {
+    "attribute" : "クール",
+    "name" : "God knows...",
+    "difficulty" : "PRO",
+    "level" : 19,
+    "notes" : 423
+  }, {
+    "attribute" : "クール",
+    "name" : "God knows...",
+    "difficulty" : "MASTER",
+    "level" : 27,
+    "notes" : 951
+  }, {
+    "attribute" : "キュート",
+    "name" : "Lost my music",
+    "difficulty" : "DEBUT",
+    "level" : 7,
+    "notes" : 110
+  }, {
+    "attribute" : "キュート",
+    "name" : "Lost my music",
+    "difficulty" : "REGULAR",
+    "level" : 13,
+    "notes" : 208
+  }, {
+    "attribute" : "キュート",
+    "name" : "Lost my music",
+    "difficulty" : "PRO",
+    "level" : 17,
+    "notes" : 382
+  }, {
+    "attribute" : "キュート",
+    "name" : "Lost my music",
+    "difficulty" : "MASTER",
+    "level" : 25,
+    "notes" : 596
   } ]
 }

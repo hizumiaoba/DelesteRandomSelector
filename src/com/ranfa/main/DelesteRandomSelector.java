@@ -39,7 +39,7 @@ import com.ranfa.lib.Song;
 import com.ranfa.lib.TwitterIntegration;
 import com.ranfa.lib.Version;
 
-@Version(major = 1, minor = 0, patch = 1)
+@Version(major = 1, minor = 0, patch = 2)
 public class DelesteRandomSelector extends JFrame {
 
 	private static ArrayList<Song> selectedSongsList = new ArrayList<Song>();
@@ -266,7 +266,7 @@ public class DelesteRandomSelector extends JFrame {
 				for(int i = 0; i < property.getSongLimit(); i++) {
 					int randomInt = random.nextInt(selectedSongsList.size());
 					tmp[i] = (i + 1) + "曲目： " + selectedSongsList.get(randomInt).getAttribute() + " [" + selectedSongsList.get(randomInt).getDifficulty() + "]「" + selectedSongsList.get(randomInt).getName() + "」！(Lv:" + selectedSongsList.get(randomInt).getLevel() + ")\n\n";
-					integratorArray[i] = selectedSongsList.get(randomInt).getName() + "\n";
+					integratorArray[i] = selectedSongsList.get(randomInt).getName() + "(Lv" + selectedSongsList.get(randomInt).getLevel() + ")\n";
 				}
 				String paneString = "";
 				for (int i = 0; i < tmp.length; i++) {
