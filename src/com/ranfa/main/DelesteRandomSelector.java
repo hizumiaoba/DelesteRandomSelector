@@ -23,8 +23,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
-import javax.swing.JTextPane;
+import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -59,7 +60,6 @@ public class DelesteRandomSelector extends JFrame {
 	private JButton btnImport;
 	private JButton btnStart;
 	private JButton btnExit;
-	private JTextPane textPane;
 	private JComboBox comboDifficultySelect;
 	private JLabel labelLvCaution;
 	private JComboBox comboAttribute;
@@ -67,6 +67,9 @@ public class DelesteRandomSelector extends JFrame {
 	private JButton btnTwitterIntegration;
 	private String[] integratorArray;
 	private boolean integratorBool = false;
+	private JTextArea textArea;
+
+	private JScrollPane scrollPane;
 
 	/**
 	 * Launch the application.
@@ -273,7 +276,7 @@ public class DelesteRandomSelector extends JFrame {
 					paneString = paneString + tmp[i];
 				}
 				paneString = paneString + "この" + tmp.length + "曲をプレイしましょう！！！";
-				textPane.setText(paneString);
+				textArea.setText(paneString);
 				integratorBool = true;
 				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "show up completed.");
 			}
@@ -355,10 +358,12 @@ public class DelesteRandomSelector extends JFrame {
 		contentPane.add(panelCentre, BorderLayout.CENTER);
 		panelCentre.setLayout(new BorderLayout(0, 0));
 
-		textPane = new JTextPane();
-		textPane.setText("楽曲選択の手順\r\n１．難易度、属性、レベルを選択する\r\n２．「楽曲取り込み」ボタンを押す！\r\n３．「開始」ボタンを押す！\r\n４．選択された楽曲がここに表示されます！\r\n現在設定されている楽曲選択の最大数：" + property.getSongLimit());
-		textPane.setEditable(false);
-		panelCentre.add(textPane);
+		textArea = new JTextArea();
+		textArea.setText("楽曲選択の手順\r\n１．難易度、属性、レベルを選択する\r\n２．「楽曲取り込み」ボタンを押す！\r\n３．「開始」ボタンを押す！\r\n４．選択された楽曲がここに表示されます！\r\n現在設定されている楽曲選択の最大数：" + property.getSongLimit());
+		textArea.setEditable(false);
+
+		scrollPane = new JScrollPane(textArea);
+		panelCentre.add(scrollPane, BorderLayout.CENTER);
 	}
 
 

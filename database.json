@@ -11372,7 +11372,7 @@
   }, {
     "attribute" : "クール",
     "name" : "Just Us Justice",
-    "difficulty" : "MASTER+",
+    "difficulty" : "ⓁMASTER+",
     "level" : 29,
     "notes" : 999
   }, {
@@ -11939,5 +11939,41 @@
     "difficulty" : "MASTER",
     "level" : 25,
     "notes" : 596
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "リトルリドル",
+    "difficulty" : "LIGHT",
+    "level" : 7,
+    "notes" : 165
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "リトルリドル",
+    "difficulty" : "TRICK",
+    "level" : 17,
+    "notes" : 410
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "Wonder goes on！！",
+    "difficulty" : "LIGHT",
+    "level" : 8,
+    "notes" : 171
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "Wonder goes on！！",
+    "difficulty" : "TRICK",
+    "level" : 17,
+    "notes" : 426
+  }, {
+    "attribute" : "クール",
+    "name" : "Just Us Justice",
+    "difficulty" : "MASTER+",
+    "level" : 29,
+    "notes" : 999
+  }, {
+    "attribute" : "クール",
+    "name" : "初夢をあなたと",
+    "difficulty" : "MASTER+",
+    "level" : 28,
+    "notes" : 803
   } ]
 }
