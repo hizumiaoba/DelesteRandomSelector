@@ -5,15 +5,13 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.BiConsumer;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -40,7 +38,7 @@ import com.ranfa.lib.Song;
 import com.ranfa.lib.TwitterIntegration;
 import com.ranfa.lib.Version;
 
-@Version(major = 1, minor = 0, patch = 2)
+@Version(major = 1, minor = 1, patch = 0)
 public class DelesteRandomSelector extends JFrame {
 
 	private static ArrayList<Song> selectedSongsList = new ArrayList<Song>();
@@ -96,6 +94,7 @@ public class DelesteRandomSelector extends JFrame {
 	 * Create the frame.
 	 */
 	public DelesteRandomSelector() {
+		ExecutorService es = Executors.newWorkStealingPool();
 		if(!Settings.fileExists() && !Settings.writeDownJSON()) {
 			JOptionPane.showMessageDialog(this, "Exception:NullPointerException\nCannot Keep up! Please re-download this Application!");
 			throw new NullPointerException("FATAL: cannot continue!");
@@ -122,23 +121,27 @@ public class DelesteRandomSelector extends JFrame {
 				JOptionPane.showMessageDialog(this, "Exception:NullPointerException\\nCannot Keep up! Please re-download this Application!");
 				throw new NullPointerException("FATAL: cannot continue!");
 			}
-		} else if(Scraping.getFromJson().size() < Scraping.getWholeData().size()) {
-			LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "Update detected.Initiate update process...");
-			Path path = Paths.get(Scraping.getDBPath());
-			try {
-				Files.delete(path);
-			} catch (IOException e1) {
-				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[FATAL]: " + "Exception while updating library.\n" + e1.getLocalizedMessage());
-				JOptionPane.showMessageDialog(null, "データベースファイルをアップデートできませんでした。ファイルの削除権限があるかどうか確認してください。\n" + e1.getLocalizedMessage());
-			}
-			Scraping.writeToJson(Scraping.getWholeData());
-			LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "Library update completed.");
 		}
-		ExecutorService es = Executors.newWorkStealingPool();
+		CompletableFuture<ArrayList<Song>> updateFuture = CompletableFuture.supplyAsync(() -> Scraping.getWholeData(), es);
+		CompletableFuture<ArrayList<Song>> updateLocalFuture = CompletableFuture.supplyAsync(() -> Scraping.getFromJson(), es);
+		BiConsumer<ArrayList<Song>, ArrayList<Song>> updateConsumer = (list1, list2) -> {
+			if(list1.size() > list2.size()) {
+				Scraping.writeToJson(list1);
+			}
+		};
 		CompletableFuture<ArrayList<Song>> getFromJsonFuture = CompletableFuture.supplyAsync(() -> Scraping.getFromJson(), es);
 		CompletableFuture<ArrayList<Song>> getWholeDataFuture = CompletableFuture.supplyAsync(() -> Scraping.getWholeData(), es);
 		getWholeDataFuture.thenAcceptAsync(list -> LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: Scraping data size:" + list.size()), es);
 		getFromJsonFuture.thenAcceptAsync(list -> LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: Currently database size:" + list.size()), es);
+		try {
+			updateConsumer.accept(updateFuture.get(), updateLocalFuture.get());
+		} catch (InterruptedException e1) {
+			// TODO 自動生成された catch ブロック
+			e1.printStackTrace();
+		} catch (ExecutionException e1) {
+			// TODO 自動生成された catch ブロック
+			e1.printStackTrace();
+		}
 		LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[DEBUG]: " + "Version:" + getVersion());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 640, 360);

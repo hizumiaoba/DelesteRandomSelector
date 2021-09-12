@@ -11504,7 +11504,7 @@
   }, {
     "attribute" : "全タイプ",
     "name" : "Hungry Bambi",
-    "difficulty" : "MASTER+",
+    "difficulty" : "ⓁMASTER+",
     "level" : 30,
     "notes" : 999
   }, {
@@ -11975,5 +11975,89 @@
     "difficulty" : "MASTER+",
     "level" : 28,
     "notes" : 803
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "星環世界",
+    "difficulty" : "DEBUT",
+    "level" : 7,
+    "notes" : 103
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "星環世界",
+    "difficulty" : "REGULAR",
+    "level" : 13,
+    "notes" : 175
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "星環世界",
+    "difficulty" : "PRO",
+    "level" : 17,
+    "notes" : 335
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "星環世界",
+    "difficulty" : "MASTER",
+    "level" : 25,
+    "notes" : 590
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "星環世界",
+    "difficulty" : "MASTER+",
+    "level" : 29,
+    "notes" : 900
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "星環世界",
+    "difficulty" : "PIANO",
+    "level" : 26,
+    "notes" : 702
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "星環世界",
+    "difficulty" : "FORTE",
+    "level" : 31,
+    "notes" : 1053
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "イリュージョニスタ！",
+    "difficulty" : "WITCH",
+    "level" : 28,
+    "notes" : 652
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "Hungry Bambi",
+    "difficulty" : "MASTER+",
+    "level" : 30,
+    "notes" : 999
+  }, {
+    "attribute" : "パッション",
+    "name" : "Shinobi 4.0 忍者のすゝめ",
+    "difficulty" : "MASTER+",
+    "level" : 29,
+    "notes" : 999
+  }, {
+    "attribute" : "パッション",
+    "name" : "にょわにょわーるど☆",
+    "difficulty" : "DEBUT",
+    "level" : 7,
+    "notes" : 101
+  }, {
+    "attribute" : "パッション",
+    "name" : "にょわにょわーるど☆",
+    "difficulty" : "REGULAR",
+    "level" : 12,
+    "notes" : 172
+  }, {
+    "attribute" : "パッション",
+    "name" : "にょわにょわーるど☆",
+    "difficulty" : "PRO",
+    "level" : 17,
+    "notes" : 340
+  }, {
+    "attribute" : "パッション",
+    "name" : "にょわにょわーるど☆",
+    "difficulty" : "MASTER",
+    "level" : 24,
+    "notes" : 541
   } ]
 }
