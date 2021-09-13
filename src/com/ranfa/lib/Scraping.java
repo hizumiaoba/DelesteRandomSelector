@@ -48,6 +48,7 @@ public class Scraping {
 	}
 
 	public static ArrayList<Song> getWholeData() {
+		long time = System.currentTimeMillis();
 		// if(databaseExists())
 		// 	return null;
 		ArrayList<Song> res = new ArrayList<>();
@@ -84,6 +85,7 @@ public class Scraping {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		LimitedLog.println(Scraping.class + ":[INFO]: scraping compeleted in " + (System.currentTimeMillis() - time)+ "ms");
 		return res;
 	}
 
@@ -173,6 +175,7 @@ public class Scraping {
 	}
 
 	public static ArrayList<Song> getFromJson() {
+		long time = System.currentTimeMillis();
 		SongJSONProperty property = null;
 		try {
 			property = new ObjectMapper().readValue(new File(DBPATH), SongJSONProperty.class);
@@ -182,6 +185,7 @@ public class Scraping {
 		}
 		ArrayList<Song> res = new ArrayList<Song>();
 		res.addAll(property.getList());
+		LimitedLog.println(Scraping.class + ":[INFO]: JSON reading compeleted in " + (System.currentTimeMillis() - time) + "ms");
 		return res;
 	}
 

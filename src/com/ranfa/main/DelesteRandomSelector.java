@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
@@ -38,7 +37,7 @@ import com.ranfa.lib.Song;
 import com.ranfa.lib.TwitterIntegration;
 import com.ranfa.lib.Version;
 
-@Version(major = 1, minor = 1, patch = 0)
+@Version(major = 1, minor = 2, patch = 0)
 public class DelesteRandomSelector extends JFrame {
 
 	private static ArrayList<Song> selectedSongsList = new ArrayList<Song>();
@@ -87,34 +86,13 @@ public class DelesteRandomSelector extends JFrame {
 
 	/**
 	 * log file prefix:
-	 *  "[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[LEVEL]: " +
+	 *  this.getClass() + ":[LEVEL]: " +
 	 */
 
 	/**
 	 * Create the frame.
 	 */
 	public DelesteRandomSelector() {
-		ExecutorService es = Executors.newWorkStealingPool();
-		if(!Settings.fileExists() && !Settings.writeDownJSON()) {
-			JOptionPane.showMessageDialog(this, "Exception:NullPointerException\nCannot Keep up! Please re-download this Application!");
-			throw new NullPointerException("FATAL: cannot continue!");
-		}
-		LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[DEBUG]: " + "Loading Settings...");
-		property.setCheckLibraryUpdates(Settings.needToCheckLibraryUpdates());
-		property.setCheckVersion(Settings.needToCheckVersion());
-		property.setWindowWidth(Settings.getWindowWidth());
-		property.setWindowHeight(Settings.getWindowHeight());
-		property.setSongLimit(Settings.getSongsLimit());
-		property.setSaveScoreLog(Settings.saveScoreLog());
-		property.setOutputDebugSentences(Settings.outputDebugSentences());
-		LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[DEBUG]: " + "Loading Settings done."
-				+ "\nVersion Check: " + property.isCheckVersion()
-				+ "\nLibrary Update Check: " + property.isCheckLibraryUpdates()
-				+ "\nWindow Width: " + property.getWindowWidth()
-				+ "\nWindow Height: " + property.getWindowHeight()
-				+ "\nSong Limit: " + property.getSongLimit()
-				+ "\nSaveScoreLog: " + property.isSaveScoreLog()
-				+ "\nOutputDebugSentences: " + property.isOutputDebugSentences());
 		if(!Scraping.databaseExists()) {
 			JOptionPane.showMessageDialog(this, "楽曲データベースが見つかりませんでした。自動的に作成されます…\n注意：初回起動ではなく、かつ、Jarファイルと同じ階層に\"database.json\"というファイルが存在するにも関わらず\nこのポップアップが出た場合、開発者までご一報ください。\nGithub URL: https://github.com/hizumiaoba/DelesteRandomSelector/issues");
 			if(!Scraping.writeToJson(Scraping.getWholeData())) {
@@ -122,27 +100,50 @@ public class DelesteRandomSelector extends JFrame {
 				throw new NullPointerException("FATAL: cannot continue!");
 			}
 		}
-		CompletableFuture<ArrayList<Song>> updateFuture = CompletableFuture.supplyAsync(() -> Scraping.getWholeData(), es);
-		CompletableFuture<ArrayList<Song>> updateLocalFuture = CompletableFuture.supplyAsync(() -> Scraping.getFromJson(), es);
-		BiConsumer<ArrayList<Song>, ArrayList<Song>> updateConsumer = (list1, list2) -> {
-			if(list1.size() > list2.size()) {
-				Scraping.writeToJson(list1);
-			}
-		};
+		ExecutorService es = Executors.newWorkStealingPool();
 		CompletableFuture<ArrayList<Song>> getFromJsonFuture = CompletableFuture.supplyAsync(() -> Scraping.getFromJson(), es);
 		CompletableFuture<ArrayList<Song>> getWholeDataFuture = CompletableFuture.supplyAsync(() -> Scraping.getWholeData(), es);
-		getWholeDataFuture.thenAcceptAsync(list -> LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: Scraping data size:" + list.size()), es);
-		getFromJsonFuture.thenAcceptAsync(list -> LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: Currently database size:" + list.size()), es);
-		try {
-			updateConsumer.accept(updateFuture.get(), updateLocalFuture.get());
-		} catch (InterruptedException e1) {
-			// TODO 自動生成された catch ブロック
-			e1.printStackTrace();
-		} catch (ExecutionException e1) {
-			// TODO 自動生成された catch ブロック
-			e1.printStackTrace();
+		if(!Settings.fileExists() && !Settings.writeDownJSON()) {
+			JOptionPane.showMessageDialog(this, "Exception:NullPointerException\nCannot Keep up! Please re-download this Application!");
+			throw new NullPointerException("FATAL: cannot continue!");
 		}
-		LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[DEBUG]: " + "Version:" + getVersion());
+		LimitedLog.println(this.getClass() + ":[DEBUG]: " + "Loading Settings...");
+		property.setCheckLibraryUpdates(Settings.needToCheckLibraryUpdates());
+		property.setCheckVersion(Settings.needToCheckVersion());
+		property.setWindowWidth(Settings.getWindowWidth());
+		property.setWindowHeight(Settings.getWindowHeight());
+		property.setSongLimit(Settings.getSongsLimit());
+		property.setSaveScoreLog(Settings.saveScoreLog());
+		property.setOutputDebugSentences(Settings.outputDebugSentences());
+		LimitedLog.println(this.getClass() + ":[DEBUG]: " + "Loading Settings done."
+				+ "\nVersion Check: " + property.isCheckVersion()
+				+ "\nLibrary Update Check: " + property.isCheckLibraryUpdates()
+				+ "\nWindow Width: " + property.getWindowWidth()
+				+ "\nWindow Height: " + property.getWindowHeight()
+				+ "\nSong Limit: " + property.getSongLimit()
+				+ "\nSaveScoreLog: " + property.isSaveScoreLog()
+				+ "\nOutputDebugSentences: " + property.isOutputDebugSentences());
+		BiConsumer<ArrayList<Song>, ArrayList<Song>> updateConsumer = (list1, list2) -> {
+			LimitedLog.println(this.getClass() + ":[INFO]: " + "Checking database updates...");
+			if(list1.size() > list2.size()) {
+				long time = System.currentTimeMillis();
+				LimitedLog.println(this.getClass() + ":[INFO]: " + "Update detected.");
+				Scraping.writeToJson(list1);
+				LimitedLog.println(this.getClass() + ":[INFO]: " + "Update completed in " + (System.currentTimeMillis() - time) + "ms");
+				LimitedLog.println(this.getClass() + ":[INFO]: " + "Updated database size: " + list1.size());
+			} else {
+				LimitedLog.println(this.getClass() + ":[INFO]: " + "database is up-to-date.");
+			}
+		};
+		Runnable setEnabled = () -> {
+			btnImport.setEnabled(true);
+			btnImport.setText("<html><body>楽曲<br>絞り込み</body></html>");
+		};
+		getWholeDataFuture.thenAcceptAsync(list -> LimitedLog.println(this.getClass() + ":[INFO]: Scraping data size:" + list.size()), es);
+		getFromJsonFuture.thenAcceptAsync(list -> LimitedLog.println(this.getClass() + ":[INFO]: Currently database size:" + list.size()), es);
+		CompletableFuture<Void> updatedFuture = getWholeDataFuture.thenAcceptBothAsync(getFromJsonFuture, updateConsumer, es);
+		updatedFuture.thenRunAsync(setEnabled, es);
+		LimitedLog.println(this.getClass() + ":[DEBUG]: " + "Version:" + getVersion());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 640, 360);
 		contentPane = new JPanel();
@@ -246,7 +247,8 @@ public class DelesteRandomSelector extends JFrame {
 				FormSpecs.RELATED_GAP_ROWSPEC,
 				FormSpecs.DEFAULT_ROWSPEC,}));
 
-		btnImport = new JButton("<html><body>楽曲<br>絞り込み</body></html>");
+		btnImport = new JButton("<html><body>データベース<br>更新中…</body></html>");
+		btnImport.setEnabled(false);
 		btnImport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ArrayList<Song> fromJson = Scraping.getFromJson();
@@ -256,7 +258,7 @@ public class DelesteRandomSelector extends JFrame {
 					if(!selectedSongsList.isEmpty())
 					selectedSongsList.clear();
 				selectedSongsList.addAll(specificAttributeList);
-				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " +"Songs are selected.We are Ready to go.");
+				LimitedLog.println(this.getClass() + ":[INFO]: " +"Songs are selected.We are Ready to go.");
 				JOptionPane.showMessageDialog(null, "絞り込み完了！「開始」をクリックすることで選曲できます！");
 			}
 		});
@@ -281,7 +283,7 @@ public class DelesteRandomSelector extends JFrame {
 				paneString = paneString + "この" + tmp.length + "曲をプレイしましょう！！！";
 				textArea.setText(paneString);
 				integratorBool = true;
-				LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "show up completed.");
+				LimitedLog.println(this.getClass() + ":[INFO]: " + "show up completed.");
 			}
 		});
 		btnStart.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
@@ -291,16 +293,16 @@ public class DelesteRandomSelector extends JFrame {
 				btnTwitterIntegration.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 11));
 				btnTwitterIntegration.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						System.out.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "Twitter Integration requested.Verify permission status.");
+						LimitedLog.println(this.getClass() + ":[INFO]: " + "Twitter Integration requested.Verify permission status.");
 						boolean authorizationStatus = TwitterIntegration.authorization();
-						System.out.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "Permission Verifying completed.\nStatus: " + authorizationStatus);
-						System.out.print("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "Construction status message...");
+						LimitedLog.println(this.getClass() + ":[INFO]: " + "Permission Verifying completed.\nStatus: " + authorizationStatus);
+						LimitedLog.print(this.getClass() + ":[INFO]: " + "Construction status message...");
 						String updatedStatus = "デレステ課題曲セレクターで\n";
 						int lengthLimit = updatedStatus.length();
 						boolean isBroken = false;
 						if(!integratorBool) {
 							JOptionPane.showMessageDialog(null, "ちひろ「まだプレイを始めていないみたいですね」");
-							System.out.println();
+							LimitedLog.println();
 							return;
 						}
 						for(int i = 0; i < integratorArray.length; i++) {
@@ -316,28 +318,28 @@ public class DelesteRandomSelector extends JFrame {
 						} else {
 							updatedStatus = updatedStatus + "をプレイしました！\n#DelesteRandomSelector #デレステ ";
 						}
-						System.out.println("completed.\n" + updatedStatus);
+						LimitedLog.println("completed.\n" + updatedStatus);
 						lengthLimit = updatedStatus.length();
 						if(authorizationStatus) {
 							int option = JOptionPane.showConfirmDialog(null, "Twitterへ以下の内容を投稿します。よろしいですか？\n\n" + updatedStatus + "\n\n文字数：" + lengthLimit);
-							System.out.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "User selected " + option);
+							LimitedLog.println(this.getClass() + ":[INFO]: " + "User selected " + option);
 							switch(option) {
 								case JOptionPane.OK_OPTION:
 									TwitterIntegration.PostTwitter(updatedStatus);
-									System.out.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "Success to update the status.");
+									LimitedLog.println(this.getClass() + ":[INFO]: " + "Success to update the status.");
 									JOptionPane.showMessageDialog(null, "投稿が完了しました。");
 									break;
 								case JOptionPane.NO_OPTION:
-									System.out.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "There is no will to post.");
+									LimitedLog.println(this.getClass() + ":[INFO]: " + "There is no will to post.");
 									break;
 								case JOptionPane.CANCEL_OPTION:
-									System.out.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " + "The Operation was canceled by user.");
+									LimitedLog.println(this.getClass() + ":[INFO]: " + "The Operation was canceled by user.");
 									break;
 								default:
 									break;
 							}
 						} else {
-							System.out.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[WARN]: " + "seems to reject the permission.it should need try again.");
+							LimitedLog.println(this.getClass() + ":[WARN]: " + "seems to reject the permission.it should need try again.");
 						}
 					}
 				});
@@ -346,8 +348,8 @@ public class DelesteRandomSelector extends JFrame {
 								btnExit = new JButton("終了");
 								btnExit.addActionListener(new ActionListener() {
 									public void actionPerformed(ActionEvent e) {
-										LimitedLog.println("[" + Thread.currentThread().toString() + "]:" + this.getClass() + ":[INFO]: " +"Requested Exit by Button");
-										if(getWholeDataFuture.isDone()) {
+										LimitedLog.println(this.getClass() + ":[INFO]: " +"Requested Exit by Button");
+										if(updatedFuture.isDone()) {
 											System.exit(0);
 										} else {
 											JOptionPane.showMessageDialog(null, "非同期処理が完了していません。少し時間が経ってからやり直してください。");
