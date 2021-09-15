@@ -14,7 +14,7 @@ import com.ranfa.main.DelesteRandomSelector;
 
 public class CheckVersion {
 
-	private final static String URI = "https://raw.githubusercontent.com/hizumiaoba/DelesteRandomSelector/master/version.json";
+	private final static String URI = "https://raw.githubusercontent.com/hizumiaoba/DelesteRandomSelector/CU-k5vk2f_DelesteRandomSelector_hizumiaoba/version.json";
 	private final static String RELEASE_STRING = "https://github.com/hizumiaoba/DelesteRandomSelector/releases";
 
 	public static void needToBeUpdated() {

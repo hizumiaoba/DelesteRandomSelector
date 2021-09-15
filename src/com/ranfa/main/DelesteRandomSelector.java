@@ -144,8 +144,10 @@ public class DelesteRandomSelector extends JFrame {
 		};
 		getWholeDataFuture.thenAcceptAsync(list -> LimitedLog.println(this.getClass() + ":[INFO]: Scraping data size:" + list.size()), es);
 		getFromJsonFuture.thenAcceptAsync(list -> LimitedLog.println(this.getClass() + ":[INFO]: Currently database size:" + list.size()), es);
-		CompletableFuture<Void> updatedFuture = getWholeDataFuture.thenAcceptBothAsync(getFromJsonFuture, updateConsumer, es);
-		updatedFuture.thenRunAsync(setEnabled, es);
+		if(property.isCheckLibraryUpdates()) {
+			CompletableFuture<Void> updatedFuture = getWholeDataFuture.thenAcceptBothAsync(getFromJsonFuture, updateConsumer, es);
+			updatedFuture.thenRunAsync(setEnabled, es);
+		}
 		LimitedLog.println(this.getClass() + ":[DEBUG]: " + "Version:" + CheckVersion.getVersion());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, property.getWindowWidth(), property.getWindowHeight());
@@ -352,11 +354,7 @@ public class DelesteRandomSelector extends JFrame {
 								btnExit.addActionListener(new ActionListener() {
 									public void actionPerformed(ActionEvent e) {
 										LimitedLog.println(this.getClass() + ":[INFO]: " +"Requested Exit by Button");
-										if(updatedFuture.isDone()) {
-											System.exit(0);
-										} else {
-											JOptionPane.showMessageDialog(null, "非同期処理が完了していません。少し時間が経ってからやり直してください。");
-										}
+										System.exit(0);
 									}
 								});
 								btnExit.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
@@ -372,7 +370,7 @@ public class DelesteRandomSelector extends JFrame {
 
 		scrollPane = new JScrollPane(textArea);
 		panelCentre.add(scrollPane, BorderLayout.CENTER);
-		if(isFirst)
+		if(isFirst || !property.isCheckLibraryUpdates())
 			setEnabled.run();
 	}
 
