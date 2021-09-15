@@ -148,7 +148,7 @@ public class DelesteRandomSelector extends JFrame {
 		updatedFuture.thenRunAsync(setEnabled, es);
 		LimitedLog.println(this.getClass() + ":[DEBUG]: " + "Version:" + CheckVersion.getVersion());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 640, 360);
+		setBounds(100, 100, property.getWindowWidth(), property.getWindowHeight());
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
