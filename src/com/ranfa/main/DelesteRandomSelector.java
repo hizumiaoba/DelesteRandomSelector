@@ -139,6 +139,12 @@ public class DelesteRandomSelector extends JFrame {
 			}
 		};
 		Runnable setEnabled = () -> {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e1) {
+				// TODO 自動生成された catch ブロック
+				e1.printStackTrace();
+			}
 			btnImport.setEnabled(true);
 			btnImport.setText("<html><body>楽曲<br>絞り込み</body></html>");
 		};
