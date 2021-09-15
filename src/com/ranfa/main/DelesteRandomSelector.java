@@ -29,6 +29,7 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
+import com.ranfa.lib.CheckVersion;
 import com.ranfa.lib.LimitedLog;
 import com.ranfa.lib.Scraping;
 import com.ranfa.lib.SettingJSONProperty;
@@ -37,7 +38,7 @@ import com.ranfa.lib.Song;
 import com.ranfa.lib.TwitterIntegration;
 import com.ranfa.lib.Version;
 
-@Version(major = 1, minor = 2, patch = 2)
+@Version(major = 1, minor = 3, patch = 0)
 public class DelesteRandomSelector extends JFrame {
 
 	private static ArrayList<Song> selectedSongsList = new ArrayList<Song>();
@@ -123,6 +124,8 @@ public class DelesteRandomSelector extends JFrame {
 				+ "\nSong Limit: " + property.getSongLimit()
 				+ "\nSaveScoreLog: " + property.isSaveScoreLog()
 				+ "\nOutputDebugSentences: " + property.isOutputDebugSentences());
+		if(property.isCheckVersion())
+			CheckVersion.needToBeUpdated();
 		BiConsumer<ArrayList<Song>, ArrayList<Song>> updateConsumer = (list1, list2) -> {
 			LimitedLog.println(this.getClass() + ":[INFO]: " + "Checking database updates...");
 			if(list1.size() > list2.size()) {
@@ -136,16 +139,24 @@ public class DelesteRandomSelector extends JFrame {
 			}
 		};
 		Runnable setEnabled = () -> {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e1) {
+				// TODO 自動生成された catch ブロック
+				e1.printStackTrace();
+			}
 			btnImport.setEnabled(true);
 			btnImport.setText("<html><body>楽曲<br>絞り込み</body></html>");
 		};
 		getWholeDataFuture.thenAcceptAsync(list -> LimitedLog.println(this.getClass() + ":[INFO]: Scraping data size:" + list.size()), es);
 		getFromJsonFuture.thenAcceptAsync(list -> LimitedLog.println(this.getClass() + ":[INFO]: Currently database size:" + list.size()), es);
-		CompletableFuture<Void> updatedFuture = getWholeDataFuture.thenAcceptBothAsync(getFromJsonFuture, updateConsumer, es);
-		updatedFuture.thenRunAsync(setEnabled, es);
-		LimitedLog.println(this.getClass() + ":[DEBUG]: " + "Version:" + getVersion());
+		if(property.isCheckLibraryUpdates()) {
+			CompletableFuture<Void> updatedFuture = getWholeDataFuture.thenAcceptBothAsync(getFromJsonFuture, updateConsumer, es);
+			updatedFuture.thenRunAsync(setEnabled, es);
+		}
+		LimitedLog.println(this.getClass() + ":[DEBUG]: " + "Version:" + CheckVersion.getVersion());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 640, 360);
+		setBounds(100, 100, property.getWindowWidth(), property.getWindowHeight());
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -164,7 +175,7 @@ public class DelesteRandomSelector extends JFrame {
 		labelTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 16));
 		panelNorth.add(labelTitle, "1, 1, center, top");
 
-		labelVersion = new JLabel(getVersion());
+		labelVersion = new JLabel(CheckVersion.getVersion());
 		labelVersion.setFont(new Font("SansSerif", Font.BOLD, 12));
 		panelNorth.add(labelVersion, "3, 1, right, top");
 
@@ -349,11 +360,7 @@ public class DelesteRandomSelector extends JFrame {
 								btnExit.addActionListener(new ActionListener() {
 									public void actionPerformed(ActionEvent e) {
 										LimitedLog.println(this.getClass() + ":[INFO]: " +"Requested Exit by Button");
-										if(updatedFuture.isDone()) {
-											System.exit(0);
-										} else {
-											JOptionPane.showMessageDialog(null, "非同期処理が完了していません。少し時間が経ってからやり直してください。");
-										}
+										System.exit(0);
 									}
 								});
 								btnExit.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
@@ -369,36 +376,8 @@ public class DelesteRandomSelector extends JFrame {
 
 		scrollPane = new JScrollPane(textArea);
 		panelCentre.add(scrollPane, BorderLayout.CENTER);
-		if(isFirst)
+		if(isFirst || !property.isCheckLibraryUpdates())
 			setEnabled.run();
 	}
 
-
-	/**
-	 * アノテーションで記載されているバージョンを取得します
-	 * @since v1.0.0
-	 * @return アノテーションで定義されているバージョン
-	 */
-	public static String getVersion() {
-		String value = "v"
-				+ getMajorVersion() + "."
-				+ getMinorVersion() + "."
-				+ getPatchVersion();
-		return value;
-	}
-
-	public static int getMajorVersion() {
-		Version version = (Version) DelesteRandomSelector.class.getAnnotation(Version.class);
-		return version.major();
-	}
-
-	public static int getMinorVersion() {
-		Version version = (Version) DelesteRandomSelector.class.getAnnotation(Version.class);
-		return version.minor();
-	}
-
-	public static int getPatchVersion() {
-		Version version = (Version) DelesteRandomSelector.class.getAnnotation(Version.class);
-		return version.patch();
-	}
 }
