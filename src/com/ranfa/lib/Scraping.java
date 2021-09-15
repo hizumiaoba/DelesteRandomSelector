@@ -104,10 +104,9 @@ public class Scraping {
 		if(attribute.equals(NONSELECTED)) {
 			res = data;
 		} else {
-			for(int i = 0; i < data.size(); i ++) {
-				if(data.get(i).getAttribute().equals(attribute))
-					res.add(data.get(i));
-			}
+			data.stream()
+			.filter(element -> element.getAttribute().equals(attribute))
+			.forEach(res::add);
 		}
 		return res;
 	}
@@ -132,10 +131,9 @@ public class Scraping {
 		if(difficulty.equals(NONSELECTED)) {
 			res = data;
 		} else {
-			for(int i = 0; i < data.size(); i++) {
-				if(data.get(i).getDifficulty().equals(difficulty))
-					res.add(data.get(i));
-			}
+			data.stream()
+			.filter(element -> element.getDifficulty().equals(difficulty))
+			.forEach(res::add);
 		}
 		return res;
 	}
@@ -151,25 +149,22 @@ public class Scraping {
 			return getOnlyLevelSongs(data, level);
 		ArrayList<Song> res = new ArrayList<Song>();
 		if(isLess) {
-			for(int i = 0; i < data.size(); i++) {
-				if(data.get(i).getLevel() < level)
-					res.add(data.get(i));
-			}
+			data.stream()
+			.filter(element -> element.getLevel() < level)
+			.forEach(res::add);
 		} else if (isMore) {
-			for (int i = 0; i < data.size(); i++) {
-				if(data.get(i).getLevel() > level)
-					res.add(data.get(i));
-			}
+			data.stream()
+			.filter(element -> element.getLevel() > level)
+			.forEach(res::add);
 		}
 		return res;
 	}
 
 	private static ArrayList<Song> getOnlyLevelSongs(ArrayList<Song> data, int level) {
 		ArrayList<Song> res = new ArrayList<Song>();
-		for(int i = 0; i < data.size(); i++) {
-			if(data.get(i).getLevel() == level)
-				res.add(data.get(i));
-		}
+		data.stream()
+		.filter(element -> element.getLevel() == level)
+		.forEach(res::add);
 		return res;
 
 	}
