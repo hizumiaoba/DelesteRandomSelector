@@ -23,7 +23,7 @@ THIS SOFTWARE DEPENDS ON APACHE LICENSE 2.0 BECAUSE THIS USED SOME LIBRARIES WHI
 
 |設定項目|値|デフォルト|説明|
 |:--:|:--:|:--:|:--:|
-|`checkVersion`|`true`/`false`|`true`|アプリケーションのバージョンをチェックします(機能作成中のためこの値は使用していません）|
+|`checkVersion`|`true`/`false`|`true`|アプリケーションのバージョンをチェックします|
 |`checkLibaryUpdates`|`true`/`false`|`true`|楽曲ライブラリの更新を毎回チェックします|
 |`windowWidth`|1以上の整数値|`640`|ウィンドウの横長さを指定します(機能作成中のためこの値は使用していません）|
 |`windowHeight`|1以上の整数値|`360`|ウィンドウの縦長さを指定します(機能作成中のためこの値は使用していません）|
