@@ -29,6 +29,7 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
+import com.ranfa.lib.CheckVersion;
 import com.ranfa.lib.LimitedLog;
 import com.ranfa.lib.Scraping;
 import com.ranfa.lib.SettingJSONProperty;
@@ -143,7 +144,7 @@ public class DelesteRandomSelector extends JFrame {
 		getFromJsonFuture.thenAcceptAsync(list -> LimitedLog.println(this.getClass() + ":[INFO]: Currently database size:" + list.size()), es);
 		CompletableFuture<Void> updatedFuture = getWholeDataFuture.thenAcceptBothAsync(getFromJsonFuture, updateConsumer, es);
 		updatedFuture.thenRunAsync(setEnabled, es);
-		LimitedLog.println(this.getClass() + ":[DEBUG]: " + "Version:" + getVersion());
+		LimitedLog.println(this.getClass() + ":[DEBUG]: " + "Version:" + CheckVersion.getVersion());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 640, 360);
 		contentPane = new JPanel();
@@ -164,7 +165,7 @@ public class DelesteRandomSelector extends JFrame {
 		labelTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 16));
 		panelNorth.add(labelTitle, "1, 1, center, top");
 
-		labelVersion = new JLabel(getVersion());
+		labelVersion = new JLabel(CheckVersion.getVersion());
 		labelVersion.setFont(new Font("SansSerif", Font.BOLD, 12));
 		panelNorth.add(labelVersion, "3, 1, right, top");
 
@@ -373,32 +374,4 @@ public class DelesteRandomSelector extends JFrame {
 			setEnabled.run();
 	}
 
-
-	/**
-	 * アノテーションで記載されているバージョンを取得します
-	 * @since v1.0.0
-	 * @return アノテーションで定義されているバージョン
-	 */
-	public static String getVersion() {
-		String value = "v"
-				+ getMajorVersion() + "."
-				+ getMinorVersion() + "."
-				+ getPatchVersion();
-		return value;
-	}
-
-	public static int getMajorVersion() {
-		Version version = (Version) DelesteRandomSelector.class.getAnnotation(Version.class);
-		return version.major();
-	}
-
-	public static int getMinorVersion() {
-		Version version = (Version) DelesteRandomSelector.class.getAnnotation(Version.class);
-		return version.minor();
-	}
-
-	public static int getPatchVersion() {
-		Version version = (Version) DelesteRandomSelector.class.getAnnotation(Version.class);
-		return version.patch();
-	}
 }
