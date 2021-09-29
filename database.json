@@ -11588,7 +11588,7 @@
   }, {
     "attribute" : "キュート",
     "name" : "いとしーさー♥",
-    "difficulty" : "MASTER+",
+    "difficulty" : "ⓁMASTER+",
     "level" : 29,
     "notes" : 983
   }, {
@@ -12059,5 +12059,71 @@
     "difficulty" : "MASTER",
     "level" : 24,
     "notes" : 541
+  }, {
+    "attribute" : "クール",
+    "name" : "Drastic Melody",
+    "difficulty" : "DEBUT",
+    "level" : 9,
+    "notes" : 137
+  }, {
+    "attribute" : "クール",
+    "name" : "Drastic Melody",
+    "difficulty" : "REGULAR",
+    "level" : 13,
+    "notes" : 201
+  }, {
+    "attribute" : "クール",
+    "name" : "Drastic Melody",
+    "difficulty" : "PRO",
+    "level" : 18,
+    "notes" : 389
+  }, {
+    "attribute" : "クール",
+    "name" : "Drastic Melody",
+    "difficulty" : "MASTER",
+    "level" : 26,
+    "notes" : 595
+  }, {
+    "attribute" : "クール",
+    "name" : "Drastic Melody",
+    "difficulty" : "MASTER+",
+    "level" : 29,
+    "notes" : 926
+  }, {
+    "attribute" : "キュート",
+    "name" : "いとしーさー♥",
+    "difficulty" : "MASTER+",
+    "level" : 29,
+    "notes" : 987
+  }, {
+    "attribute" : "キュート",
+    "name" : "Beat of the Night",
+    "difficulty" : "MASTER+",
+    "level" : 27,
+    "notes" : 705
+  }, {
+    "attribute" : "キュート",
+    "name" : "Kawaii make MY day！",
+    "difficulty" : "LIGHT",
+    "level" : 5,
+    "notes" : 104
+  }, {
+    "attribute" : "キュート",
+    "name" : "Kawaii make MY day！",
+    "difficulty" : "TRICK",
+    "level" : 16,
+    "notes" : 351
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "イリュージョニスタ！",
+    "difficulty" : "LIGHT",
+    "level" : 8,
+    "notes" : 173
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "イリュージョニスタ！",
+    "difficulty" : "TRICK",
+    "level" : 18,
+    "notes" : 460
   } ]
 }

@@ -130,7 +130,7 @@ public class DelesteRandomSelector extends JFrame {
 			LimitedLog.println(this.getClass() + ":[INFO]: " + "Checking database updates...");
 			if(list1.size() > list2.size()) {
 				long time = System.currentTimeMillis();
-				LimitedLog.println(this.getClass() + ":[INFO]: " + "Update detected.");
+				LimitedLog.println(this.getClass() + ":[INFO]: " + (list1.size() - list2.size()) + " Update detected.");
 				Scraping.writeToJson(list1);
 				LimitedLog.println(this.getClass() + ":[INFO]: " + "Update completed in " + (System.currentTimeMillis() - time) + "ms");
 				LimitedLog.println(this.getClass() + ":[INFO]: " + "Updated database size: " + list1.size());
