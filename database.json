@@ -12125,5 +12125,35 @@
     "difficulty" : "TRICK",
     "level" : 18,
     "notes" : 460
+  }, {
+    "attribute" : "キュート",
+    "name" : "かぼちゃ姫",
+    "difficulty" : "DEBUT",
+    "level" : 6,
+    "notes" : 89
+  }, {
+    "attribute" : "キュート",
+    "name" : "かぼちゃ姫",
+    "difficulty" : "REGULAR",
+    "level" : 13,
+    "notes" : 214
+  }, {
+    "attribute" : "キュート",
+    "name" : "かぼちゃ姫",
+    "difficulty" : "PRO",
+    "level" : 17,
+    "notes" : 325
+  }, {
+    "attribute" : "キュート",
+    "name" : "かぼちゃ姫",
+    "difficulty" : "MASTER",
+    "level" : 25,
+    "notes" : 576
+  }, {
+    "attribute" : "キュート",
+    "name" : "かぼちゃ姫",
+    "difficulty" : "MASTER+",
+    "level" : 29,
+    "notes" : 953
   } ]
 }
