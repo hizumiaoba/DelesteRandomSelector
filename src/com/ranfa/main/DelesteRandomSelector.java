@@ -38,7 +38,7 @@ import com.ranfa.lib.Song;
 import com.ranfa.lib.TwitterIntegration;
 import com.ranfa.lib.Version;
 
-@Version(major = 1, minor = 3, patch = 1)
+@Version(major = 1, minor = 3, patch = 2)
 public class DelesteRandomSelector extends JFrame {
 
 	private static ArrayList<Song> selectedSongsList = new ArrayList<Song>();
