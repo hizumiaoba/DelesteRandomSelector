@@ -69,7 +69,7 @@ public class Settings {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return res;
+		return res < 1 ? 640 : res;
 	}
 
 	public static int getWindowHeight() {
@@ -81,7 +81,7 @@ public class Settings {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return res;
+		return res < 1 ? 360 : res;
 	}
 
 	public static int getSongsLimit() {
@@ -93,7 +93,7 @@ public class Settings {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return res;
+		return res < 1 ? 3 : res;
 	}
 
 	public static boolean saveScoreLog() {
