@@ -38,7 +38,7 @@ import com.ranfa.lib.Song;
 import com.ranfa.lib.TwitterIntegration;
 import com.ranfa.lib.Version;
 
-@Version(major = 1, minor = 3, patch = 2)
+@Version(major = 1, minor = 3, patch = 3)
 public class DelesteRandomSelector extends JFrame {
 
 	private static ArrayList<Song> selectedSongsList = new ArrayList<Song>();
@@ -124,8 +124,9 @@ public class DelesteRandomSelector extends JFrame {
 				+ "\nSong Limit: " + property.getSongLimit()
 				+ "\nSaveScoreLog: " + property.isSaveScoreLog()
 				+ "\nOutputDebugSentences: " + property.isOutputDebugSentences());
-		if(property.isCheckVersion())
-			CheckVersion.needToBeUpdated();
+		if(property.isCheckVersion()) {
+			CompletableFuture<Void> softwareUpdateFuture = CompletableFuture.runAsync(() -> CheckVersion.needToBeUpdated(), es);
+		}
 		BiConsumer<ArrayList<Song>, ArrayList<Song>> updateConsumer = (list1, list2) -> {
 			LimitedLog.println(this.getClass() + ":[INFO]: " + "Checking database updates...");
 			if(list1.size() > list2.size()) {
