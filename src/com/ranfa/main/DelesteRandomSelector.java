@@ -124,8 +124,9 @@ public class DelesteRandomSelector extends JFrame {
 				+ "\nSong Limit: " + property.getSongLimit()
 				+ "\nSaveScoreLog: " + property.isSaveScoreLog()
 				+ "\nOutputDebugSentences: " + property.isOutputDebugSentences());
-		if(property.isCheckVersion())
-			CheckVersion.needToBeUpdated();
+		if(property.isCheckVersion()) {
+			CompletableFuture<Void> softwareUpdateFuture = CompletableFuture.runAsync(() -> CheckVersion.needToBeUpdated(), es);
+		}
 		BiConsumer<ArrayList<Song>, ArrayList<Song>> updateConsumer = (list1, list2) -> {
 			LimitedLog.println(this.getClass() + ":[INFO]: " + "Checking database updates...");
 			if(list1.size() > list2.size()) {
