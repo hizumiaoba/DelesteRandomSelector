@@ -81,7 +81,7 @@ public class Settings {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return res < 0 ? 360 : res;
+		return res < 1 ? 360 : res;
 	}
 
 	public static int getSongsLimit() {
@@ -93,7 +93,7 @@ public class Settings {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return res;
+		return res < 1 ? 3 : res;
 	}
 
 	public static boolean saveScoreLog() {
