@@ -38,7 +38,7 @@ import com.ranfa.lib.Song;
 import com.ranfa.lib.TwitterIntegration;
 import com.ranfa.lib.Version;
 
-@Version(major = 1, minor = 3, patch = 3)
+@Version(major = 1, minor = 3, patch = 4)
 public class DelesteRandomSelector extends JFrame {
 
 	private static ArrayList<Song> selectedSongsList = new ArrayList<Song>();
@@ -281,18 +281,14 @@ public class DelesteRandomSelector extends JFrame {
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Random random = new Random(System.currentTimeMillis());
-				String[] tmp = new String[property.getSongLimit()];
+				String paneString = "";
 				integratorArray = new String[property.getSongLimit()];
 				for(int i = 0; i < property.getSongLimit(); i++) {
 					int randomInt = random.nextInt(selectedSongsList.size());
-					tmp[i] = (i + 1) + "曲目： " + selectedSongsList.get(randomInt).getAttribute() + " [" + selectedSongsList.get(randomInt).getDifficulty() + "]「" + selectedSongsList.get(randomInt).getName() + "」！(Lv:" + selectedSongsList.get(randomInt).getLevel() + ")\n\n";
+					paneString = paneString + (i + 1) + "曲目： " + selectedSongsList.get(randomInt).getAttribute() + " [" + selectedSongsList.get(randomInt).getDifficulty() + "]「" + selectedSongsList.get(randomInt).getName() + "」！(Lv:" + selectedSongsList.get(randomInt).getLevel() + ")\n\n";
 					integratorArray[i] = selectedSongsList.get(randomInt).getName() + "(Lv" + selectedSongsList.get(randomInt).getLevel() + ")\n";
 				}
-				String paneString = "";
-				for (int i = 0; i < tmp.length; i++) {
-					paneString = paneString + tmp[i];
-				}
-				paneString = paneString + "この" + tmp.length + "曲をプレイしましょう！！！";
+				paneString = paneString + "この" + property.getSongLimit() + "曲をプレイしましょう！！！";
 				textArea.setText(paneString);
 				integratorBool = true;
 				LimitedLog.println(this.getClass() + ":[INFO]: " + "show up completed.");
