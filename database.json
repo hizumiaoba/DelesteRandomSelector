@@ -11888,7 +11888,7 @@
   }, {
     "attribute" : "クール",
     "name" : "レッド・ソール",
-    "difficulty" : "MASTER+",
+    "difficulty" : "ⓁMASTER+",
     "level" : 29,
     "notes" : 900
   }, {
@@ -12155,5 +12155,17 @@
     "difficulty" : "MASTER+",
     "level" : 29,
     "notes" : 953
+  }, {
+    "attribute" : "クール",
+    "name" : "レッド・ソール",
+    "difficulty" : "MASTER+",
+    "level" : 29,
+    "notes" : 900
+  }, {
+    "attribute" : "クール",
+    "name" : "泡沫のアイオーン",
+    "difficulty" : "MASTER+",
+    "level" : 30,
+    "notes" : 967
   } ]
 }
