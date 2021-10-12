@@ -1,4 +1,4 @@
-name: "create PR"
+name: "create Pull Request"
 
 on:
   push:
