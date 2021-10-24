@@ -67,6 +67,7 @@ public class DelesteRandomSelector extends JFrame {
 	private boolean integratorBool = false;
 	private JTextArea textArea;
 	private JScrollPane scrollPane;
+	private CompletableFuture<Void> softwareUpdateFuture = null;
 
 	/**
 	 * Launch the application.
@@ -125,7 +126,7 @@ public class DelesteRandomSelector extends JFrame {
 				+ "\nSaveScoreLog: " + property.isSaveScoreLog()
 				+ "\nOutputDebugSentences: " + property.isOutputDebugSentences());
 		if(property.isCheckVersion()) {
-			CompletableFuture<Void> softwareUpdateFuture = CompletableFuture.runAsync(() -> CheckVersion.needToBeUpdated(), es);
+			softwareUpdateFuture = CompletableFuture.runAsync(() -> CheckVersion.needToBeUpdated(), es);
 		}
 		BiConsumer<ArrayList<Song>, ArrayList<Song>> updateConsumer = (list1, list2) -> {
 			LimitedLog.println(this.getClass() + ":[INFO]: " + "Checking database updates...");
@@ -356,8 +357,12 @@ public class DelesteRandomSelector extends JFrame {
 								btnExit = new JButton("終了");
 								btnExit.addActionListener(new ActionListener() {
 									public void actionPerformed(ActionEvent e) {
-										LimitedLog.println(this.getClass() + ":[INFO]: " +"Requested Exit by Button");
-										System.exit(0);
+										if(softwareUpdateFuture.isDone()) {
+											LimitedLog.println(this.getClass() + ":[INFO]: " +"Requested Exit by Button");
+											System.exit(0);
+										} else {
+											JOptionPane.showMessageDialog(null, "内部更新処理が完了していません。少し待ってからやり直してください。");
+										}
 									}
 								});
 								btnExit.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
