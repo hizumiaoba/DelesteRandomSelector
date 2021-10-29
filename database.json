@@ -11702,7 +11702,7 @@
   }, {
     "attribute" : "パッション",
     "name" : "パ・リ・ラ",
-    "difficulty" : "MASTER+",
+    "difficulty" : "ⓁMASTER+",
     "level" : 29,
     "notes" : 999
   }, {
@@ -12167,5 +12167,95 @@
     "difficulty" : "MASTER+",
     "level" : 30,
     "notes" : 967
+  }, {
+    "attribute" : "パッション",
+    "name" : "ひまわりマークをさがせ！",
+    "difficulty" : "DEBUT",
+    "level" : 8,
+    "notes" : 125
+  }, {
+    "attribute" : "パッション",
+    "name" : "ひまわりマークをさがせ！",
+    "difficulty" : "REGULAR",
+    "level" : 13,
+    "notes" : 207
+  }, {
+    "attribute" : "パッション",
+    "name" : "ひまわりマークをさがせ！",
+    "difficulty" : "PRO",
+    "level" : 18,
+    "notes" : 440
+  }, {
+    "attribute" : "パッション",
+    "name" : "ひまわりマークをさがせ！",
+    "difficulty" : "MASTER",
+    "level" : 26,
+    "notes" : 713
+  }, {
+    "attribute" : "パッション",
+    "name" : "パ・リ・ラ",
+    "difficulty" : "MASTER+",
+    "level" : 29,
+    "notes" : 999
+  }, {
+    "attribute" : "パッション",
+    "name" : "Milky Mode",
+    "difficulty" : "MASTER+",
+    "level" : 29,
+    "notes" : 841
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "Let’s Sail Away！！！",
+    "difficulty" : "DEBUT",
+    "level" : 9,
+    "notes" : 132
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "Let’s Sail Away！！！",
+    "difficulty" : "REGULAR",
+    "level" : 13,
+    "notes" : 207
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "Let’s Sail Away！！！",
+    "difficulty" : "PRO",
+    "level" : 18,
+    "notes" : 417
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "Let’s Sail Away！！！",
+    "difficulty" : "MASTER",
+    "level" : 26,
+    "notes" : 732
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "Let’s Sail Away！！！",
+    "difficulty" : "MASTER+",
+    "level" : 29,
+    "notes" : 992
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "Take me☆Take you",
+    "difficulty" : "LIGHT",
+    "level" : 6,
+    "notes" : 125
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "Take me☆Take you",
+    "difficulty" : "TRICK",
+    "level" : 16,
+    "notes" : 393
+  }, {
+    "attribute" : "パッション",
+    "name" : "私色ギフト",
+    "difficulty" : "LIGHT",
+    "level" : 6,
+    "notes" : 143
+  }, {
+    "attribute" : "パッション",
+    "name" : "私色ギフト",
+    "difficulty" : "TRICK",
+    "level" : 15,
+    "notes" : 313
   } ]
 }
