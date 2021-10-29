@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 public class Settings {
 
 	// 設定ファイルパス
-	private final static String FILEPATH = "settings.json";
+	private final static String FILEPATH = "generated/settings.json";
 
 	public static boolean fileExists() {
 		Path path = Paths.get(FILEPATH);

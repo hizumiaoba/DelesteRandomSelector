@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 public class Scraping {
 
 	private final static String URI = "https://imascg-slstage-wiki.gamerch.com/%E6%A5%BD%E6%9B%B2%E8%A9%B3%E7%B4%B0%E4%B8%80%E8%A6%A7";
-	private final static String DBPATH = "database.json";
+	private final static String DBPATH = "generated/database.json";
 	public final static String NONSELECTED = "指定なし";
 	public final static String ALL = "全タイプ";
 	public final static String CUTE = "キュート";
