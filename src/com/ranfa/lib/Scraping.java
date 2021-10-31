@@ -16,6 +16,7 @@ import org.jsoup.select.Elements;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.ranfa.lib.AlbumTypeEstimate.MASTERPLUS_TYPE;
 
 public class Scraping {
 
@@ -60,6 +61,7 @@ public class Scraping {
 					.timeout(0)
 					.get();
 			Elements rows = document.getElementsByTag("tbody").get(0).select("tr");
+			ArrayList<ArrayList<Album>> typeLists = AlbumTypeEstimate.getAlbumType();
 			for(int i = 0; i < rows.size(); i++) {
 				String attribute = rows.get(i).select("td").get(0).text();
 				String name = rows.get(i).select("td").get(1).text();
@@ -80,6 +82,21 @@ public class Scraping {
 				tmp.setDifficulty(difficulty);
 				tmp.setLevel(level);
 				tmp.setNotes(notes);
+				if(difficulty.equals(LEGACYMASTERPLUS)) {
+					ArrayList<Album> newTypeList = typeLists.get(MASTERPLUS_TYPE.LEGACYMASTERPLUS.ordinal());
+					for(int j = 0; j < newTypeList.size(); j++) {
+						if(newTypeList.get(j).getSongName().equals(name))
+							tmp.setAlbumType(newTypeList.get(j).getAlbumType());
+					}
+				} else if(difficulty.equals(MASTERPLUS)) {
+					ArrayList<Album> legacyTypeList = typeLists.get(MASTERPLUS_TYPE.NEWMASTERPLUS.ordinal());
+					for(int j = 0; j < legacyTypeList.size(); j++) {
+						if(legacyTypeList.get(j).getSongName().equals(name))
+							tmp.setAlbumType(legacyTypeList.get(j).getAlbumType());
+					}
+				} else {
+					tmp.setAlbumType("Not-Implemented");
+				}
 				res.add(tmp);
 			}
 		} catch (IOException e) {

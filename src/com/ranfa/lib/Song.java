@@ -7,6 +7,7 @@ public class Song {
 	private String difficulty;
 	private int level;
 	private int notes;
+	private String albumType;
 
 
 	public String getAttribute() {
@@ -65,6 +66,16 @@ public class Song {
 				+ ", Difficulty: " + getDifficulty()
 				+ ", Level :" + String.valueOf(getLevel())
 				+ ", Notes :" + String.valueOf(getNotes());
+	}
+
+
+	public String getAlbumType() {
+		return albumType;
+	}
+
+
+	public void setAlbumType(String albumType) {
+		this.albumType = albumType;
 	}
 
 }
