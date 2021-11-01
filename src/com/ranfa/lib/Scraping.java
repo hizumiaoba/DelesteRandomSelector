@@ -50,6 +50,8 @@ public class Scraping {
 
 	public static ArrayList<Song> getWholeData() {
 		long time = System.currentTimeMillis();
+		ExecutorService es = Executors.newWorkStealingPool();
+		CompletableFuture<ArrayList<ArrayList<Album>>> typeFetchFuture = CompletableFuture.supplyAsync(() -> AlbumTypeEstimate.getAlbumType(), es);
 		// if(databaseExists())
 		// 	return null;
 		ArrayList<Song> res = new ArrayList<>();
