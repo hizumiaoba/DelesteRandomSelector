@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 
 public class EstimateAlbumTypeCycle {
 
@@ -45,11 +46,34 @@ public class EstimateAlbumTypeCycle {
 	private static void write(AlbumCycleDefinitionProperty property) {
 		ObjectWriter writer = new ObjectMapper().writer(new DefaultPrettyPrinter());
 		try {
-			writer.writeValue(Paths.get(CYCLEPATH).toFile(), writer);
+			writer.writeValue(Paths.get(CYCLEPATH).toFile(), property);
 		} catch (IOException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		}
+	}
+
+	public static String getCurrentCycle() {
+		if(Files.notExists(Paths.get(CYCLEPATH)))
+			throw new IllegalStateException("Program seems to have avoided first initiating. how could it have done?");
+		AlbumCycleDefinitionProperty property = new AlbumCycleDefinitionProperty();
+		try {
+			property = new ObjectMapper().readValue(Paths.get(CYCLEPATH).toFile(), AlbumCycleDefinitionProperty.class);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		int dayPresent = Integer.parseInt(new SimpleDateFormat("DD").format(new Date()));
+		int dayDefinited = Integer.parseInt(property.getDateDefinited().substring(8));
+		int daysLeft = property.getDaysLeft();
+		if(dayPresent - dayDefinited <= 1 && daysLeft == 0) {
+			int delta = dayPresent - dayDefinited;
+			int weeksPassed = delta / 14;
+			if(weeksPassed > 0) {
+				int weeksPassedDelta = weeksPassed / 3;
+				
+			}
+		}
+		return property.getType();
 	}
 
 }
