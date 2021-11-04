@@ -6,6 +6,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.swing.JOptionPane;
 
@@ -63,7 +67,7 @@ public class Scraping {
 					.timeout(0)
 					.get();
 			Elements rows = document.getElementsByTag("tbody").get(0).select("tr");
-			ArrayList<ArrayList<Album>> typeLists = AlbumTypeEstimate.getAlbumType();
+			ArrayList<ArrayList<Album>> typeLists = typeFetchFuture.get();
 			for(int i = 0; i < rows.size(); i++) {
 				String attribute = rows.get(i).select("td").get(0).text();
 				String name = rows.get(i).select("td").get(1).text();
@@ -101,7 +105,7 @@ public class Scraping {
 				}
 				res.add(tmp);
 			}
-		} catch (IOException e) {
+		} catch (IOException | InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 		}
 		LimitedLog.println(Scraping.class + ":[INFO]: scraping compeleted in " + (System.currentTimeMillis() - time)+ "ms");

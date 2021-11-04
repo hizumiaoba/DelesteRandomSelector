@@ -1,11 +1,16 @@
 package com.ranfa.lib;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.swing.JOptionPane;
+
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
 public class EstimateAlbumTypeCycle {
 
@@ -24,6 +29,7 @@ public class EstimateAlbumTypeCycle {
 		AlbumCycleDefinitionProperty property = new AlbumCycleDefinitionProperty();
 		String inputType = JOptionPane.showInputDialog("現在のMASTER＋のALBUMを入力してください。（A,B,C）");
 		if(!inputType.equals("A") || !inputType.equals("B") || !inputType.equals("C")) {
+
 			LimitedLog.println(EstimateAlbumTypeCycle.class + ":[FATAL]; " + "inputType has invaild.Canceling initiate...");
 			return;
 		}
@@ -33,7 +39,17 @@ public class EstimateAlbumTypeCycle {
 		property.setDaysLeft(Integer.parseInt(inputDaysLeft));
 		property.setType(inputType.equals("A") ? ALBUM_A : inputType.equals("B") ? ALBUM_B : ALBUM_C);
 		write(property);
-		
+		return;
+	}
+
+	private static void write(AlbumCycleDefinitionProperty property) {
+		ObjectWriter writer = new ObjectMapper().writer(new DefaultPrettyPrinter());
+		try {
+			writer.writeValue(Paths.get(CYCLEPATH).toFile(), writer);
+		} catch (IOException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
 	}
 
 }
