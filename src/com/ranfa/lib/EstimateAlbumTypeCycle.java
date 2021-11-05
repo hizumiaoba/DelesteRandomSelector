@@ -29,7 +29,7 @@ public class EstimateAlbumTypeCycle {
 	public final static String ALBUM_B = "ALBUM B";
 	public final static String ALBUM_C = "ALBUM C";
 
-	public static void firstInitiate() {
+	public static void preInitialization() {
 		if(Files.exists(Paths.get(CYCLEPATH)))
 			return;
 		LimitedLog.println(EstimateAlbumTypeCycle.class + ":[INFO]: " + "Cycle definition file does not exist.Trying to ask you...");
@@ -107,5 +107,10 @@ public class EstimateAlbumTypeCycle {
 	}
 */
 
+	public static void initialization() {
+		if(Files.notExists(Paths.get(CYCLEPATH)))
+			throw new IllegalStateException("Cycle data doesn't exist. but this is impossible.Please contact developer.");
+
+	}
 
 }
