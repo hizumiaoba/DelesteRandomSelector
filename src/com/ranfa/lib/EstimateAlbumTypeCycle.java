@@ -3,7 +3,12 @@ package com.ranfa.lib;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.swing.JOptionPane;
@@ -12,6 +17,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.sun.org.apache.bcel.internal.generic.NEW;
+import com.sun.security.auth.NTDomainPrincipal;
 
 public class EstimateAlbumTypeCycle {
 
@@ -52,7 +58,7 @@ public class EstimateAlbumTypeCycle {
 			e.printStackTrace();
 		}
 	}
-
+/*
 	public static String getCurrentCycle() {
 		if(Files.notExists(Paths.get(CYCLEPATH)))
 			throw new IllegalStateException("Program seems to have avoided first initiating. how could it have done?");
@@ -62,18 +68,44 @@ public class EstimateAlbumTypeCycle {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		int dayPresent = Integer.parseInt(new SimpleDateFormat("DD").format(new Date()));
-		int dayDefinited = Integer.parseInt(property.getDateDefinited().substring(8));
-		int daysLeft = property.getDaysLeft();
-		if(dayPresent - dayDefinited <= 1 && daysLeft == 0) {
-			int delta = dayPresent - dayDefinited;
-			int weeksPassed = delta / 14;
-			if(weeksPassed > 0) {
-				int weeksPassedDelta = weeksPassed / 3;
-				
+		Date presentDate = new Date();
+		Calendar presentCalendar = Calendar.getInstance();
+		presentCalendar.setTime(presentDate);
+		presentCalendar.set(Calendar.HOUR_OF_DAY, 0);
+		presentCalendar.set(Calendar.MINUTE, 0);
+		presentCalendar.set(Calendar.SECOND, 0);
+		presentCalendar.set(Calendar.MILLISECOND, 0);
+		presentDate = presentCalendar.getTime();
+		Date definiteDate  = null;
+		try {
+			definiteDate = FORMAT.parse(property.getDateDefinited());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		presentCalendar.setTime(definiteDate);
+		presentCalendar.setTime(presentDate);
+		presentCalendar.set(Calendar.HOUR_OF_DAY, 0);
+		presentCalendar.set(Calendar.MINUTE, 0);
+		presentCalendar.set(Calendar.SECOND, 0);
+		presentCalendar.set(Calendar.MILLISECOND, 0);
+		definiteDate = presentCalendar.getTime();
+		switch(presentDate.compareTo(definiteDate)) {
+		case 0:
+			return property.getType();
+		case 1:
+			LocalDate presentLocalDate = presentDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			LocalDate definitedLocalDate = definiteDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			long delta = ChronoUnit.DAYS.between(presentLocalDate, definitedLocalDate);
+			if(delta < property.getDaysLeft())
+				return property.getType();
+			delta = delta - property.getDaysLeft();
+			long cycleDelta = (delta / 14) % 3;
+			if(cycleDelta == 0) {
+
 			}
 		}
-		return property.getType();
 	}
+*/
+
 
 }
