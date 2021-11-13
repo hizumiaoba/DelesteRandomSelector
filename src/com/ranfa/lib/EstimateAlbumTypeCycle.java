@@ -1,5 +1,7 @@
 package com.ranfa.lib;
 
+import static org.hamcrest.CoreMatchers.nullValue;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -8,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -16,27 +19,24 @@ import javax.swing.JOptionPane;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.sun.org.apache.bcel.internal.generic.NEW;
-import com.sun.security.auth.NTDomainPrincipal;
 
 public class EstimateAlbumTypeCycle {
 
 	private final static String CYCLEPATH = "generated/albumCycle.json";
-	private final static String DATEFORMAT = "YYYY:MM:DD";
+	private final static String DATEFORMAT = "YYYY/MM/dd";
 	private final static SimpleDateFormat FORMAT = new SimpleDateFormat(DATEFORMAT);
 
 	public final static String ALBUM_A = "ALBUM A";
 	public final static String ALBUM_B = "ALBUM B";
 	public final static String ALBUM_C = "ALBUM C";
 
-	public static void preInitialization() {
+	public static void Initialization() {
 		if(Files.exists(Paths.get(CYCLEPATH)))
 			return;
 		LimitedLog.println(EstimateAlbumTypeCycle.class + ":[INFO]: " + "Cycle definition file does not exist.Trying to ask you...");
 		AlbumCycleDefinitionProperty property = new AlbumCycleDefinitionProperty();
 		String inputType = JOptionPane.showInputDialog("現在のMASTER＋のALBUMを入力してください。（A,B,C）");
-		if(!inputType.equals("A") || !inputType.equals("B") || !inputType.equals("C")) {
-
+		if(!(inputType.equals("A") || inputType.equals("B") || inputType.equals("C"))) {
 			LimitedLog.println(EstimateAlbumTypeCycle.class + ":[FATAL]; " + "inputType has invaild.Canceling initiate...");
 			return;
 		}
@@ -58,7 +58,7 @@ public class EstimateAlbumTypeCycle {
 			e.printStackTrace();
 		}
 	}
-/*
+
 	public static String getCurrentCycle() {
 		if(Files.notExists(Paths.get(CYCLEPATH)))
 			throw new IllegalStateException("Program seems to have avoided first initiating. how could it have done?");
@@ -76,41 +76,43 @@ public class EstimateAlbumTypeCycle {
 		presentCalendar.set(Calendar.SECOND, 0);
 		presentCalendar.set(Calendar.MILLISECOND, 0);
 		presentDate = presentCalendar.getTime();
-		Date definiteDate  = null;
-		try {
-			definiteDate = FORMAT.parse(property.getDateDefinited());
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		presentCalendar.setTime(definiteDate);
-		presentCalendar.setTime(presentDate);
-		presentCalendar.set(Calendar.HOUR_OF_DAY, 0);
-		presentCalendar.set(Calendar.MINUTE, 0);
-		presentCalendar.set(Calendar.SECOND, 0);
-		presentCalendar.set(Calendar.MILLISECOND, 0);
-		definiteDate = presentCalendar.getTime();
+		String dateDefinited = property.getDateDefinited();
+		String dates[] = dateDefinited.split("/");
+		presentCalendar.set(Integer.parseInt(dates[0]), Integer.parseInt(dates[1]) - 1, Integer.parseInt(dates[2]));
+		Date definiteDate = presentCalendar.getTime();
 		switch(presentDate.compareTo(definiteDate)) {
 		case 0:
 			return property.getType();
 		case 1:
 			LocalDate presentLocalDate = presentDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 			LocalDate definitedLocalDate = definiteDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-			long delta = ChronoUnit.DAYS.between(presentLocalDate, definitedLocalDate);
-			if(delta < property.getDaysLeft())
+			long delta = ChronoUnit.DAYS.between(definitedLocalDate, presentLocalDate);
+			if(delta < property.getDaysLeft()) {
 				return property.getType();
-			delta = delta - property.getDaysLeft();
-			long cycleDelta = (delta / 14) % 3;
-			if(cycleDelta == 0) {
-
 			}
+			delta = delta - property.getDaysLeft();
+			if(delta > Integer.MAX_VALUE) {
+				JOptionPane.showMessageDialog(null, "ALBUM周期の推定に失敗しました。暫定的な措置として前回起動時のALBUM種類を表示します。\n(内部変数エラー：delta has the value that is more than Integer.MAX_VALUE.）");
+				LimitedLog.println(EstimateAlbumTypeCycle.class + ":[FATAL]; " + "Valuable was overflowed.");
+			}
+			String res = cycling(property.getType(), (int)delta);
+			return res;
+		default:
+			throw new IllegalStateException("Date delta has illegal value. the system clock might be incorrect?");
 		}
 	}
-*/
 
-	public static void initialization() {
-		if(Files.notExists(Paths.get(CYCLEPATH)))
-			throw new IllegalStateException("Cycle data doesn't exist. but this is impossible.Please contact developer.");
-
+	private static String cycling(String currentType, int times) {
+		int cyclingDelta = times % 3;
+		String[] typeArray = {
+				ALBUM_A,
+				ALBUM_B,
+				ALBUM_C
+		};
+		int currentIndex = Arrays.asList(typeArray).indexOf(currentType);
+		int nextIndex = currentIndex + cyclingDelta;
+		int nextIndexDelta = nextIndex % 3;
+		return typeArray[nextIndexDelta];
 	}
 
 }

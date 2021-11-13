@@ -1,10 +1,14 @@
 package com.ranfa.main;
 
+import static org.hamcrest.CoreMatchers.nullValue;
+
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
@@ -30,6 +34,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.ranfa.lib.CheckVersion;
+import com.ranfa.lib.EstimateAlbumTypeCycle;
 import com.ranfa.lib.LimitedLog;
 import com.ranfa.lib.Scraping;
 import com.ranfa.lib.SettingJSONProperty;
@@ -68,6 +73,8 @@ public class DelesteRandomSelector extends JFrame {
 	private JTextArea textArea;
 	private JScrollPane scrollPane;
 	private CompletableFuture<Void> softwareUpdateFuture = null;
+	private CompletableFuture<Void> albumTypeEstimateFuture = null;
+	private String albumType = "計算中";
 
 	/**
 	 * Launch the application.
@@ -125,6 +132,10 @@ public class DelesteRandomSelector extends JFrame {
 				+ "\nSong Limit: " + property.getSongLimit()
 				+ "\nSaveScoreLog: " + property.isSaveScoreLog()
 				+ "\nOutputDebugSentences: " + property.isOutputDebugSentences());
+		EstimateAlbumTypeCycle.Initialization();
+		if(Files.exists(Paths.get("generated/albumCycle.json"))) {
+			albumType = EstimateAlbumTypeCycle.getCurrentCycle();
+		}
 		if(property.isCheckVersion()) {
 			softwareUpdateFuture = CompletableFuture.runAsync(() -> CheckVersion.needToBeUpdated(), es);
 		}
@@ -159,6 +170,7 @@ public class DelesteRandomSelector extends JFrame {
 		LimitedLog.println(this.getClass() + ":[DEBUG]: " + "Version:" + CheckVersion.getVersion());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, property.getWindowWidth(), property.getWindowHeight());
+		// setBounds(100, 100, 640, 360);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -268,9 +280,10 @@ public class DelesteRandomSelector extends JFrame {
 					ArrayList<Song> specificlevelList = Scraping.getSpecificLevelSongs(fromJson, (Integer)spinnerLevel.getValue(), checkLessLv.isSelected(), checkMoreLv.isSelected());
 					ArrayList<Song> specificDifficultyList = Scraping.getSpecificDifficultySongs(specificlevelList, comboDifficultySelect.getSelectedItem().toString());
 					ArrayList<Song> specificAttributeList = Scraping.getSpecificAttributeSongs(specificDifficultyList, comboAttribute.getSelectedItem().toString());
+					ArrayList<Song> specificTypeList = Scraping.getSpecificAlbumTypeSongs(specificAttributeList, EstimateAlbumTypeCycle.getCurrentCycle());
 					if(!selectedSongsList.isEmpty())
 					selectedSongsList.clear();
-				selectedSongsList.addAll(specificAttributeList);
+				selectedSongsList.addAll((comboDifficultySelect.getSelectedItem().equals(Scraping.MASTERPLUS) || comboDifficultySelect.getSelectedItem().equals(Scraping.LEGACYMASTERPLUS)) ? specificTypeList : specificAttributeList);
 				LimitedLog.println(this.getClass() + ":[INFO]: " +"Songs are selected.We are Ready to go.");
 				JOptionPane.showMessageDialog(null, "絞り込み完了！「開始」をクリックすることで選曲できます！");
 			}
@@ -286,7 +299,8 @@ public class DelesteRandomSelector extends JFrame {
 				integratorArray = new String[property.getSongLimit()];
 				for(int i = 0; i < property.getSongLimit(); i++) {
 					int randomInt = random.nextInt(selectedSongsList.size());
-					paneString = paneString + (i + 1) + "曲目： " + selectedSongsList.get(randomInt).getAttribute() + " [" + selectedSongsList.get(randomInt).getDifficulty() + "]「" + selectedSongsList.get(randomInt).getName() + "」！(Lv:" + selectedSongsList.get(randomInt).getLevel() + ")\n\n";
+					String typeString = comboDifficultySelect.getSelectedItem().equals(Scraping.MASTERPLUS) || comboDifficultySelect.getSelectedItem().equals(Scraping.LEGACYMASTERPLUS) ? EstimateAlbumTypeCycle.getCurrentCycle() : "";
+					paneString = paneString + (i + 1) + "曲目： " + selectedSongsList.get(randomInt).getAttribute() + " [" + selectedSongsList.get(randomInt).getDifficulty() + "]「" + selectedSongsList.get(randomInt).getName() + "」！(Lv:" + selectedSongsList.get(randomInt).getLevel() + " " + typeString + ")\n\n";
 					integratorArray[i] = selectedSongsList.get(randomInt).getName() + "(Lv" + selectedSongsList.get(randomInt).getLevel() + ")\n";
 				}
 				paneString = paneString + "この" + property.getSongLimit() + "曲をプレイしましょう！！！";
@@ -357,7 +371,7 @@ public class DelesteRandomSelector extends JFrame {
 								btnExit = new JButton("終了");
 								btnExit.addActionListener(new ActionListener() {
 									public void actionPerformed(ActionEvent e) {
-										if(softwareUpdateFuture.isDone()) {
+										if(softwareUpdateFuture.isDone() || albumTypeEstimateFuture.isDone()) {
 											LimitedLog.println(this.getClass() + ":[INFO]: " +"Requested Exit by Button");
 											System.exit(0);
 										} else {
@@ -373,13 +387,14 @@ public class DelesteRandomSelector extends JFrame {
 		panelCentre.setLayout(new BorderLayout(0, 0));
 
 		textArea = new JTextArea();
-		textArea.setText("楽曲選択の手順\r\n１．難易度、属性、レベルを選択する\r\n２．「楽曲取り込み」ボタンを押す！\r\n３．「開始」ボタンを押す！\r\n４．選択された楽曲がここに表示されます！\r\n現在設定されている楽曲選択の最大数：" + property.getSongLimit());
+		textArea.setText("楽曲選択の手順\r\n１．難易度、属性、レベルを選択する\r\n２．「楽曲取り込み」ボタンを押す！\r\n３．「開始」ボタンを押す！\r\n４．選択された楽曲がここに表示されます！\r\n現在設定されている楽曲選択の最大数：" + property.getSongLimit() + "\n現在のMASTER+アルバム周期（推定）：" + albumType);
 		textArea.setEditable(false);
 
 		scrollPane = new JScrollPane(textArea);
 		panelCentre.add(scrollPane, BorderLayout.CENTER);
-		if(isFirst || !property.isCheckLibraryUpdates())
+		if(isFirst || !property.isCheckLibraryUpdates()) {
 			setEnabled.run();
+		}
 	}
 
 }

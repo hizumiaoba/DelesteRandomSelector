@@ -13596,10 +13596,10 @@
   }, {
     "attribute" : "キュート",
     "name" : "Home Sweet Home",
-    "difficulty" : "MASTER+",
+    "difficulty" : "ⓁMASTER+",
     "level" : 28,
     "notes" : 771,
-    "albumType" : "Not-implemented"
+    "albumType" : "ALBUM A"
   }, {
     "attribute" : "キュート",
     "name" : "ギュっとMilky Way",
@@ -14270,7 +14270,7 @@
     "name" : "Let’s Sail Away！！！",
     "difficulty" : "MASTER+",
     "level" : 29,
-    "notes" : 992,実装
+    "notes" : 992,
     "albumType" : "Not-implemented"
   }, {
     "attribute" : "全タイプ",
@@ -14342,5 +14342,19 @@
     "level" : 28,
     "notes" : 669,
     "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "Home Sweet Home",
+    "difficulty" : "MASTER+",
+    "level" : 28,
+    "notes" : 777,
+    "albumType" : "ALBUM A"
+  }, {
+    "attribute" : "キュート",
+    "name" : "おかしな国のおかし屋さん",
+    "difficulty" : "MASTER+",
+    "level" : 27,
+    "notes" : 834,
+    "albumType" : "ALBUM A"
   } ]
 }

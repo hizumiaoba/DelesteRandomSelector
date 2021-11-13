@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.junit.internal.ArrayComparisonFailure;
 
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -180,6 +181,18 @@ public class Scraping {
 			.filter(element -> element.getLevel() > level)
 			.forEach(res::add);
 		}
+		return res;
+	}
+
+	public static ArrayList<Song> getSpecificAlbumTypeSongs(ArrayList<Song> data, String type) {
+		if(data == null)
+			throw new IllegalArgumentException("type must not null.");
+		if(data.isEmpty())
+			throw new IllegalArgumentException("ArrayList must not empty");
+		ArrayList<Song> res = new ArrayList<>();
+		data.stream()
+			.filter(element -> element.getAlbumType().equals(type))
+			.forEach(res::add);
 		return res;
 	}
 
