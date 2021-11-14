@@ -9,6 +9,8 @@ THIS SOFTWARE DEPENDS ON APACHE LICENSE 2.0 BECAUSE THIS USED SOME LIBRARIES WHI
 	- And other child libraries
 - jsoup Java HTML Parser (https://jsoup.org/)
 - Twitter4J Java TwitterAPI wrapper (https://twitter4j.org/ja/)
+- SLF4J java Logger facade system
+	- logback Logger libraries
 
 ## 使用方法
 (v0.2.0時点の使用方法です)
@@ -28,5 +30,4 @@ THIS SOFTWARE DEPENDS ON APACHE LICENSE 2.0 BECAUSE THIS USED SOME LIBRARIES WHI
 |`windowWidth`|1以上の整数値|`640`|ウィンドウの横長さを指定します|
 |`windowHeight`|1以上の整数値|`360`|ウィンドウの縦長さを指定します|
 |`songLimit`|1以上の整数値|`3`|ランダム選曲する最大曲数を指定します|
-|`saveScoreLog`|`true`/`false`|`false`|スコアデータを保存するかどうか指定します(機能作成中のためこの値は使用していません）|
-|`outputDebugSentences`|`true`/`false`|`false`|標準出力へログを流すかどうか指定します
+|`saveScoreLog`|`true`/`false`|`false`|スコアデータを保存するかどうか指定します(機能作成中のためこの値は使用していません）
