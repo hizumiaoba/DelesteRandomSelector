@@ -27,16 +27,12 @@ public class CheckVersion {
 			latestMinor = node.get("minor").asInt();
 			latestPatch = node.get("patch").asInt();
 		} catch (JsonMappingException e) {
-			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		} catch (JsonProcessingException e) {
-			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		} catch (MalformedURLException e) {
-			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		}
 		if(latestPatch > getPatchVersion()) {
@@ -63,17 +59,17 @@ public class CheckVersion {
 	}
 
 	public static int getMajorVersion() {
-		Version version = (Version) DelesteRandomSelector.class.getAnnotation(Version.class);
+		Version version = DelesteRandomSelector.class.getAnnotation(Version.class);
 		return version.major();
 	}
 
 	public static int getMinorVersion() {
-		Version version = (Version) DelesteRandomSelector.class.getAnnotation(Version.class);
+		Version version = DelesteRandomSelector.class.getAnnotation(Version.class);
 		return version.minor();
 	}
 
 	public static int getPatchVersion() {
-		Version version = (Version) DelesteRandomSelector.class.getAnnotation(Version.class);
+		Version version = DelesteRandomSelector.class.getAnnotation(Version.class);
 		return version.patch();
 	}
 

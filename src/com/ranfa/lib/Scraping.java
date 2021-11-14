@@ -213,7 +213,6 @@ public class Scraping {
 		try {
 			property = new ObjectMapper().readValue(new File(DBPATH), SongJSONProperty.class);
 		} catch (IOException e) {
-			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		}
 		ArrayList<Song> res = new ArrayList<Song>();

@@ -1,11 +1,8 @@
 package com.ranfa.lib;
 
-import static org.hamcrest.CoreMatchers.nullValue;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -58,7 +55,6 @@ public class EstimateAlbumTypeCycle {
 		try {
 			writer.writeValue(Paths.get(CYCLEPATH).toFile(), property);
 		} catch (IOException e) {
-			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		}
 	}
