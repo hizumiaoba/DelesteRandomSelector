@@ -16,7 +16,6 @@ import javax.swing.JOptionPane;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.junit.internal.ArrayComparisonFailure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
