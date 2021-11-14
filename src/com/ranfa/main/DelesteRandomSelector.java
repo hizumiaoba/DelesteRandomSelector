@@ -1,7 +1,5 @@
 package com.ranfa.main;
 
-import static org.hamcrest.CoreMatchers.nullValue;
-
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -84,6 +82,7 @@ public class DelesteRandomSelector extends JFrame {
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				try {
 					DelesteRandomSelector frame = new DelesteRandomSelector();
@@ -276,6 +275,7 @@ public class DelesteRandomSelector extends JFrame {
 		btnImport = new JButton("<html><body>データベース<br>更新中…</body></html>");
 		btnImport.setEnabled(false);
 		btnImport.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				ArrayList<Song> fromJson = Scraping.getFromJson();
 					ArrayList<Song> specificlevelList = Scraping.getSpecificLevelSongs(fromJson, (Integer)spinnerLevel.getValue(), checkLessLv.isSelected(), checkMoreLv.isSelected());
@@ -294,6 +294,7 @@ public class DelesteRandomSelector extends JFrame {
 
 		btnStart = new JButton("開始！");
 		btnStart.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				Random random = new Random(System.currentTimeMillis());
 				String paneString = "";
@@ -316,6 +317,7 @@ public class DelesteRandomSelector extends JFrame {
 				btnTwitterIntegration = new JButton("Twitter連携");
 				btnTwitterIntegration.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 11));
 				btnTwitterIntegration.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(ActionEvent e) {
 						boolean authorizationStatus = TwitterIntegration.authorization();
 						String updatedStatus = "デレステ課題曲セレクターで\n";
@@ -367,6 +369,7 @@ public class DelesteRandomSelector extends JFrame {
 
 								btnExit = new JButton("終了");
 								btnExit.addActionListener(new ActionListener() {
+									@Override
 									public void actionPerformed(ActionEvent e) {
 										if(softwareUpdateFuture.isDone() || albumTypeEstimateFuture.isDone()) {
 											logger.info("Requested Exit by Button");
