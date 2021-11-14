@@ -19,8 +19,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
  * ・ウィンドウサイズ (windowWidth), (windowHeight)
  * ・デフォルトの曲指定上限数 (songsLimit)
  * ・スコアログの保存 (saveScoreLog)
- * ・標準出力へデバッグ用簡易ログを流すかどうか (outputDebugSentences)
- * の6つ(括弧内はフィールド名)
+ * の5つ(括弧内はフィールド名)
  * 今後、設定可能事項は増える可能性あり
  * @author hizum
  * @since v1.0.0
@@ -108,18 +107,6 @@ public class Settings {
 		return res;
 	}
 
-	public static boolean outputDebugSentences() {
-		boolean res = false;
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			JsonNode node = mapper.readTree(new File(FILEPATH));
-			res = node.get("outputDebugSentences").asBoolean();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return res;
-	}
-
 	public static boolean writeDownJSON() {
 		boolean res = true;
 		SettingJSONProperty property = new SettingJSONProperty();
@@ -129,7 +116,6 @@ public class Settings {
 		property.setWindowHeight(360);
 		property.setSongLimit(3);
 		property.setSaveScoreLog(false);
-		property.setOutputDebugSentences(false);
 		ObjectWriter writer = new ObjectMapper().writer(new DefaultPrettyPrinter());
 		try {
 			writer.writeValue(Paths.get(FILEPATH).toFile(), property);

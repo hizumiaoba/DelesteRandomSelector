@@ -4,6 +4,5 @@
   "windowWidth" : 640,
   "windowHeight" : 360,
   "songLimit" : 15,
-  "saveScoreLog" : false,
-  "outputDebugSentences" : true
+  "saveScoreLog" : false
 }

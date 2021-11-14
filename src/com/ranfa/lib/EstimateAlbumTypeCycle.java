@@ -16,6 +16,9 @@ import java.util.Date;
 
 import javax.swing.JOptionPane;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -25,6 +28,7 @@ public class EstimateAlbumTypeCycle {
 	private final static String CYCLEPATH = "generated/albumCycle.json";
 	private final static String DATEFORMAT = "YYYY/MM/dd";
 	private final static SimpleDateFormat FORMAT = new SimpleDateFormat(DATEFORMAT);
+	private static Logger logger = LoggerFactory.getLogger(EstimateAlbumTypeCycle.class);
 
 	public final static String ALBUM_A = "ALBUM A";
 	public final static String ALBUM_B = "ALBUM B";
@@ -33,11 +37,11 @@ public class EstimateAlbumTypeCycle {
 	public static void Initialization() {
 		if(Files.exists(Paths.get(CYCLEPATH)))
 			return;
-		LimitedLog.println(EstimateAlbumTypeCycle.class + ":[INFO]: " + "Cycle definition file does not exist.Trying to ask you...");
+		logger.info("Cycle definition file does not exist.Trying to ask you...");
 		AlbumCycleDefinitionProperty property = new AlbumCycleDefinitionProperty();
 		String inputType = JOptionPane.showInputDialog("現在のMASTER＋のALBUMを入力してください。（A,B,C）");
 		if(!(inputType.equals("A") || inputType.equals("B") || inputType.equals("C"))) {
-			LimitedLog.println(EstimateAlbumTypeCycle.class + ":[FATAL]; " + "inputType has invaild.Canceling initiate...");
+			logger.error("inputType has invaild.Canceling initiate...");
 			return;
 		}
 		String inputDaysLeft = JOptionPane.showInputDialog("MASTER＋のALBUM切り替えまであと何日ですか？\n(残り時間が表示されている場合は0を入力してください)");
@@ -93,7 +97,7 @@ public class EstimateAlbumTypeCycle {
 			delta = delta - property.getDaysLeft();
 			if(delta > Integer.MAX_VALUE) {
 				JOptionPane.showMessageDialog(null, "ALBUM周期の推定に失敗しました。暫定的な措置として前回起動時のALBUM種類を表示します。\n(内部変数エラー：delta has the value that is more than Integer.MAX_VALUE.）");
-				LimitedLog.println(EstimateAlbumTypeCycle.class + ":[FATAL]; " + "Valuable was overflowed.");
+				logger.error("Valuable was overflowed.");
 			}
 			String res = cycling(property.getType(), (int)delta);
 			return res;

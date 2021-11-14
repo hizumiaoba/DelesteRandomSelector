@@ -17,6 +17,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.junit.internal.ArrayComparisonFailure;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,6 +29,7 @@ public class Scraping {
 
 	private final static String URI = "https://imascg-slstage-wiki.gamerch.com/%E6%A5%BD%E6%9B%B2%E8%A9%B3%E7%B4%B0%E4%B8%80%E8%A6%A7";
 	private final static String DBPATH = "generated/database.json";
+	private static Logger logger = LoggerFactory.getLogger(Scraping.class);
 	public final static String NONSELECTED = "指定なし";
 	public final static String ALL = "全タイプ";
 	public final static String CUTE = "キュート";
@@ -109,7 +112,7 @@ public class Scraping {
 		} catch (IOException | InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 		}
-		LimitedLog.println(Scraping.class + ":[INFO]: scraping compeleted in " + (System.currentTimeMillis() - time)+ "ms");
+		logger.info("scraping compeleted in " + (System.currentTimeMillis() - time)+ "ms");
 		return res;
 	}
 
@@ -216,7 +219,7 @@ public class Scraping {
 		}
 		ArrayList<Song> res = new ArrayList<Song>();
 		res.addAll(property.getList());
-		LimitedLog.println(Scraping.class + ":[INFO]: JSON reading compeleted in " + (System.currentTimeMillis() - time) + "ms");
+		logger.info("JSON reading compeleted in " + (System.currentTimeMillis() - time) + "ms");
 		return res;
 	}
 

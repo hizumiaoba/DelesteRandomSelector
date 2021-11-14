@@ -8,7 +8,6 @@ public class SettingJSONProperty {
 	private int windowHeight;
 	private int songLimit;
 	private boolean saveScoreLog;
-	private boolean outputDebugSentences;
 
 
 	public boolean isCheckVersion() {
@@ -46,12 +45,6 @@ public class SettingJSONProperty {
 	}
 	public void setSaveScoreLog(boolean saveScoreLog) {
 		this.saveScoreLog = saveScoreLog;
-	}
-	public boolean isOutputDebugSentences() {
-		return outputDebugSentences;
-	}
-	public void setOutputDebugSentences(boolean outputDebugSentences) {
-		this.outputDebugSentences = outputDebugSentences;
 	}
 
 }

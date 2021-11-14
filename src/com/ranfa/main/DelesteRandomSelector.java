@@ -29,13 +29,15 @@ import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.ranfa.lib.CheckVersion;
 import com.ranfa.lib.EstimateAlbumTypeCycle;
-import com.ranfa.lib.LimitedLog;
 import com.ranfa.lib.Scraping;
 import com.ranfa.lib.SettingJSONProperty;
 import com.ranfa.lib.Settings;
@@ -75,6 +77,7 @@ public class DelesteRandomSelector extends JFrame {
 	private CompletableFuture<Void> softwareUpdateFuture = null;
 	private CompletableFuture<Void> albumTypeEstimateFuture = null;
 	private String albumType = "計算中";
+	private Logger logger = LoggerFactory.getLogger(DelesteRandomSelector.class);
 
 	/**
 	 * Launch the application.
@@ -116,22 +119,20 @@ public class DelesteRandomSelector extends JFrame {
 			JOptionPane.showMessageDialog(this, "Exception:NullPointerException\nCannot Keep up! Please re-download this Application!");
 			throw new NullPointerException("FATAL: cannot continue!");
 		}
-		LimitedLog.println(this.getClass() + ":[DEBUG]: " + "Loading Settings...");
+		logger.debug("Loading settings...");
 		property.setCheckLibraryUpdates(Settings.needToCheckLibraryUpdates());
 		property.setCheckVersion(Settings.needToCheckVersion());
 		property.setWindowWidth(Settings.getWindowWidth());
 		property.setWindowHeight(Settings.getWindowHeight());
 		property.setSongLimit(Settings.getSongsLimit());
 		property.setSaveScoreLog(Settings.saveScoreLog());
-		property.setOutputDebugSentences(Settings.outputDebugSentences());
-		LimitedLog.println(this.getClass() + ":[DEBUG]: " + "Loading Settings done."
-				+ "\nVersion Check: " + property.isCheckVersion()
-				+ "\nLibrary Update Check: " + property.isCheckLibraryUpdates()
-				+ "\nWindow Width: " + property.getWindowWidth()
-				+ "\nWindow Height: " + property.getWindowHeight()
-				+ "\nSong Limit: " + property.getSongLimit()
-				+ "\nSaveScoreLog: " + property.isSaveScoreLog()
-				+ "\nOutputDebugSentences: " + property.isOutputDebugSentences());
+		logger.debug("Load settings done.");
+		logger.debug("Version check: " + property.isCheckVersion());
+		logger.debug("Library update check: " + property.isCheckLibraryUpdates());
+		logger.debug("Window Width: " + property.getWindowWidth());
+		logger.debug("Window Height: " + property.getWindowHeight());
+		logger.debug("Song Limit: " + property.getSongLimit());
+		logger.debug("SaveScoreLog: " + property.isSaveScoreLog());
 		EstimateAlbumTypeCycle.Initialization();
 		if(Files.exists(Paths.get("generated/albumCycle.json"))) {
 			albumType = EstimateAlbumTypeCycle.getCurrentCycle();
@@ -140,15 +141,15 @@ public class DelesteRandomSelector extends JFrame {
 			softwareUpdateFuture = CompletableFuture.runAsync(() -> CheckVersion.needToBeUpdated(), es);
 		}
 		BiConsumer<ArrayList<Song>, ArrayList<Song>> updateConsumer = (list1, list2) -> {
-			LimitedLog.println(this.getClass() + ":[INFO]: " + "Checking database updates...");
+			logger.info("Checking database updates...");
 			if(list1.size() > list2.size()) {
 				long time = System.currentTimeMillis();
-				LimitedLog.println(this.getClass() + ":[INFO]: " + (list1.size() - list2.size()) + " Update detected.");
+				logger.info((list1.size() - list2.size()) + " Update detected.");
 				Scraping.writeToJson(list1);
-				LimitedLog.println(this.getClass() + ":[INFO]: " + "Update completed in " + (System.currentTimeMillis() - time) + "ms");
-				LimitedLog.println(this.getClass() + ":[INFO]: " + "Updated database size: " + list1.size());
+				logger.info("Update completed in " + (System.currentTimeMillis() - time) + "ms");
+				logger.info("Updated database size: " + list1.size());
 			} else {
-				LimitedLog.println(this.getClass() + ":[INFO]: " + "database is up-to-date.");
+				logger.info("database is up-to-date.");
 			}
 		};
 		Runnable setEnabled = () -> {
@@ -161,13 +162,13 @@ public class DelesteRandomSelector extends JFrame {
 			btnImport.setEnabled(true);
 			btnImport.setText("<html><body>楽曲<br>絞り込み</body></html>");
 		};
-		getWholeDataFuture.thenAcceptAsync(list -> LimitedLog.println(this.getClass() + ":[INFO]: Scraping data size:" + list.size()), es);
-		getFromJsonFuture.thenAcceptAsync(list -> LimitedLog.println(this.getClass() + ":[INFO]: Currently database size:" + list.size()), es);
+		getWholeDataFuture.thenAcceptAsync(list -> logger.info("Scraping data size:" + list.size()), es);
+		getFromJsonFuture.thenAcceptAsync(list -> logger.info("Currently database size:" + list.size()), es);
 		if(property.isCheckLibraryUpdates()) {
 			CompletableFuture<Void> updatedFuture = getWholeDataFuture.thenAcceptBothAsync(getFromJsonFuture, updateConsumer, es);
 			updatedFuture.thenRunAsync(setEnabled, es);
 		}
-		LimitedLog.println(this.getClass() + ":[DEBUG]: " + "Version:" + CheckVersion.getVersion());
+		logger.debug("Version:" + CheckVersion.getVersion());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, property.getWindowWidth(), property.getWindowHeight());
 		// setBounds(100, 100, 640, 360);
@@ -284,7 +285,7 @@ public class DelesteRandomSelector extends JFrame {
 					if(!selectedSongsList.isEmpty())
 					selectedSongsList.clear();
 				selectedSongsList.addAll((comboDifficultySelect.getSelectedItem().equals(Scraping.MASTERPLUS) || comboDifficultySelect.getSelectedItem().equals(Scraping.LEGACYMASTERPLUS)) ? specificTypeList : specificAttributeList);
-				LimitedLog.println(this.getClass() + ":[INFO]: " +"Songs are selected.We are Ready to go.");
+				logger.info("Songs are selected.We are Ready to go.");
 				JOptionPane.showMessageDialog(null, "絞り込み完了！「開始」をクリックすることで選曲できます！");
 			}
 		});
@@ -306,7 +307,7 @@ public class DelesteRandomSelector extends JFrame {
 				paneString = paneString + "この" + property.getSongLimit() + "曲をプレイしましょう！！！";
 				textArea.setText(paneString);
 				integratorBool = true;
-				LimitedLog.println(this.getClass() + ":[INFO]: " + "show up completed.");
+				logger.info("show up completed.");
 			}
 		});
 		btnStart.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
@@ -316,16 +317,12 @@ public class DelesteRandomSelector extends JFrame {
 				btnTwitterIntegration.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 11));
 				btnTwitterIntegration.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						LimitedLog.println(this.getClass() + ":[INFO]: " + "Twitter Integration requested.Verify permission status.");
 						boolean authorizationStatus = TwitterIntegration.authorization();
-						LimitedLog.println(this.getClass() + ":[INFO]: " + "Permission Verifying completed.\nStatus: " + authorizationStatus);
-						LimitedLog.print(this.getClass() + ":[INFO]: " + "Construction status message...");
 						String updatedStatus = "デレステ課題曲セレクターで\n";
 						int lengthLimit = updatedStatus.length();
 						boolean isBroken = false;
 						if(!integratorBool) {
 							JOptionPane.showMessageDialog(null, "ちひろ「まだプレイを始めていないみたいですね」");
-							LimitedLog.println();
 							return;
 						}
 						for(int i = 0; i < integratorArray.length; i++) {
@@ -341,28 +338,28 @@ public class DelesteRandomSelector extends JFrame {
 						} else {
 							updatedStatus = updatedStatus + "をプレイしました！\n#DelesteRandomSelector #デレステ ";
 						}
-						LimitedLog.println("completed.\n" + updatedStatus);
+						logger.info("status message constructed.");
 						lengthLimit = updatedStatus.length();
 						if(authorizationStatus) {
 							int option = JOptionPane.showConfirmDialog(null, "Twitterへ以下の内容を投稿します。よろしいですか？\n\n" + updatedStatus + "\n\n文字数：" + lengthLimit);
-							LimitedLog.println(this.getClass() + ":[INFO]: " + "User selected " + option);
+							logger.info("user seletced: " + option);
 							switch(option) {
 								case JOptionPane.OK_OPTION:
 									TwitterIntegration.PostTwitter(updatedStatus);
-									LimitedLog.println(this.getClass() + ":[INFO]: " + "Success to update the status.");
+									logger.info("Success to update the status.");
 									JOptionPane.showMessageDialog(null, "投稿が完了しました。");
 									break;
 								case JOptionPane.NO_OPTION:
-									LimitedLog.println(this.getClass() + ":[INFO]: " + "There is no will to post.");
+									logger.info("There is no will to post.");
 									break;
 								case JOptionPane.CANCEL_OPTION:
-									LimitedLog.println(this.getClass() + ":[INFO]: " + "The Operation was canceled by user.");
+									logger.info("The Operation was canceled by user.");
 									break;
 								default:
 									break;
 							}
 						} else {
-							LimitedLog.println(this.getClass() + ":[WARN]: " + "seems to reject the permission.it should need try again.");
+							logger.info("seems to reject the permission.it should need try again.");
 						}
 					}
 				});
@@ -372,7 +369,7 @@ public class DelesteRandomSelector extends JFrame {
 								btnExit.addActionListener(new ActionListener() {
 									public void actionPerformed(ActionEvent e) {
 										if(softwareUpdateFuture.isDone() || albumTypeEstimateFuture.isDone()) {
-											LimitedLog.println(this.getClass() + ":[INFO]: " +"Requested Exit by Button");
+											logger.info("Requested Exit by Button");
 											System.exit(0);
 										} else {
 											JOptionPane.showMessageDialog(null, "内部更新処理が完了していません。少し待ってからやり直してください。");

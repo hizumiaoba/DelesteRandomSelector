@@ -8,10 +8,13 @@ import java.util.concurrent.ExecutionException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AlbumTypeEstimate {
 
 	public final static String ALBUM_DATA_URI = "https://imascg-slstage-wiki.gamerch.com/%E6%A5%BD%E6%9B%B2%E8%A9%B3%E7%B4%B0%E4%B8%80%E8%A6%A7%EF%BC%88%E9%9B%A3%E6%98%93%E5%BA%A6%E5%88%A5%EF%BC%89";
+	private static Logger logger = LoggerFactory.getLogger(AlbumTypeEstimate.class);
 
 	//アルバム種類の定義
 	public enum ALBUM_TYPE {
@@ -49,7 +52,7 @@ public class AlbumTypeEstimate {
 		} catch (IOException | InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 		}
-		LimitedLog.println(AlbumTypeEstimate.class + ":[INFO]: " + "Album type fetched in " + (System.currentTimeMillis() - time) + "ms");
+		logger.info("Album type fetched in " + (System.currentTimeMillis() - time) + "ms");
 		return res;
 	}
 
