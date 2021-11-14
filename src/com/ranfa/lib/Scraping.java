@@ -218,7 +218,11 @@ public class Scraping {
 			e.printStackTrace();
 		}
 		ArrayList<Song> res = new ArrayList<Song>();
-		res.addAll(property.getList());
+		if(property != null) {
+			res.addAll(property.getList());
+		} else {
+			throw new NullPointerException("json is null.");
+		}
 		logger.info("JSON reading compeleted in " + (System.currentTimeMillis() - time) + "ms");
 		return res;
 	}
