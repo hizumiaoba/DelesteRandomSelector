@@ -35,12 +35,12 @@ public class CheckVersion {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		if(latestPatch > getPatchVersion()) {
-			JOptionPane.showInputDialog(null, "ソフトウェアのバグ修正が公開されています。こちらから最新バージョンをダウンロードしてください。\n", RELEASE_STRING);
+		if(latestMajor > getMajorVersion()) {
+			JOptionPane.showInputDialog(null, "大規模なソフトウェアの更新が公開されています。速やかにアップデートをお願いします。\n", RELEASE_STRING);
 		} else if(latestMinor > getMinorVersion()) {
 			JOptionPane.showInputDialog(null, "ソフトウェアの軽微な機能改修が公開されています。こちらから最新バージョンをダウンロードしてください。\n", RELEASE_STRING);
-		} else if(latestMajor > getMajorVersion()) {
-			JOptionPane.showInputDialog(null, "大規模なソフトウェアの更新が公開されています。速やかにアップデートをお願いします。\n", RELEASE_STRING);
+		} else if(latestPatch > getPatchVersion()) {
+			JOptionPane.showInputDialog(null, "ソフトウェアのバグ修正が公開されています。こちらから最新バージョンをダウンロードしてください。\n", RELEASE_STRING);
 		}
 	}
 
