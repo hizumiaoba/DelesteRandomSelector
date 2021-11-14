@@ -9,8 +9,8 @@ THIS SOFTWARE DEPENDS ON APACHE LICENSE 2.0 BECAUSE THIS USED SOME LIBRARIES WHI
 	- And other child libraries
 - jsoup Java HTML Parser (https://jsoup.org/)
 - Twitter4J Java TwitterAPI wrapper (https://twitter4j.org/ja/)
-- SLF4J java Logger facade system
-	- logback Logger libraries
+- SLF4J java Logger facade system (http://www.slf4j.org/)
+	- logback Logger libraries (http://logback.qos.ch/)
 
 ## 使用方法
 (v0.2.0時点の使用方法です)
