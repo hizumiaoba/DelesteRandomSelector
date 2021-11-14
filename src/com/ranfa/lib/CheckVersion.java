@@ -27,24 +27,20 @@ public class CheckVersion {
 			latestMinor = node.get("minor").asInt();
 			latestPatch = node.get("patch").asInt();
 		} catch (JsonMappingException e) {
-			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		} catch (JsonProcessingException e) {
-			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		} catch (MalformedURLException e) {
-			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		}
-		if(latestPatch > getPatchVersion()) {
-			JOptionPane.showInputDialog(null, "ソフトウェアのバグ修正が公開されています。こちらから最新バージョンをダウンロードしてください。\n", RELEASE_STRING);
+		if(latestMajor > getMajorVersion()) {
+			JOptionPane.showInputDialog(null, "大規模なソフトウェアの更新が公開されています。速やかにアップデートをお願いします。\n", RELEASE_STRING);
 		} else if(latestMinor > getMinorVersion()) {
 			JOptionPane.showInputDialog(null, "ソフトウェアの軽微な機能改修が公開されています。こちらから最新バージョンをダウンロードしてください。\n", RELEASE_STRING);
-		} else if(latestMajor > getMajorVersion()) {
-			JOptionPane.showInputDialog(null, "大規模なソフトウェアの更新が公開されています。速やかにアップデートをお願いします。\n", RELEASE_STRING);
+		} else if(latestPatch > getPatchVersion()) {
+			JOptionPane.showInputDialog(null, "ソフトウェアのバグ修正が公開されています。こちらから最新バージョンをダウンロードしてください。\n", RELEASE_STRING);
 		}
 	}
 
@@ -63,17 +59,17 @@ public class CheckVersion {
 	}
 
 	public static int getMajorVersion() {
-		Version version = (Version) DelesteRandomSelector.class.getAnnotation(Version.class);
+		Version version = DelesteRandomSelector.class.getAnnotation(Version.class);
 		return version.major();
 	}
 
 	public static int getMinorVersion() {
-		Version version = (Version) DelesteRandomSelector.class.getAnnotation(Version.class);
+		Version version = DelesteRandomSelector.class.getAnnotation(Version.class);
 		return version.minor();
 	}
 
 	public static int getPatchVersion() {
-		Version version = (Version) DelesteRandomSelector.class.getAnnotation(Version.class);
+		Version version = DelesteRandomSelector.class.getAnnotation(Version.class);
 		return version.patch();
 	}
 

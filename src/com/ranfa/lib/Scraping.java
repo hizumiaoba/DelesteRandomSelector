@@ -6,21 +6,29 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.swing.JOptionPane;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.ranfa.lib.AlbumTypeEstimate.MASTERPLUS_TYPE;
 
 public class Scraping {
 
 	private final static String URI = "https://imascg-slstage-wiki.gamerch.com/%E6%A5%BD%E6%9B%B2%E8%A9%B3%E7%B4%B0%E4%B8%80%E8%A6%A7";
-	private final static String DBPATH = "database.json";
+	private final static String DBPATH = "generated/database.json";
+	private static Logger logger = LoggerFactory.getLogger(Scraping.class);
 	public final static String NONSELECTED = "指定なし";
 	public final static String ALL = "全タイプ";
 	public final static String CUTE = "キュート";
@@ -49,6 +57,8 @@ public class Scraping {
 
 	public static ArrayList<Song> getWholeData() {
 		long time = System.currentTimeMillis();
+		ExecutorService es = Executors.newWorkStealingPool();
+		CompletableFuture<ArrayList<ArrayList<Album>>> typeFetchFuture = CompletableFuture.supplyAsync(() -> AlbumTypeEstimate.getAlbumType(), es);
 		// if(databaseExists())
 		// 	return null;
 		ArrayList<Song> res = new ArrayList<>();
@@ -60,6 +70,7 @@ public class Scraping {
 					.timeout(0)
 					.get();
 			Elements rows = document.getElementsByTag("tbody").get(0).select("tr");
+			ArrayList<ArrayList<Album>> typeLists = typeFetchFuture.get();
 			for(int i = 0; i < rows.size(); i++) {
 				String attribute = rows.get(i).select("td").get(0).text();
 				String name = rows.get(i).select("td").get(1).text();
@@ -80,12 +91,27 @@ public class Scraping {
 				tmp.setDifficulty(difficulty);
 				tmp.setLevel(level);
 				tmp.setNotes(notes);
+				if(difficulty.equals(LEGACYMASTERPLUS)) {
+					ArrayList<Album> newTypeList = typeLists.get(MASTERPLUS_TYPE.LEGACYMASTERPLUS.ordinal());
+					for(int j = 0; j < newTypeList.size(); j++) {
+						if(newTypeList.get(j).getSongName().equals(name))
+							tmp.setAlbumType(newTypeList.get(j).getAlbumType());
+					}
+				} else if(difficulty.equals(MASTERPLUS)) {
+					ArrayList<Album> legacyTypeList = typeLists.get(MASTERPLUS_TYPE.NEWMASTERPLUS.ordinal());
+					for(int j = 0; j < legacyTypeList.size(); j++) {
+						if(legacyTypeList.get(j).getSongName().equals(name))
+							tmp.setAlbumType(legacyTypeList.get(j).getAlbumType());
+					}
+				} else {
+					tmp.setAlbumType("Not-Implemented");
+				}
 				res.add(tmp);
 			}
-		} catch (IOException e) {
+		} catch (IOException | InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 		}
-		LimitedLog.println(Scraping.class + ":[INFO]: scraping compeleted in " + (System.currentTimeMillis() - time)+ "ms");
+		logger.info("scraping compeleted in " + (System.currentTimeMillis() - time)+ "ms");
 		return res;
 	}
 
@@ -160,6 +186,18 @@ public class Scraping {
 		return res;
 	}
 
+	public static ArrayList<Song> getSpecificAlbumTypeSongs(ArrayList<Song> data, String type) {
+		if(data == null)
+			throw new IllegalArgumentException("type must not null.");
+		if(data.isEmpty())
+			throw new IllegalArgumentException("ArrayList must not empty");
+		ArrayList<Song> res = new ArrayList<>();
+		data.stream()
+			.filter(element -> element.getAlbumType().equals(type))
+			.forEach(res::add);
+		return res;
+	}
+
 	private static ArrayList<Song> getOnlyLevelSongs(ArrayList<Song> data, int level) {
 		ArrayList<Song> res = new ArrayList<Song>();
 		data.stream()
@@ -175,12 +213,15 @@ public class Scraping {
 		try {
 			property = new ObjectMapper().readValue(new File(DBPATH), SongJSONProperty.class);
 		} catch (IOException e) {
-			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		}
 		ArrayList<Song> res = new ArrayList<Song>();
-		res.addAll(property.getList());
-		LimitedLog.println(Scraping.class + ":[INFO]: JSON reading compeleted in " + (System.currentTimeMillis() - time) + "ms");
+		if(property != null) {
+			res.addAll(property.getList());
+		} else {
+			throw new NullPointerException("json is null.");
+		}
+		logger.info("JSON reading compeleted in " + (System.currentTimeMillis() - time) + "ms");
 		return res;
 	}
 
