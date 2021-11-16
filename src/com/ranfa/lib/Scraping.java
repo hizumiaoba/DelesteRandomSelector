@@ -231,6 +231,7 @@ public class Scraping {
 		property.setList(list);
 		ObjectWriter writer = new ObjectMapper().writer(new DefaultPrettyPrinter());
 		try {
+			Files.createDirectory(Paths.get("generated"));
 			writer.writeValue(Paths.get(DBPATH).toFile(), property);
 		} catch (IOException e) {
 			res = false;
