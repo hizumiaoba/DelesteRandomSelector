@@ -5,6 +5,7 @@
 
 #Ignore binary files
 bin/
+logs/
 
 #Ignore Twitter Consumer keys
 twitterToken.json
