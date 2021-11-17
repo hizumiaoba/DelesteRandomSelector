@@ -187,7 +187,7 @@ public class Scraping {
 	}
 
 	public static ArrayList<Song> getSpecificAlbumTypeSongs(ArrayList<Song> data, String type) {
-		if(data == null)
+		if(type == null)
 			throw new IllegalArgumentException("type must not null.");
 		if(data.isEmpty())
 			throw new IllegalArgumentException("ArrayList must not empty");
@@ -231,6 +231,7 @@ public class Scraping {
 		property.setList(list);
 		ObjectWriter writer = new ObjectMapper().writer(new DefaultPrettyPrinter());
 		try {
+			Files.createDirectory(Paths.get("generated"));
 			writer.writeValue(Paths.get(DBPATH).toFile(), property);
 		} catch (IOException e) {
 			res = false;

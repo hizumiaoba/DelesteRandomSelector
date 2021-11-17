@@ -43,7 +43,7 @@ import com.ranfa.lib.Song;
 import com.ranfa.lib.TwitterIntegration;
 import com.ranfa.lib.Version;
 
-@Version(major = 2, minor = 0, patch = 0)
+@Version(major = 2, minor = 0, patch = 1)
 public class DelesteRandomSelector extends JFrame {
 
 	private static ArrayList<Song> selectedSongsList = new ArrayList<Song>();
@@ -107,7 +107,7 @@ public class DelesteRandomSelector extends JFrame {
 		if(isFirst) {
 			JOptionPane.showMessageDialog(this, "楽曲データベースが見つかりませんでした。自動的に作成されます…\n注意：初回起動ではなく、かつ、Jarファイルと同じ階層に\"database.json\"というファイルが存在するにも関わらず\nこのポップアップが出た場合、開発者までご一報ください。\nGithub URL: https://github.com/hizumiaoba/DelesteRandomSelector/issues");
 			if(!Scraping.writeToJson(Scraping.getWholeData())) {
-				JOptionPane.showMessageDialog(this, "Exception:NullPointerException\\nCannot Keep up! Please re-download this Application!");
+				JOptionPane.showMessageDialog(this, "Exception:NullPointerException\nCannot Keep up! Please re-download this Application!");
 				throw new NullPointerException("FATAL: cannot continue!");
 			}
 		}
