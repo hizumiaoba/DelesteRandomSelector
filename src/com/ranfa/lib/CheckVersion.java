@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ranfa.main.DelesteRandomSelector;
+import com.sun.javafx.sg.prism.web.NGWebView;
 
 public class CheckVersion {
 
@@ -35,12 +36,13 @@ public class CheckVersion {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		String newVersion = String.format("v%d.%d.%d", latestMajor, latestMinor, latestPatch);
 		if(latestMajor > getMajorVersion()) {
-			JOptionPane.showInputDialog(null, "大規模なソフトウェアの更新が公開されています。速やかにアップデートをお願いします。\n", RELEASE_STRING);
+			JOptionPane.showInputDialog(null, String.format("大規模なソフトウェアの更新が公開されています。速やかにアップデートをお願いします。\n最新バージョン：%s", newVersion), RELEASE_STRING);
 		} else if(latestMinor > getMinorVersion()) {
-			JOptionPane.showInputDialog(null, "ソフトウェアの軽微な機能改修が公開されています。こちらから最新バージョンをダウンロードしてください。\n", RELEASE_STRING);
+			JOptionPane.showInputDialog(null, String.format("ソフトウェアの軽微な機能改修が公開されています。こちらから最新バージョンをダウンロードしてください。\n最新バージョン：%s", newVersion), RELEASE_STRING);
 		} else if(latestPatch > getPatchVersion()) {
-			JOptionPane.showInputDialog(null, "ソフトウェアのバグ修正が公開されています。こちらから最新バージョンをダウンロードしてください。\n", RELEASE_STRING);
+			JOptionPane.showInputDialog(null, String.format("ソフトウェアのバグ修正が公開されています。こちらから最新バージョンをダウンロードしてください。\n最新バージョン：%s", newVersion), RELEASE_STRING);
 		}
 	}
 
