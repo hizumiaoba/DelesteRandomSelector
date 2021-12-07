@@ -52,7 +52,7 @@ public class AlbumTypeEstimate {
 		} catch (IOException | InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 		}
-		logger.info("Album type fetched in " + (System.currentTimeMillis() - time) + "ms");
+		logger.info("Album type fetched in {} ms", (System.currentTimeMillis() - time));
 		return res;
 	}
 

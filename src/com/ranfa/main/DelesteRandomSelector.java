@@ -126,12 +126,12 @@ public class DelesteRandomSelector extends JFrame {
 		property.setSongLimit(Settings.getSongsLimit());
 		property.setSaveScoreLog(Settings.saveScoreLog());
 		logger.debug("Load settings done.");
-		logger.debug("Version check: " + property.isCheckVersion());
-		logger.debug("Library update check: " + property.isCheckLibraryUpdates());
-		logger.debug("Window Width: " + property.getWindowWidth());
-		logger.debug("Window Height: " + property.getWindowHeight());
-		logger.debug("Song Limit: " + property.getSongLimit());
-		logger.debug("SaveScoreLog: " + property.isSaveScoreLog());
+		logger.debug("Version check: {}", property.isCheckVersion());
+		logger.debug("Library update check: {}", property.isCheckLibraryUpdates());
+		logger.debug("Window Width: {}", property.getWindowWidth());
+		logger.debug("Window Height: {}", property.getWindowHeight());
+		logger.debug("Song Limit: {}", property.getSongLimit());
+		logger.debug("SaveScoreLog: {}", property.isSaveScoreLog());
 		EstimateAlbumTypeCycle.Initialization();
 		if(Files.exists(Paths.get("generated/albumCycle.json"))) {
 			albumType = EstimateAlbumTypeCycle.getCurrentCycle();
@@ -143,10 +143,10 @@ public class DelesteRandomSelector extends JFrame {
 			logger.info("Checking database updates...");
 			if(list1.size() > list2.size()) {
 				long time = System.currentTimeMillis();
-				logger.info((list1.size() - list2.size()) + " Update detected.");
+				logger.info("{} Update detected.", (list1.size() - list2.size()));
 				Scraping.writeToJson(list1);
-				logger.info("Update completed in " + (System.currentTimeMillis() - time) + "ms");
-				logger.info("Updated database size: " + list1.size());
+				logger.info("Update completed in {} ms", (System.currentTimeMillis() - time));
+				logger.info("Updated database size: {}", list1.size());
 			} else {
 				logger.info("database is up-to-date.");
 			}
@@ -167,7 +167,7 @@ public class DelesteRandomSelector extends JFrame {
 			CompletableFuture<Void> updatedFuture = getWholeDataFuture.thenAcceptBothAsync(getFromJsonFuture, updateConsumer, es);
 			updatedFuture.thenRunAsync(setEnabled, es);
 		}
-		logger.debug("Version:" + CheckVersion.getVersion());
+		logger.debug("Version: {}", CheckVersion.getVersion());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, property.getWindowWidth(), property.getWindowHeight());
 		// setBounds(100, 100, 640, 360);
