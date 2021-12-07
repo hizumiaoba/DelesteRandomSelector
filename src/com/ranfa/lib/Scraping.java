@@ -111,7 +111,7 @@ public class Scraping {
 		} catch (IOException | InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 		}
-		logger.info("scraping compeleted in " + (System.currentTimeMillis() - time)+ "ms");
+		logger.info("scraping compeleted in {} ms", (System.currentTimeMillis() - time));
 		return res;
 	}
 
@@ -221,7 +221,7 @@ public class Scraping {
 		} else {
 			throw new NullPointerException("json is null.");
 		}
-		logger.info("JSON reading compeleted in " + (System.currentTimeMillis() - time) + "ms");
+		logger.info("JSON reading compeleted in {} ms", (System.currentTimeMillis() - time));
 		return res;
 	}
 
