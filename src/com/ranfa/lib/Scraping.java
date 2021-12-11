@@ -109,7 +109,7 @@ public class Scraping {
 				res.add(tmp);
 			}
 		} catch (IOException | InterruptedException | ExecutionException e) {
-			e.printStackTrace();
+			logger.error("Exception was thrown during web scraping", e);
 		}
 		logger.info("scraping compeleted in " + (System.currentTimeMillis() - time)+ "ms");
 		return res;
@@ -213,7 +213,7 @@ public class Scraping {
 		try {
 			property = new ObjectMapper().readValue(new File(DBPATH), SongJSONProperty.class);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("IOException was thrown during reading From JSON Database file.", e);
 		}
 		ArrayList<Song> res = new ArrayList<Song>();
 		if(property != null) {
@@ -234,6 +234,7 @@ public class Scraping {
 			Files.createDirectory(Paths.get("generated"));
 			writer.writeValue(Paths.get(DBPATH).toFile(), property);
 		} catch (IOException e) {
+			logger.error("IOException was thrown during writing to JSON database file.", e);
 			res = false;
 		}
 		return res;
