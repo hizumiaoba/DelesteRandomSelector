@@ -3,8 +3,6 @@ package test;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-
 import org.junit.Test;
 
 import com.ranfa.lib.Scraping;
@@ -26,7 +24,7 @@ public class FileIOTest {
 	@Test
 	public void readFromLocalTest() {
 
-		assertTrue(Arrays.equals(webData.toArray(), Scraping.getFromJson().toArray()));
+		assertTrue(webData.size() == Scraping.getFromJson().size());
 
 	}
 

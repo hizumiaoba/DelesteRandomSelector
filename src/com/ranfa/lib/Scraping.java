@@ -231,7 +231,8 @@ public class Scraping {
 		property.setList(list);
 		ObjectWriter writer = new ObjectMapper().writer(new DefaultPrettyPrinter());
 		try {
-			Files.createDirectory(Paths.get("generated"));
+			if(Files.notExists(Paths.get("generated")))
+				Files.createDirectory(Paths.get("generated"));
 			writer.writeValue(Paths.get(DBPATH).toFile(), property);
 		} catch (IOException e) {
 			logger.error("IOException was thrown during writing to JSON database file.", e);

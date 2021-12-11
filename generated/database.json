@@ -14002,10 +14002,10 @@
   }, {
     "attribute" : "全タイプ",
     "name" : "星環世界",
-    "difficulty" : "MASTER+",
+    "difficulty" : "ⓁMASTER+",
     "level" : 29,
     "notes" : 900,
-    "albumType" : "Not-implemented"
+    "albumType" : "ALBUM B"
   }, {
     "attribute" : "全タイプ",
     "name" : "星環世界",
@@ -14268,10 +14268,10 @@
   }, {
     "attribute" : "全タイプ",
     "name" : "Let’s Sail Away！！！",
-    "difficulty" : "MASTER+",
+    "difficulty" : "ⓁMASTER+",
     "level" : 29,
     "notes" : 992,
-    "albumType" : "Not-implemented"
+    "albumType" : "ALBUM C"
   }, {
     "attribute" : "全タイプ",
     "name" : "Take me☆Take you",
@@ -14356,5 +14356,152 @@
     "level" : 27,
     "notes" : 834,
     "albumType" : "ALBUM A"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "星環世界",
+    "difficulty" : "MASTER+",
+    "level" : 29,
+    "notes" : 900,
+    "albumType" : "ALBUM B"
+  }, {
+    "attribute" : "クール",
+    "name" : "＃HE4DSHOT",
+    "difficulty" : "MASTER+",
+    "level" : 29,
+    "notes" : 981,
+    "albumType" : "ALBUM B"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "EVERLASTING",
+    "difficulty" : "DEBUT",
+    "level" : 7,
+    "notes" : 87,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "EVERLASTING",
+    "difficulty" : "REGULAR",
+    "level" : 13,
+    "notes" : 173,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "EVERLASTING",
+    "difficulty" : "PRO",
+    "level" : 18,
+    "notes" : 408,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "EVERLASTING",
+    "difficulty" : "MASTER",
+    "level" : 27,
+    "notes" : 678,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "EVERLASTING",
+    "difficulty" : "MASTER+",
+    "level" : 30,
+    "notes" : 939,
+    "albumType" : "Not-implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "秋風に手を振って",
+    "difficulty" : "LIGHT",
+    "level" : 6,
+    "notes" : 157,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "秋風に手を振って",
+    "difficulty" : "TRICK",
+    "level" : 15,
+    "notes" : 317,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "Halloween♥Code",
+    "difficulty" : "LIGHT",
+    "level" : 6,
+    "notes" : 123,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "Halloween♥Code",
+    "difficulty" : "TRICK",
+    "level" : 17,
+    "notes" : 443,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "EVERLASTING",
+    "difficulty" : "PIANO",
+    "level" : 26,
+    "notes" : 484,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "EVERLASTING",
+    "difficulty" : "FORTE",
+    "level" : 31,
+    "notes" : 846,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "M＠GIC☆",
+    "difficulty" : "WITCH",
+    "level" : 29,
+    "notes" : 803,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "Let’s Sail Away！！！",
+    "difficulty" : "MASTER+",
+    "level" : 30,
+    "notes" : 992,
+    "albumType" : "ALBUM C"
+  }, {
+    "attribute" : "パッション",
+    "name" : "14平米にスーベニア",
+    "difficulty" : "MASTER+",
+    "level" : 29,
+    "notes" : 988,
+    "albumType" : "Not-implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "キセキの証",
+    "difficulty" : "DEBUT",
+    "level" : 6,
+    "notes" : 87,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "キセキの証",
+    "difficulty" : "REGULAR",
+    "level" : 11,
+    "notes" : 149,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "キセキの証",
+    "difficulty" : "PRO",
+    "level" : 16,
+    "notes" : 332,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "キセキの証",
+    "difficulty" : "MASTER",
+    "level" : 24,
+    "notes" : 443,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "キセキの証",
+    "difficulty" : "MASTER+",
+    "level" : 27,
+    "notes" : 500,
+    "albumType" : "Not-implemented"
   } ]
 }
