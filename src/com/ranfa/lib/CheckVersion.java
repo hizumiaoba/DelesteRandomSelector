@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ranfa.main.DelesteRandomSelector;
-import com.sun.javafx.sg.prism.web.NGWebView;
 
 public class CheckVersion {
 
