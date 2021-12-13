@@ -9,12 +9,13 @@ import java.util.ResourceBundle;
 public enum Messages {
 
 	MSGCalcStart,
-	MSGDatabaseNotExist;
+	MSGDatabaseNotExist,
+	MSGAlbumTypeBeingCalculated;
 
 	@Override
 	public String toString() {
 		try {
-			return ResourceBundle.getBundle("com.ranfa.languages.List", Locale.getDefault()).getString(name());
+			return ResourceBundle.getBundle("com.ranfa.languages.List", Locale.getDefault()).getString(this.name());
 		} catch(Exception e) {
 			e.printStackTrace();
 			System.exit(-1);
