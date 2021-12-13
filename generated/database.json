@@ -13729,10 +13729,10 @@
   }, {
     "attribute" : "キュート",
     "name" : "Secret Mirage",
-    "difficulty" : "MASTER+",
+    "difficulty" : "ⓁMASTER+",
     "level" : 28,
     "notes" : 757,
-    "albumType" : "Not-implemented"
+    "albumType" : "ALBUM A"
   }, {
     "attribute" : "キュート",
     "name" : "とんでいっちゃいたいの",
@@ -14503,5 +14503,19 @@
     "level" : 27,
     "notes" : 500,
     "albumType" : "Not-implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "Secret Mirage",
+    "difficulty" : "MASTER+",
+    "level" : 28,
+    "notes" : 759,
+    "albumType" : "ALBUM A"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "Shine！！",
+    "difficulty" : "MASTER+",
+    "level" : 30,
+    "notes" : 977,
+    "albumType" : "ALBUM A"
   } ]
 }

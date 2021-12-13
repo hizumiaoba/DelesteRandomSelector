@@ -1,6 +1,6 @@
 package test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Locale;
 
@@ -19,24 +19,24 @@ public class LanguageTest {
 	@Test
 	public void jpTest() {
 		// Set locale
-		Locale.setDefault(jp);
+		Locale.setDefault(this.jp);
 
 		// asserts
-		assertEquals("開始！", Messages.MSGCalcStart.toString());
+		assertTrue(Messages.MSGCalcStart.toString().equals("開始！"));
 	}
 
 	@Test
 	public void enTest() {
 		//set locale
-		Locale.setDefault(us);
+		Locale.setDefault(this.us);
 
 		// asserts
-		assertEquals("Start!", Messages.MSGCalcStart.toString());
+		assertTrue(Messages.MSGCalcStart.toString().equals("Start!"));
 	}
 
 	@After
 	public void revertDefault() {
-		Locale.setDefault(defaultLocale);
+		Locale.setDefault(this.defaultLocale);
 	}
 
 }

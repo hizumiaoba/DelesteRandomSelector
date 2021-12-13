@@ -8,7 +8,8 @@ import java.util.ResourceBundle;
  */
 public enum Messages {
 
-	MSGCalcStart;
+	MSGCalcStart,
+	MSGDatabaseNotExist;
 
 	@Override
 	public String toString() {
