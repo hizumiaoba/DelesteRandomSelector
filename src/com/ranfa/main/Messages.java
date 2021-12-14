@@ -10,7 +10,8 @@ public enum Messages {
 
 	MSGCalcStart,
 	MSGDatabaseNotExist,
-	MSGAlbumTypeBeingCalculated;
+	MSGAlbumTypeBeingCalculated,
+	MSGNarrowingDownSongs;
 
 	@Override
 	public String toString() {

@@ -25,6 +25,7 @@ public class LanguageTest {
 		assertTrue(Messages.MSGCalcStart.toString().equals("開始！"));
 		assertTrue(Messages.MSGDatabaseNotExist.toString().equals("楽曲データベースが見つかりませんでした。自動的に作成されます…\n注意：初回起動ではなく、かつ、Jarファイルと同じ階層に\"database.json\"というファイルが存在するにも関わらず\nこのポップアップが出た場合、開発者までご一報ください。\nGithub URL: https://github.com/hizumiaoba/DelesteRandomSelector/issues"));
 		assertTrue(Messages.MSGAlbumTypeBeingCalculated.toString().equals("計算中..."));
+		assertTrue(Messages.MSGNarrowingDownSongs.toString().equals("<html><body>楽曲<br>絞り込み</body></html>"));
 	}
 
 	@Test
@@ -36,6 +37,7 @@ public class LanguageTest {
 		assertTrue(Messages.MSGCalcStart.toString().equals("Start!"));
 		assertTrue(Messages.MSGDatabaseNotExist.toString().equals("Music database does not exist.\nIt will be automatically created.\nATTENTION:There is the JSON file named \"database.json\" in the same directory which executable is contained and you see this pop up,\nPlease contact the Developer.\nGithub URL: https://github.com/hizumiaoba/DelesteRandomSelector/issues"));
 		assertTrue(Messages.MSGAlbumTypeBeingCalculated.toString().equals("Simulating..."));
+		assertTrue(Messages.MSGNarrowingDownSongs.toString().equals("<html><body>Narrow down<br>songs</body></html>"));
 	}
 
 	@After

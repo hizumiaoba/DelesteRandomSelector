@@ -3,8 +3,6 @@ package com.ranfa.main;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -46,7 +44,7 @@ import com.ranfa.lib.Version;
 @Version(major = 2, minor = 0, patch = 3)
 public class DelesteRandomSelector extends JFrame {
 
-	private static ArrayList<Song> selectedSongsList = new ArrayList<Song>();
+	private static ArrayList<Song> selectedSongsList = new ArrayList<>();
 
 	private JPanel contentPane;
 	private JPanel panelNorth;
@@ -74,22 +72,19 @@ public class DelesteRandomSelector extends JFrame {
 	private JScrollPane scrollPane;
 	private CompletableFuture<Void> softwareUpdateFuture = null;
 	private CompletableFuture<Void> albumTypeEstimateFuture = null;
-	private String albumType = "計算中";
+	private String albumType = Messages.MSGAlbumTypeBeingCalculated.toString();
 	private Logger logger = LoggerFactory.getLogger(DelesteRandomSelector.class);
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					DelesteRandomSelector frame = new DelesteRandomSelector();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+		EventQueue.invokeLater(() -> {
+			try {
+				DelesteRandomSelector frame = new DelesteRandomSelector();
+				frame.setVisible(true);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		});
 	}
@@ -105,7 +100,7 @@ public class DelesteRandomSelector extends JFrame {
 	public DelesteRandomSelector() {
 		boolean isFirst = !Scraping.databaseExists();
 		if(isFirst) {
-			JOptionPane.showMessageDialog(this, "楽曲データベースが見つかりませんでした。自動的に作成されます…\n注意：初回起動ではなく、かつ、Jarファイルと同じ階層に\"database.json\"というファイルが存在するにも関わらず\nこのポップアップが出た場合、開発者までご一報ください。\nGithub URL: https://github.com/hizumiaoba/DelesteRandomSelector/issues");
+			JOptionPane.showMessageDialog(this, Messages.MSGDatabaseNotExist.toString());
 			if(!Scraping.writeToJson(Scraping.getWholeData())) {
 				JOptionPane.showMessageDialog(this, "Exception:NullPointerException\nCannot Keep up! Please re-download this Application!");
 				throw new NullPointerException("FATAL: cannot continue!");
@@ -118,37 +113,37 @@ public class DelesteRandomSelector extends JFrame {
 			JOptionPane.showMessageDialog(this, "Exception:NullPointerException\nCannot Keep up! Please re-download this Application!");
 			throw new NullPointerException("FATAL: cannot continue!");
 		}
-		logger.debug("Loading settings...");
-		property.setCheckLibraryUpdates(Settings.needToCheckLibraryUpdates());
-		property.setCheckVersion(Settings.needToCheckVersion());
-		property.setWindowWidth(Settings.getWindowWidth());
-		property.setWindowHeight(Settings.getWindowHeight());
-		property.setSongLimit(Settings.getSongsLimit());
-		property.setSaveScoreLog(Settings.saveScoreLog());
-		logger.debug("Load settings done.");
-		logger.debug("Version check: {}", property.isCheckVersion());
-		logger.debug("Library update check: {}", property.isCheckLibraryUpdates());
-		logger.debug("Window Width: {}", property.getWindowWidth());
-		logger.debug("Window Height: {}", property.getWindowHeight());
-		logger.debug("Song Limit: {}", property.getSongLimit());
-		logger.debug("SaveScoreLog: {}", property.isSaveScoreLog());
+		this.logger.debug("Loading settings...");
+		this.property.setCheckLibraryUpdates(Settings.needToCheckLibraryUpdates());
+		this.property.setCheckVersion(Settings.needToCheckVersion());
+		this.property.setWindowWidth(Settings.getWindowWidth());
+		this.property.setWindowHeight(Settings.getWindowHeight());
+		this.property.setSongLimit(Settings.getSongsLimit());
+		this.property.setSaveScoreLog(Settings.saveScoreLog());
+		this.logger.debug("Load settings done.");
+		this.logger.debug("Version check: {}", this.property.isCheckVersion());
+		this.logger.debug("Library update check: {}", this.property.isCheckLibraryUpdates());
+		this.logger.debug("Window Width: {}", this.property.getWindowWidth());
+		this.logger.debug("Window Height: {}", this.property.getWindowHeight());
+		this.logger.debug("Song Limit: {}", this.property.getSongLimit());
+		this.logger.debug("SaveScoreLog: {}", this.property.isSaveScoreLog());
 		EstimateAlbumTypeCycle.Initialization();
 		if(Files.exists(Paths.get("generated/albumCycle.json"))) {
-			albumType = EstimateAlbumTypeCycle.getCurrentCycle();
+			this.albumType = EstimateAlbumTypeCycle.getCurrentCycle();
 		}
-		if(property.isCheckVersion()) {
-			softwareUpdateFuture = CompletableFuture.runAsync(() -> CheckVersion.needToBeUpdated(), es);
+		if(this.property.isCheckVersion()) {
+			this.softwareUpdateFuture = CompletableFuture.runAsync(() -> CheckVersion.needToBeUpdated(), es);
 		}
 		BiConsumer<ArrayList<Song>, ArrayList<Song>> updateConsumer = (list1, list2) -> {
-			logger.info("Checking database updates...");
+			this.logger.info("Checking database updates...");
 			if(list1.size() > list2.size()) {
 				long time = System.currentTimeMillis();
-				logger.info("{} Update detected.", (list1.size() - list2.size()));
+				this.logger.info("{} Update detected.", (list1.size() - list2.size()));
 				Scraping.writeToJson(list1);
-				logger.info("Update completed in {} ms", (System.currentTimeMillis() - time));
-				logger.info("Updated database size: {}", list1.size());
+				this.logger.info("Update completed in {} ms", (System.currentTimeMillis() - time));
+				this.logger.info("Updated database size: {}", list1.size());
 			} else {
-				logger.info("database is up-to-date.");
+				this.logger.info("database is up-to-date.");
 			}
 		};
 		Runnable setEnabled = () -> {
@@ -158,241 +153,230 @@ public class DelesteRandomSelector extends JFrame {
 				// TODO 自動生成された catch ブロック
 				e1.printStackTrace();
 			}
-			btnImport.setEnabled(true);
-			btnImport.setText("<html><body>楽曲<br>絞り込み</body></html>");
+			this.btnImport.setEnabled(true);
+			this.btnImport.setText(Messages.MSGNarrowingDownSongs.toString());
 		};
-		getWholeDataFuture.thenAcceptAsync(list -> logger.info("Scraping data size:" + list.size()), es);
-		getFromJsonFuture.thenAcceptAsync(list -> logger.info("Currently database size:" + list.size()), es);
-		if(property.isCheckLibraryUpdates()) {
+		getWholeDataFuture.thenAcceptAsync(list -> this.logger.info("Scraping data size:" + list.size()), es);
+		getFromJsonFuture.thenAcceptAsync(list -> this.logger.info("Currently database size:" + list.size()), es);
+		if(this.property.isCheckLibraryUpdates()) {
 			CompletableFuture<Void> updatedFuture = getWholeDataFuture.thenAcceptBothAsync(getFromJsonFuture, updateConsumer, es);
 			updatedFuture.thenRunAsync(setEnabled, es);
 		}
-		logger.debug("Version: {}", CheckVersion.getVersion());
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, property.getWindowWidth(), property.getWindowHeight());
-		// setBounds(100, 100, 640, 360);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(new BorderLayout(0, 0));
+		this.logger.debug("Version: {}", CheckVersion.getVersion());
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setBounds(100, 100, this.property.getWindowWidth(), this.property.getWindowHeight());
+		// this.setBounds(100, 100, 640, 360);
+		this.contentPane = new JPanel();
+		this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		this.setContentPane(this.contentPane);
+		this.contentPane.setLayout(new BorderLayout(0, 0));
 
-		panelNorth = new JPanel();
-		contentPane.add(panelNorth, BorderLayout.NORTH);
-		panelNorth.setLayout(new FormLayout(new ColumnSpec[] {
+		this.panelNorth = new JPanel();
+		this.contentPane.add(this.panelNorth, BorderLayout.NORTH);
+		this.panelNorth.setLayout(new FormLayout(new ColumnSpec[] {
 				ColumnSpec.decode("max(302dlu;default)"),
 				FormSpecs.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("40px"),},
-			new RowSpec[] {
-				RowSpec.decode("20px"),}));
+				new RowSpec[] {
+						RowSpec.decode("20px"),}));
 
-		labelTitle = new JLabel("デレステ課題曲セレクター");
-		labelTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 16));
-		panelNorth.add(labelTitle, "1, 1, center, top");
+		this.labelTitle = new JLabel("デレステ課題曲セレクター");
+		this.labelTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 16));
+		this.panelNorth.add(this.labelTitle, "1, 1, center, top");
 
-		labelVersion = new JLabel(CheckVersion.getVersion());
-		labelVersion.setFont(new Font("SansSerif", Font.BOLD, 12));
-		panelNorth.add(labelVersion, "3, 1, right, top");
+		this.labelVersion = new JLabel(CheckVersion.getVersion());
+		this.labelVersion.setFont(new Font("SansSerif", Font.BOLD, 12));
+		this.panelNorth.add(this.labelVersion, "3, 1, right, top");
 
-		panelWest = new JPanel();
-		contentPane.add(panelWest, BorderLayout.WEST);
-		panelWest.setLayout(new FormLayout(new ColumnSpec[] {
+		this.panelWest = new JPanel();
+		this.contentPane.add(this.panelWest, BorderLayout.WEST);
+		this.panelWest.setLayout(new FormLayout(new ColumnSpec[] {
 				FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 				ColumnSpec.decode("112px:grow"),},
-			new RowSpec[] {
-				FormSpecs.LINE_GAP_ROWSPEC,
-				RowSpec.decode("19px"),
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("max(12dlu;default)"),
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("max(12dlu;default)"),
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("12dlu"),
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("max(12dlu;default)"),
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("max(12dlu;default)"),
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("max(12dlu;default)"),
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("max(52dlu;default)"),}));
+				new RowSpec[] {
+						FormSpecs.LINE_GAP_ROWSPEC,
+						RowSpec.decode("19px"),
+						FormSpecs.RELATED_GAP_ROWSPEC,
+						RowSpec.decode("max(12dlu;default)"),
+						FormSpecs.RELATED_GAP_ROWSPEC,
+						RowSpec.decode("max(12dlu;default)"),
+						FormSpecs.RELATED_GAP_ROWSPEC,
+						RowSpec.decode("12dlu"),
+						FormSpecs.RELATED_GAP_ROWSPEC,
+						RowSpec.decode("max(12dlu;default)"),
+						FormSpecs.RELATED_GAP_ROWSPEC,
+						RowSpec.decode("max(12dlu;default)"),
+						FormSpecs.RELATED_GAP_ROWSPEC,
+						RowSpec.decode("max(12dlu;default)"),
+						FormSpecs.RELATED_GAP_ROWSPEC,
+						RowSpec.decode("max(52dlu;default)"),}));
 
-		labelDifficulty = new JLabel("難易度選択");
-		labelDifficulty.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-		panelWest.add(labelDifficulty, "2, 2, center, default");
+		this.labelDifficulty = new JLabel("難易度選択");
+		this.labelDifficulty.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+		this.panelWest.add(this.labelDifficulty, "2, 2, center, default");
 
-		comboDifficultySelect = new JComboBox();
-		comboDifficultySelect.setFont(new Font("Dialog", Font.BOLD, 12));
-		comboDifficultySelect.setModel(new DefaultComboBoxModel(new String[] {"指定なし", "DEBUT", "REGULAR", "PRO", "MASTER", "MASTER+", "ⓁMASTER+", "LIGHT", "TRICK", "PIANO", "FORTE", "WITCH"}));
-		panelWest.add(comboDifficultySelect, "2, 4, fill, default");
+		this.comboDifficultySelect = new JComboBox();
+		this.comboDifficultySelect.setFont(new Font("Dialog", Font.BOLD, 12));
+		this.comboDifficultySelect.setModel(new DefaultComboBoxModel(new String[] {"指定なし", "DEBUT", "REGULAR", "PRO", "MASTER", "MASTER+", "ⓁMASTER+", "LIGHT", "TRICK", "PIANO", "FORTE", "WITCH"}));
+		this.panelWest.add(this.comboDifficultySelect, "2, 4, fill, default");
 
-				comboAttribute = new JComboBox();
-				comboAttribute.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-				comboAttribute.setModel(new DefaultComboBoxModel(new String[] {"指定なし", "全タイプ", "キュート", "クール", "パッション"}));
-				panelWest.add(comboAttribute, "2, 6, fill, default");
+		this.comboAttribute = new JComboBox();
+		this.comboAttribute.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+		this.comboAttribute.setModel(new DefaultComboBoxModel(new String[] {"指定なし", "全タイプ", "キュート", "クール", "パッション"}));
+		this.panelWest.add(this.comboAttribute, "2, 6, fill, default");
 
-				labelLevel = new JLabel("楽曲Lv");
-				labelLevel.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-				panelWest.add(labelLevel, "2, 8, center, default");
+		this.labelLevel = new JLabel("楽曲Lv");
+		this.labelLevel.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+		this.panelWest.add(this.labelLevel, "2, 8, center, default");
 
-				spinnerLevel = new JSpinner();
-				panelWest.add(spinnerLevel, "2, 10");
+		this.spinnerLevel = new JSpinner();
+		this.panelWest.add(this.spinnerLevel, "2, 10");
 
-				checkLessLv = new JCheckBox("指定Lv以下");
-				checkLessLv.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-				panelWest.add(checkLessLv, "2, 12");
+		this.checkLessLv = new JCheckBox("指定Lv以下");
+		this.checkLessLv.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+		this.panelWest.add(this.checkLessLv, "2, 12");
 
-				checkMoreLv = new JCheckBox("指定Lv以上");
-				checkMoreLv.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-				panelWest.add(checkMoreLv, "2, 14");
+		this.checkMoreLv = new JCheckBox("指定Lv以上");
+		this.checkMoreLv.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+		this.panelWest.add(this.checkMoreLv, "2, 14");
 
-				labelLvCaution = new JLabel("<html><body>※以下以上両方にチェックをつけることで指定レベルのみ絞り込むことができます</body></html>");
-				labelLvCaution.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-				panelWest.add(labelLvCaution, "2, 16, fill, fill");
+		this.labelLvCaution = new JLabel("<html><body>※以下以上両方にチェックをつけることで指定レベルのみ絞り込むことができます</body></html>");
+		this.labelLvCaution.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+		this.panelWest.add(this.labelLvCaution, "2, 16, fill, fill");
 
-		panelEast = new JPanel();
-		contentPane.add(panelEast, BorderLayout.EAST);
-		panelEast.setLayout(new FormLayout(new ColumnSpec[] {
+		this.panelEast = new JPanel();
+		this.contentPane.add(this.panelEast, BorderLayout.EAST);
+		this.panelEast.setLayout(new FormLayout(new ColumnSpec[] {
 				ColumnSpec.decode("98px"),},
-			new RowSpec[] {
-				RowSpec.decode("26px"),
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("max(36dlu;default)"),
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				FormSpecs.DEFAULT_ROWSPEC,
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("max(30dlu;default)"),
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("max(15dlu;default)"),
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("max(11dlu;default)"),
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				FormSpecs.DEFAULT_ROWSPEC,
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				FormSpecs.DEFAULT_ROWSPEC,
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				FormSpecs.DEFAULT_ROWSPEC,}));
+				new RowSpec[] {
+						RowSpec.decode("26px"),
+						FormSpecs.RELATED_GAP_ROWSPEC,
+						RowSpec.decode("max(36dlu;default)"),
+						FormSpecs.RELATED_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.RELATED_GAP_ROWSPEC,
+						RowSpec.decode("max(30dlu;default)"),
+						FormSpecs.RELATED_GAP_ROWSPEC,
+						RowSpec.decode("max(15dlu;default)"),
+						FormSpecs.RELATED_GAP_ROWSPEC,
+						RowSpec.decode("max(11dlu;default)"),
+						FormSpecs.RELATED_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.RELATED_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.RELATED_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC,}));
 
-		btnImport = new JButton("<html><body>データベース<br>更新中…</body></html>");
-		btnImport.setEnabled(false);
-		btnImport.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				ArrayList<Song> fromJson = Scraping.getFromJson();
-					ArrayList<Song> specificlevelList = Scraping.getSpecificLevelSongs(fromJson, (Integer)spinnerLevel.getValue(), checkLessLv.isSelected(), checkMoreLv.isSelected());
-					ArrayList<Song> specificDifficultyList = Scraping.getSpecificDifficultySongs(specificlevelList, comboDifficultySelect.getSelectedItem().toString());
-					ArrayList<Song> specificAttributeList = Scraping.getSpecificAttributeSongs(specificDifficultyList, comboAttribute.getSelectedItem().toString());
-					ArrayList<Song> specificTypeList = Scraping.getSpecificAlbumTypeSongs(specificAttributeList, EstimateAlbumTypeCycle.getCurrentCycle());
-					if(!selectedSongsList.isEmpty())
-					selectedSongsList.clear();
-				selectedSongsList.addAll((comboDifficultySelect.getSelectedItem().equals(Scraping.MASTERPLUS) || comboDifficultySelect.getSelectedItem().equals(Scraping.LEGACYMASTERPLUS)) ? specificTypeList : specificAttributeList);
-				logger.info("Songs are selected.We are Ready to go.");
-				JOptionPane.showMessageDialog(null, "絞り込み完了！「開始」をクリックすることで選曲できます！");
+		this.btnImport = new JButton("<html><body>データベース<br>更新中…</body></html>");
+		this.btnImport.setEnabled(false);
+		this.btnImport.addActionListener(e -> {
+			ArrayList<Song> fromJson = Scraping.getFromJson();
+			ArrayList<Song> specificlevelList = Scraping.getSpecificLevelSongs(fromJson, (Integer)DelesteRandomSelector.this.spinnerLevel.getValue(), DelesteRandomSelector.this.checkLessLv.isSelected(), DelesteRandomSelector.this.checkMoreLv.isSelected());
+			ArrayList<Song> specificDifficultyList = Scraping.getSpecificDifficultySongs(specificlevelList, DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().toString());
+			ArrayList<Song> specificAttributeList = Scraping.getSpecificAttributeSongs(specificDifficultyList, DelesteRandomSelector.this.comboAttribute.getSelectedItem().toString());
+			ArrayList<Song> specificTypeList = Scraping.getSpecificAlbumTypeSongs(specificAttributeList, EstimateAlbumTypeCycle.getCurrentCycle());
+			if(!selectedSongsList.isEmpty()) {
+				selectedSongsList.clear();
 			}
+			selectedSongsList.addAll((DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().equals(Scraping.MASTERPLUS) || DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().equals(Scraping.LEGACYMASTERPLUS)) ? specificTypeList : specificAttributeList);
+			DelesteRandomSelector.this.logger.info("Songs are selected.We are Ready to go.");
+			JOptionPane.showMessageDialog(null, "絞り込み完了！「開始」をクリックすることで選曲できます！");
 		});
-		btnImport.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-		panelEast.add(btnImport, "1, 3, fill, fill");
+		this.btnImport.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+		this.panelEast.add(this.btnImport, "1, 3, fill, fill");
 
-		btnStart = new JButton("開始！");
-		btnStart.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Random random = new Random(System.currentTimeMillis());
-				String paneString = "";
-				integratorArray = new String[property.getSongLimit()];
-				for(int i = 0; i < property.getSongLimit(); i++) {
-					int randomInt = random.nextInt(selectedSongsList.size());
-					String typeString = comboDifficultySelect.getSelectedItem().equals(Scraping.MASTERPLUS) || comboDifficultySelect.getSelectedItem().equals(Scraping.LEGACYMASTERPLUS) ? EstimateAlbumTypeCycle.getCurrentCycle() : "";
-					paneString = paneString + (i + 1) + "曲目： " + selectedSongsList.get(randomInt).getAttribute() + " [" + selectedSongsList.get(randomInt).getDifficulty() + "]「" + selectedSongsList.get(randomInt).getName() + "」！(Lv:" + selectedSongsList.get(randomInt).getLevel() + " " + typeString + ")\n\n";
-					integratorArray[i] = selectedSongsList.get(randomInt).getName() + "(Lv" + selectedSongsList.get(randomInt).getLevel() + ")\n";
+		this.btnStart = new JButton(Messages.MSGCalcStart.toString());
+		this.btnStart.addActionListener(e -> {
+			Random random = new Random(System.currentTimeMillis());
+			String paneString = "";
+			DelesteRandomSelector.this.integratorArray = new String[DelesteRandomSelector.this.property.getSongLimit()];
+			for(int i = 0; i < DelesteRandomSelector.this.property.getSongLimit(); i++) {
+				int randomInt = random.nextInt(selectedSongsList.size());
+				String typeString = DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().equals(Scraping.MASTERPLUS) || DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().equals(Scraping.LEGACYMASTERPLUS) ? EstimateAlbumTypeCycle.getCurrentCycle() : "";
+				paneString = paneString + (i + 1) + "曲目： " + selectedSongsList.get(randomInt).getAttribute() + " [" + selectedSongsList.get(randomInt).getDifficulty() + "]「" + selectedSongsList.get(randomInt).getName() + "」！(Lv:" + selectedSongsList.get(randomInt).getLevel() + " " + typeString + ")\n\n";
+				DelesteRandomSelector.this.integratorArray[i] = selectedSongsList.get(randomInt).getName() + "(Lv" + selectedSongsList.get(randomInt).getLevel() + ")\n";
+			}
+			paneString = paneString + "この" + DelesteRandomSelector.this.property.getSongLimit() + "曲をプレイしましょう！！！";
+			DelesteRandomSelector.this.textArea.setText(paneString);
+			DelesteRandomSelector.this.integratorBool = true;
+			DelesteRandomSelector.this.logger.info("show up completed.");
+		});
+		this.btnStart.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+		this.panelEast.add(this.btnStart, "1, 7, fill, fill");
+
+		this.btnTwitterIntegration = new JButton("Twitter連携");
+		this.btnTwitterIntegration.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 11));
+		this.btnTwitterIntegration.addActionListener(e -> {
+			boolean authorizationStatus = TwitterIntegration.authorization();
+			String updatedStatus = "デレステ課題曲セレクターで\n";
+			int lengthLimit = updatedStatus.length();
+			boolean isBroken = false;
+			if(!DelesteRandomSelector.this.integratorBool) {
+				JOptionPane.showMessageDialog(null, "ちひろ「まだプレイを始めていないみたいですね」");
+				return;
+			}
+			for (String element : DelesteRandomSelector.this.integratorArray) {
+				updatedStatus = updatedStatus + element;
+				lengthLimit += element.length();
+				if(lengthLimit > 69) {
+					isBroken = true;
+					break;
 				}
-				paneString = paneString + "この" + property.getSongLimit() + "曲をプレイしましょう！！！";
-				textArea.setText(paneString);
-				integratorBool = true;
-				logger.info("show up completed.");
+			}
+			if(isBroken) {
+				updatedStatus = updatedStatus + "…その他数曲\nをプレイしました！\n#DelesteRandomSelector #デレステ ";
+			} else {
+				updatedStatus = updatedStatus + "をプレイしました！\n#DelesteRandomSelector #デレステ ";
+			}
+			DelesteRandomSelector.this.logger.info("status message constructed.");
+			lengthLimit = updatedStatus.length();
+			if(authorizationStatus) {
+				int option = JOptionPane.showConfirmDialog(null, "Twitterへ以下の内容を投稿します。よろしいですか？\n\n" + updatedStatus + "\n\n文字数：" + lengthLimit);
+				DelesteRandomSelector.this.logger.info("user seletced: " + option);
+				switch(option) {
+				case JOptionPane.OK_OPTION:
+					TwitterIntegration.PostTwitter(updatedStatus);
+					DelesteRandomSelector.this.logger.info("Success to update the status.");
+					JOptionPane.showMessageDialog(null, "投稿が完了しました。");
+					break;
+				case JOptionPane.NO_OPTION:
+					DelesteRandomSelector.this.logger.info("There is no will to post.");
+					break;
+				case JOptionPane.CANCEL_OPTION:
+					DelesteRandomSelector.this.logger.info("The Operation was canceled by user.");
+					break;
+				default:
+					break;
+				}
+			} else {
+				DelesteRandomSelector.this.logger.info("seems to reject the permission.it should need try again.");
 			}
 		});
-		btnStart.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-		panelEast.add(btnStart, "1, 7, fill, fill");
+		this.panelEast.add(this.btnTwitterIntegration, "1, 11");
 
-				btnTwitterIntegration = new JButton("Twitter連携");
-				btnTwitterIntegration.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 11));
-				btnTwitterIntegration.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						boolean authorizationStatus = TwitterIntegration.authorization();
-						String updatedStatus = "デレステ課題曲セレクターで\n";
-						int lengthLimit = updatedStatus.length();
-						boolean isBroken = false;
-						if(!integratorBool) {
-							JOptionPane.showMessageDialog(null, "ちひろ「まだプレイを始めていないみたいですね」");
-							return;
-						}
-						for(int i = 0; i < integratorArray.length; i++) {
-							updatedStatus = updatedStatus + integratorArray[i];
-							lengthLimit += integratorArray[i].length();
-							if(lengthLimit > 69) {
-								isBroken = true;
-								break;
-							}
-						}
-						if(isBroken) {
-							updatedStatus = updatedStatus + "…その他数曲\nをプレイしました！\n#DelesteRandomSelector #デレステ ";
-						} else {
-							updatedStatus = updatedStatus + "をプレイしました！\n#DelesteRandomSelector #デレステ ";
-						}
-						logger.info("status message constructed.");
-						lengthLimit = updatedStatus.length();
-						if(authorizationStatus) {
-							int option = JOptionPane.showConfirmDialog(null, "Twitterへ以下の内容を投稿します。よろしいですか？\n\n" + updatedStatus + "\n\n文字数：" + lengthLimit);
-							logger.info("user seletced: " + option);
-							switch(option) {
-								case JOptionPane.OK_OPTION:
-									TwitterIntegration.PostTwitter(updatedStatus);
-									logger.info("Success to update the status.");
-									JOptionPane.showMessageDialog(null, "投稿が完了しました。");
-									break;
-								case JOptionPane.NO_OPTION:
-									logger.info("There is no will to post.");
-									break;
-								case JOptionPane.CANCEL_OPTION:
-									logger.info("The Operation was canceled by user.");
-									break;
-								default:
-									break;
-							}
-						} else {
-							logger.info("seems to reject the permission.it should need try again.");
-						}
-					}
-				});
-				panelEast.add(btnTwitterIntegration, "1, 11");
+		this.btnExit = new JButton("終了");
+		this.btnExit.addActionListener(e -> {
+			if(DelesteRandomSelector.this.softwareUpdateFuture.isDone() || DelesteRandomSelector.this.albumTypeEstimateFuture.isDone()) {
+				DelesteRandomSelector.this.logger.info("Requested Exit by Button");
+				System.exit(0);
+			} else {
+				JOptionPane.showMessageDialog(null, "内部更新処理が完了していません。少し待ってからやり直してください。");
+			}
+		});
+		this.btnExit.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+		this.panelEast.add(this.btnExit, "1, 13");
 
-								btnExit = new JButton("終了");
-								btnExit.addActionListener(new ActionListener() {
-									@Override
-									public void actionPerformed(ActionEvent e) {
-										if(softwareUpdateFuture.isDone() || albumTypeEstimateFuture.isDone()) {
-											logger.info("Requested Exit by Button");
-											System.exit(0);
-										} else {
-											JOptionPane.showMessageDialog(null, "内部更新処理が完了していません。少し待ってからやり直してください。");
-										}
-									}
-								});
-								btnExit.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-								panelEast.add(btnExit, "1, 13");
+		this.panelCentre = new JPanel();
+		this.contentPane.add(this.panelCentre, BorderLayout.CENTER);
+		this.panelCentre.setLayout(new BorderLayout(0, 0));
 
-		panelCentre = new JPanel();
-		contentPane.add(panelCentre, BorderLayout.CENTER);
-		panelCentre.setLayout(new BorderLayout(0, 0));
+		this.textArea = new JTextArea();
+		this.textArea.setText("楽曲選択の手順\r\n１．難易度、属性、レベルを選択する\r\n２．「楽曲取り込み」ボタンを押す！\r\n３．「開始」ボタンを押す！\r\n４．選択された楽曲がここに表示されます！\r\n現在設定されている楽曲選択の最大数：" + this.property.getSongLimit() + "\n現在のMASTER+アルバム周期（推定）：" + this.albumType);
+		this.textArea.setEditable(false);
 
-		textArea = new JTextArea();
-		textArea.setText("楽曲選択の手順\r\n１．難易度、属性、レベルを選択する\r\n２．「楽曲取り込み」ボタンを押す！\r\n３．「開始」ボタンを押す！\r\n４．選択された楽曲がここに表示されます！\r\n現在設定されている楽曲選択の最大数：" + property.getSongLimit() + "\n現在のMASTER+アルバム周期（推定）：" + albumType);
-		textArea.setEditable(false);
-
-		scrollPane = new JScrollPane(textArea);
-		panelCentre.add(scrollPane, BorderLayout.CENTER);
-		if(isFirst || !property.isCheckLibraryUpdates()) {
+		this.scrollPane = new JScrollPane(this.textArea);
+		this.panelCentre.add(this.scrollPane, BorderLayout.CENTER);
+		if(isFirst || !this.property.isCheckLibraryUpdates()) {
 			setEnabled.run();
 		}
 	}
