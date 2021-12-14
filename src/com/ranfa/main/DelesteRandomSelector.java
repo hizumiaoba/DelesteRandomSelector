@@ -180,7 +180,7 @@ public class DelesteRandomSelector extends JFrame {
 				new RowSpec[] {
 						RowSpec.decode("20px"),}));
 
-		this.labelTitle = new JLabel("デレステ課題曲セレクター");
+		this.labelTitle = new JLabel(Messages.MSGTitle.toString());
 		this.labelTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 16));
 		this.panelNorth.add(this.labelTitle, "1, 1, center, top");
 
@@ -211,36 +211,36 @@ public class DelesteRandomSelector extends JFrame {
 						FormSpecs.RELATED_GAP_ROWSPEC,
 						RowSpec.decode("max(52dlu;default)"),}));
 
-		this.labelDifficulty = new JLabel("難易度選択");
+		this.labelDifficulty = new JLabel(Messages.MSGSelectDifficulty.toString());
 		this.labelDifficulty.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 		this.panelWest.add(this.labelDifficulty, "2, 2, center, default");
 
 		this.comboDifficultySelect = new JComboBox();
 		this.comboDifficultySelect.setFont(new Font("Dialog", Font.BOLD, 12));
-		this.comboDifficultySelect.setModel(new DefaultComboBoxModel(new String[] {"指定なし", "DEBUT", "REGULAR", "PRO", "MASTER", "MASTER+", "ⓁMASTER+", "LIGHT", "TRICK", "PIANO", "FORTE", "WITCH"}));
+		this.comboDifficultySelect.setModel(new DefaultComboBoxModel(new String[] {Messages.MSGNonSelected.toString(), "DEBUT", "REGULAR", "PRO", "MASTER", "MASTER+", "ⓁMASTER+", "LIGHT", "TRICK", "PIANO", "FORTE", "WITCH"}));
 		this.panelWest.add(this.comboDifficultySelect, "2, 4, fill, default");
 
 		this.comboAttribute = new JComboBox();
 		this.comboAttribute.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-		this.comboAttribute.setModel(new DefaultComboBoxModel(new String[] {"指定なし", "全タイプ", "キュート", "クール", "パッション"}));
+		this.comboAttribute.setModel(new DefaultComboBoxModel(new String[] {Messages.MSGNonSelected.toString(), "全タイプ", "キュート", "クール", "パッション"}));
 		this.panelWest.add(this.comboAttribute, "2, 6, fill, default");
 
-		this.labelLevel = new JLabel("楽曲Lv");
+		this.labelLevel = new JLabel(Messages.MSGSongLevel.toString());
 		this.labelLevel.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 		this.panelWest.add(this.labelLevel, "2, 8, center, default");
 
 		this.spinnerLevel = new JSpinner();
 		this.panelWest.add(this.spinnerLevel, "2, 10");
 
-		this.checkLessLv = new JCheckBox("指定Lv以下");
+		this.checkLessLv = new JCheckBox(Messages.MSGBelowSpecificLevel.toString());
 		this.checkLessLv.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 		this.panelWest.add(this.checkLessLv, "2, 12");
 
-		this.checkMoreLv = new JCheckBox("指定Lv以上");
+		this.checkMoreLv = new JCheckBox(Messages.MSGOverSpecificLevel.toString());
 		this.checkMoreLv.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 		this.panelWest.add(this.checkMoreLv, "2, 14");
 
-		this.labelLvCaution = new JLabel("<html><body>※以下以上両方にチェックをつけることで指定レベルのみ絞り込むことができます</body></html>");
+		this.labelLvCaution = new JLabel(Messages.MSGLevelCheckboxInfo.toString());
 		this.labelLvCaution.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 		this.panelWest.add(this.labelLvCaution, "2, 16, fill, fill");
 
@@ -267,7 +267,7 @@ public class DelesteRandomSelector extends JFrame {
 						FormSpecs.RELATED_GAP_ROWSPEC,
 						FormSpecs.DEFAULT_ROWSPEC,}));
 
-		this.btnImport = new JButton("<html><body>データベース<br>更新中…</body></html>");
+		this.btnImport = new JButton(Messages.MSGUpdatingDatabase.toString());
 		this.btnImport.setEnabled(false);
 		this.btnImport.addActionListener(e -> {
 			ArrayList<Song> fromJson = Scraping.getFromJson();
@@ -280,7 +280,7 @@ public class DelesteRandomSelector extends JFrame {
 			}
 			selectedSongsList.addAll((DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().equals(Scraping.MASTERPLUS) || DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().equals(Scraping.LEGACYMASTERPLUS)) ? specificTypeList : specificAttributeList);
 			DelesteRandomSelector.this.logger.info("Songs are selected.We are Ready to go.");
-			JOptionPane.showMessageDialog(null, "絞り込み完了！「開始」をクリックすることで選曲できます！");
+			JOptionPane.showMessageDialog(null, Messages.MSGCompleteNarrowDown.toString());
 		});
 		this.btnImport.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 		this.panelEast.add(this.btnImport, "1, 3, fill, fill");
@@ -293,10 +293,10 @@ public class DelesteRandomSelector extends JFrame {
 			for(int i = 0; i < DelesteRandomSelector.this.property.getSongLimit(); i++) {
 				int randomInt = random.nextInt(selectedSongsList.size());
 				String typeString = DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().equals(Scraping.MASTERPLUS) || DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().equals(Scraping.LEGACYMASTERPLUS) ? EstimateAlbumTypeCycle.getCurrentCycle() : "";
-				paneString = paneString + (i + 1) + "曲目： " + selectedSongsList.get(randomInt).getAttribute() + " [" + selectedSongsList.get(randomInt).getDifficulty() + "]「" + selectedSongsList.get(randomInt).getName() + "」！(Lv:" + selectedSongsList.get(randomInt).getLevel() + " " + typeString + ")\n\n";
+				paneString = paneString + (i + 1) + Messages.MSGNumberOfSongs.toString() + " " + selectedSongsList.get(randomInt).getAttribute() + " [" + selectedSongsList.get(randomInt).getDifficulty() + "]「" + selectedSongsList.get(randomInt).getName() + "」！(Lv:" + selectedSongsList.get(randomInt).getLevel() + " " + typeString + ")\n\n";
 				DelesteRandomSelector.this.integratorArray[i] = selectedSongsList.get(randomInt).getName() + "(Lv" + selectedSongsList.get(randomInt).getLevel() + ")\n";
 			}
-			paneString = paneString + "この" + DelesteRandomSelector.this.property.getSongLimit() + "曲をプレイしましょう！！！";
+			paneString = paneString + Messages.MSGThisPhrase.toString() + DelesteRandomSelector.this.property.getSongLimit() + Messages.MSGPlayPhrase.toString();
 			DelesteRandomSelector.this.textArea.setText(paneString);
 			DelesteRandomSelector.this.integratorBool = true;
 			DelesteRandomSelector.this.logger.info("show up completed.");
@@ -304,15 +304,15 @@ public class DelesteRandomSelector extends JFrame {
 		this.btnStart.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 		this.panelEast.add(this.btnStart, "1, 7, fill, fill");
 
-		this.btnTwitterIntegration = new JButton("Twitter連携");
+		this.btnTwitterIntegration = new JButton(Messages.MSGTwitterIntegration.toString());
 		this.btnTwitterIntegration.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 11));
 		this.btnTwitterIntegration.addActionListener(e -> {
 			boolean authorizationStatus = TwitterIntegration.authorization();
-			String updatedStatus = "デレステ課題曲セレクターで\n";
+			String updatedStatus = Messages.MSGUsingThisAppPhrase.toString();
 			int lengthLimit = updatedStatus.length();
 			boolean isBroken = false;
 			if(!DelesteRandomSelector.this.integratorBool) {
-				JOptionPane.showMessageDialog(null, "ちひろ「まだプレイを始めていないみたいですね」");
+				JOptionPane.showMessageDialog(null, Messages.MSGNotPlayYet.toString());
 				return;
 			}
 			for (String element : DelesteRandomSelector.this.integratorArray) {
@@ -324,20 +324,20 @@ public class DelesteRandomSelector extends JFrame {
 				}
 			}
 			if(isBroken) {
-				updatedStatus = updatedStatus + "…その他数曲\nをプレイしました！\n#DelesteRandomSelector #デレステ ";
+				updatedStatus = updatedStatus + Messages.MSGTwitterPlayOtherwisePhrase.toString() + "\n#DelesteRandomSelector #デレステ ";
 			} else {
-				updatedStatus = updatedStatus + "をプレイしました！\n#DelesteRandomSelector #デレステ ";
+				updatedStatus = updatedStatus + Messages.MSGTwitterPlayOnlyPhrase.toString() + "\n#DelesteRandomSelector #デレステ ";
 			}
 			DelesteRandomSelector.this.logger.info("status message constructed.");
 			lengthLimit = updatedStatus.length();
 			if(authorizationStatus) {
-				int option = JOptionPane.showConfirmDialog(null, "Twitterへ以下の内容を投稿します。よろしいですか？\n\n" + updatedStatus + "\n\n文字数：" + lengthLimit);
+				int option = JOptionPane.showConfirmDialog(null, Messages.MSGTwitterIntegrationConfirm.toString() + updatedStatus + Messages.MSGStringLength.toString() + lengthLimit);
 				DelesteRandomSelector.this.logger.info("user seletced: " + option);
 				switch(option) {
 				case JOptionPane.OK_OPTION:
 					TwitterIntegration.PostTwitter(updatedStatus);
 					DelesteRandomSelector.this.logger.info("Success to update the status.");
-					JOptionPane.showMessageDialog(null, "投稿が完了しました。");
+					JOptionPane.showMessageDialog(null, Messages.MSGCompletePost.toString());
 					break;
 				case JOptionPane.NO_OPTION:
 					DelesteRandomSelector.this.logger.info("There is no will to post.");
@@ -354,13 +354,13 @@ public class DelesteRandomSelector extends JFrame {
 		});
 		this.panelEast.add(this.btnTwitterIntegration, "1, 11");
 
-		this.btnExit = new JButton("終了");
+		this.btnExit = new JButton(Messages.MSGTerminate.toString());
 		this.btnExit.addActionListener(e -> {
 			if(DelesteRandomSelector.this.softwareUpdateFuture.isDone() || DelesteRandomSelector.this.albumTypeEstimateFuture.isDone()) {
 				DelesteRandomSelector.this.logger.info("Requested Exit by Button");
 				System.exit(0);
 			} else {
-				JOptionPane.showMessageDialog(null, "内部更新処理が完了していません。少し待ってからやり直してください。");
+				JOptionPane.showMessageDialog(null, Messages.MSGInternalYpdateNotDoneYet.toString());
 			}
 		});
 		this.btnExit.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
@@ -371,7 +371,7 @@ public class DelesteRandomSelector extends JFrame {
 		this.panelCentre.setLayout(new BorderLayout(0, 0));
 
 		this.textArea = new JTextArea();
-		this.textArea.setText("楽曲選択の手順\r\n１．難易度、属性、レベルを選択する\r\n２．「楽曲取り込み」ボタンを押す！\r\n３．「開始」ボタンを押す！\r\n４．選択された楽曲がここに表示されます！\r\n現在設定されている楽曲選択の最大数：" + this.property.getSongLimit() + "\n現在のMASTER+アルバム周期（推定）：" + this.albumType);
+		this.textArea.setText(Messages.MSGNarrowDownProcedure.toString() + this.property.getSongLimit() + Messages.MSGCurrentAlbumType.toString() + this.albumType);
 		this.textArea.setEditable(false);
 
 		this.scrollPane = new JScrollPane(this.textArea);
