@@ -11,7 +11,36 @@ public enum Messages {
 	MSGCalcStart,
 	MSGDatabaseNotExist,
 	MSGAlbumTypeBeingCalculated,
-	MSGNarrowingDownSongs;
+	MSGNarrowingDownSongs,
+	MSGTitle,
+	MSGSelectDifficulty,
+	MSGNonSelected,
+	MSGAll,
+	MSGCute,
+	MSGCool,
+	MSGPassion,
+	MSGSongLevel,
+	MSGBelowSpecificLevel,
+	MSGOverSpecificLevel,
+	MSGLevelCheckboxInfo,
+	MSGUpdatingDatabase,
+	MSGCompleteNarrowDown,
+	MSGNumberOfSongs,
+	MSGThisPhrase,
+	MSGPlayPhrase,
+	MSGTwitterIntegration,
+	MSGUsingThisAppPhrase,
+	MSGNotPlayYet,
+	MSGTwitterPlayOtherwisePhrase,
+	MSGTwitterPlayOnlyPhrase,
+	MSGTwitterIntegrationConfirm,
+	MSGStringLength,
+	MSGCompletePost,
+	MSGTerminate,
+	MSGInternalYpdateNotDoneYet,
+	MSGNarrowDownProcedure,
+	MSGCurrentAlbumType;
+
 
 	@Override
 	public String toString() {
