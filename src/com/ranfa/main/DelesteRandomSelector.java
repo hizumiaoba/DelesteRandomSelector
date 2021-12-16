@@ -34,6 +34,7 @@ import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.ranfa.lib.CheckVersion;
 import com.ranfa.lib.EstimateAlbumTypeCycle;
+import com.ranfa.lib.ManualUpdateThreadImpl;
 import com.ranfa.lib.Scraping;
 import com.ranfa.lib.SettingJSONProperty;
 import com.ranfa.lib.Settings;
@@ -74,6 +75,9 @@ public class DelesteRandomSelector extends JFrame {
 	private CompletableFuture<Void> albumTypeEstimateFuture = null;
 	private String albumType = Messages.MSGAlbumTypeBeingCalculated.toString();
 	private Logger logger = LoggerFactory.getLogger(DelesteRandomSelector.class);
+	private ManualUpdateThreadImpl impl;
+	private Thread manualUpdateThread;
+	private JButton btnNewButton;
 
 	/**
 	 * Launch the application.
@@ -163,8 +167,8 @@ public class DelesteRandomSelector extends JFrame {
 		}
 		this.logger.debug("Version: {}", CheckVersion.getVersion());
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setBounds(100, 100, this.property.getWindowWidth(), this.property.getWindowHeight());
-		// this.setBounds(100, 100, 640, 360);
+		// this.setBounds(100, 100, this.property.getWindowWidth(), this.property.getWindowHeight());
+		this.setBounds(100, 100, 640, 360);
 		this.contentPane = new JPanel();
 		this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		this.setContentPane(this.contentPane);
@@ -269,6 +273,11 @@ public class DelesteRandomSelector extends JFrame {
 		this.btnImport = new JButton(Messages.MSGUpdatingDatabase.toString());
 		this.btnImport.setEnabled(false);
 		this.btnImport.addActionListener(e -> {
+			if(this.impl != null) {
+				if(!this.impl.getFlag()) {
+					JOptionPane.showMessageDialog(null, Messages.MSGManualUpdateNotCompleteYet.toString());
+				}
+			}
 			ArrayList<Song> fromJson = Scraping.getFromJson();
 			ArrayList<Song> specificlevelList = Scraping.getSpecificLevelSongs(fromJson, (Integer)DelesteRandomSelector.this.spinnerLevel.getValue(), DelesteRandomSelector.this.checkLessLv.isSelected(), DelesteRandomSelector.this.checkMoreLv.isSelected());
 			ArrayList<Song> specificDifficultyList = Scraping.getSpecificDifficultySongs(specificlevelList, DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().toString());
@@ -351,11 +360,21 @@ public class DelesteRandomSelector extends JFrame {
 				DelesteRandomSelector.this.logger.info("seems to reject the permission.it should need try again.");
 			}
 		});
+
+		this.btnNewButton = new JButton(Messages.MSGManualUpdate.toString());
+		this.btnNewButton.addActionListener(e -> {
+			this.impl = new ManualUpdateThreadImpl();
+			this.manualUpdateThread = new Thread(this.impl);
+			this.manualUpdateThread.setName("ManualUpdate-thread");
+			this.manualUpdateThread.setDaemon(false);
+			this.manualUpdateThread.start();
+		});
+		this.panelEast.add(this.btnNewButton, "1, 9");
 		this.panelEast.add(this.btnTwitterIntegration, "1, 11");
 
 		this.btnExit = new JButton(Messages.MSGTerminate.toString());
 		this.btnExit.addActionListener(e -> {
-			if(DelesteRandomSelector.this.softwareUpdateFuture.isDone() || DelesteRandomSelector.this.albumTypeEstimateFuture.isDone()) {
+			if(DelesteRandomSelector.this.softwareUpdateFuture.isDone() || DelesteRandomSelector.this.albumTypeEstimateFuture.isDone() || !this.impl.getFlag()) {
 				DelesteRandomSelector.this.logger.info("Requested Exit by Button");
 				System.exit(0);
 			} else {

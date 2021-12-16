@@ -37,7 +37,9 @@ public enum Messages {
 	MSGTerminate,
 	MSGInternalYpdateNotDoneYet,
 	MSGNarrowDownProcedure,
-	MSGCurrentAlbumType;
+	MSGCurrentAlbumType,
+	MSGManualUpdate,
+	MSGManualUpdateNotCompleteYet;
 
 
 	@Override

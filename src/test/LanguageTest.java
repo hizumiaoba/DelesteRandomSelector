@@ -50,6 +50,8 @@ public class LanguageTest {
 		assertTrue(Messages.MSGInternalYpdateNotDoneYet.toString().equals("内部更新処理が完了していません。少し待ってからやり直してください。"));
 		assertTrue(Messages.MSGNarrowDownProcedure.toString().equals("楽曲選択の手順\r\n１．難易度、属性、レベルを選択する\r\n２．「楽曲取り込み」ボタンを押す！\r\n３．「開始」ボタンを押す！\r\n４．選択された楽曲がここに表示されます！\r\n現在設定されている楽曲選択の最大数："));
 		assertTrue(Messages.MSGCurrentAlbumType.toString().equals("\n現在のMASTER+アルバム周期（推定）："));
+		assertTrue(Messages.MSGManualUpdate.toString().equals("<html><body>手動更新</body></html>"));
+		assertTrue(Messages.MSGManualUpdateNotCompleteYet.toString().equals("手動更新が完了していません。もうしばらくお待ちください。"));
 	}
 
 	@Test
@@ -86,6 +88,8 @@ public class LanguageTest {
 		assertTrue(Messages.MSGInternalYpdateNotDoneYet.toString().equals("Internal update in progress. Please wait a moment."));
 		assertTrue(Messages.MSGNarrowDownProcedure.toString().equals("How to select songs\r\n1.Select difficulty, attribute, and level.\r\n2.Click [Narrow down songs] button.\r\n3.Click [start!] button.\r\n4.Selected songs will be shown here!\r\nThe maximum number of selected songs:"));
 		assertTrue(Messages.MSGCurrentAlbumType.toString().equals("\nCurrent MASTER+ ALBUM type(based on simulation):"));
+		assertTrue(Messages.MSGManualUpdate.toString().equals("<html><body>Manual<br>Update</body></html>"));
+		assertTrue(Messages.MSGManualUpdateNotCompleteYet.toString().equals("Manual Update has not been finished yet. Please wait a moment."));
 	}
 
 	@After
