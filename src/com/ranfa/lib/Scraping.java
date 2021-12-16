@@ -94,18 +94,18 @@ public class Scraping {
 				tmp.setNotes(notes);
 				if(difficulty.equals(LEGACYMASTERPLUS)) {
 					ArrayList<Album> newTypeList = typeLists.get(MASTERPLUS_TYPE.LEGACYMASTERPLUS.ordinal());
-					for (Album element : newTypeList) {
-						if(element.getSongName().equals(name)) {
-							tmp.setAlbumType(element.getAlbumType());
-						}
-					}
+					newTypeList.stream()
+					.filter(element -> element.getSongName().equals(name))
+					.forEach(element -> {
+						tmp.setAlbumType(element.getAlbumType());
+					});
 				} else if(difficulty.equals(MASTERPLUS)) {
 					ArrayList<Album> legacyTypeList = typeLists.get(MASTERPLUS_TYPE.NEWMASTERPLUS.ordinal());
-					for (Album element : legacyTypeList) {
-						if(element.getSongName().equals(name)) {
-							tmp.setAlbumType(element.getAlbumType());
-						}
-					}
+					legacyTypeList.stream()
+					.filter(element -> element.getSongName().equals(name))
+					.forEach(element -> {
+						tmp.setAlbumType(element.getAlbumType());
+					});
 				} else {
 					tmp.setAlbumType("Not-Implemented");
 				}
