@@ -1,13 +1,12 @@
 package com.ranfa.lib;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.swing.JOptionPane;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ranfa.main.DelesteRandomSelector;
@@ -26,14 +25,8 @@ public class CheckVersion {
 			latestMajor = node.get("major").asInt();
 			latestMinor = node.get("minor").asInt();
 			latestPatch = node.get("patch").asInt();
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			LoggerFactory.getLogger(CheckVersion.class).error("Error while processing version tag.", e);
 		}
 		String newVersion = String.format("v%d.%d.%d", latestMajor, latestMinor, latestPatch);
 		if(latestMajor > getMajorVersion()) {

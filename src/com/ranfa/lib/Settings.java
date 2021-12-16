@@ -6,6 +6,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,6 +32,7 @@ public class Settings {
 
 	// 設定ファイルパス
 	private final static String FILEPATH = "generated/settings.json";
+	private static Logger logger = LoggerFactory.getLogger(Settings.class);
 
 	public static boolean fileExists() {
 		Path path = Paths.get(FILEPATH);
@@ -42,7 +46,7 @@ public class Settings {
 			JsonNode node = mapper.readTree(new File(FILEPATH));
 			res = node.get("checkVersion").asBoolean();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Couldn't read setting file.", e);
 		}
 		return res;
 	}
@@ -54,7 +58,7 @@ public class Settings {
 			JsonNode node = mapper.readTree(new File(FILEPATH));
 			res = node.get("checkLibraryUpdates").asBoolean();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Couldn't read setting file.", e);
 		}
 		return res;
 	}
@@ -66,7 +70,7 @@ public class Settings {
 			JsonNode node = mapper.readTree(new File(FILEPATH));
 			res = node.get("windowWidth").asInt();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Couldn't read setting file.", e);
 		}
 		return res < 1 ? 640 : res;
 	}
@@ -78,7 +82,7 @@ public class Settings {
 			JsonNode node = mapper.readTree(new File(FILEPATH));
 			res = node.get("windowHeight").asInt();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Couldn't read setting file.", e);
 		}
 		return res < 1 ? 360 : res;
 	}
@@ -90,7 +94,7 @@ public class Settings {
 			JsonNode node = mapper.readTree(new File(FILEPATH));
 			res = node.get("songLimit").asInt();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Couldn't read setting file.", e);
 		}
 		return res < 1 ? 3 : res;
 	}
@@ -102,7 +106,7 @@ public class Settings {
 			JsonNode node = mapper.readTree(new File(FILEPATH));
 			res = node.get("saveScoreLog").asBoolean();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Couldn't read setting file.", e);
 		}
 		return res;
 	}
@@ -120,6 +124,7 @@ public class Settings {
 		try {
 			writer.writeValue(Paths.get(FILEPATH).toFile(), property);
 		} catch (IOException e) {
+			logger.error("Couldn't write down setting file.", e);
 			res = false;
 		}
 		return res;

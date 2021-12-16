@@ -35,7 +35,7 @@ public class AlbumTypeEstimate {
 
 	public static ArrayList<ArrayList<Album>> getAlbumType() {
 		long time = System.currentTimeMillis();
-		ArrayList<ArrayList<Album>> res = new ArrayList<ArrayList<Album>>();
+		ArrayList<ArrayList<Album>> res = new ArrayList<>();
 		try {
 			Document document = Jsoup.connect(ALBUM_DATA_URI)
 					.userAgent("Java/DelesteRandomSelector  More Information is available at https://github.com/hizumiaoba/DeresteRandomSelector/")
@@ -50,7 +50,7 @@ public class AlbumTypeEstimate {
 			res.add(fetchNew.get());
 			res.add(fetchLegacy.get());
 		} catch (IOException | InterruptedException | ExecutionException e) {
-			e.printStackTrace();
+			logger.warn("Exception was thrown while fetching Album type.", e);
 		}
 		logger.info("Album type fetched in {} ms", (System.currentTimeMillis() - time));
 		return res;
@@ -59,14 +59,14 @@ public class AlbumTypeEstimate {
 	private static ArrayList<Album> fetch(Elements elements) {
 		ArrayList<Album> res = new ArrayList<>();
 		elements.stream()
-			.forEach(element -> {
-				String type = element.select("td").get(0).text().isEmpty() ? "Not-implemented" : element.select("td").get(0).text();
-				String songName = element.select("td").get(2).text();
-				Album tmp = new Album();
-				tmp.setSongName(songName);
-				tmp.setAlbumType(type);
-				res.add(tmp);
-			});
+		.forEach(element -> {
+			String type = element.select("td").get(0).text().isEmpty() ? "Not-implemented" : element.select("td").get(0).text();
+			String songName = element.select("td").get(2).text();
+			Album tmp = new Album();
+			tmp.setSongName(songName);
+			tmp.setAlbumType(type);
+			res.add(tmp);
+		});
 		return res;
 	}
 }

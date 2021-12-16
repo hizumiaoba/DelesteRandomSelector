@@ -32,8 +32,9 @@ public class EstimateAlbumTypeCycle {
 	public final static String ALBUM_C = "ALBUM C";
 
 	public static void Initialization() {
-		if(Files.exists(Paths.get(CYCLEPATH)))
+		if(Files.exists(Paths.get(CYCLEPATH))) {
 			return;
+		}
 		logger.info("Cycle definition file does not exist.Trying to ask you...");
 		AlbumCycleDefinitionProperty property = new AlbumCycleDefinitionProperty();
 		String inputType = JOptionPane.showInputDialog("現在のMASTER＋のALBUMを入力してください。（A,B,C）");
@@ -55,18 +56,19 @@ public class EstimateAlbumTypeCycle {
 		try {
 			writer.writeValue(Paths.get(CYCLEPATH).toFile(), property);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.warn("Couldn't write album type information.", e);
 		}
 	}
 
 	public static String getCurrentCycle() {
-		if(Files.notExists(Paths.get(CYCLEPATH)))
+		if(Files.notExists(Paths.get(CYCLEPATH))) {
 			throw new IllegalStateException("Program seems to have avoided first initiating. how could it have done?");
+		}
 		AlbumCycleDefinitionProperty property = new AlbumCycleDefinitionProperty();
 		try {
 			property = new ObjectMapper().readValue(Paths.get(CYCLEPATH).toFile(), AlbumCycleDefinitionProperty.class);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Error while reading local definition file.", e);
 		}
 		Date presentDate = new Date();
 		Calendar presentCalendar = Calendar.getInstance();

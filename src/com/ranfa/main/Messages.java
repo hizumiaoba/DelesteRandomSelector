@@ -3,6 +3,8 @@ package com.ranfa.main;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import org.slf4j.LoggerFactory;
+
 /*
  * ja_JPはUTF-16BE
  */
@@ -43,7 +45,7 @@ public enum Messages {
 		try {
 			return ResourceBundle.getBundle("com.ranfa.languages.List", Locale.getDefault()).getString(this.name());
 		} catch(Exception e) {
-			e.printStackTrace();
+			LoggerFactory.getLogger(Messages.class).error("Exception was thrown while processing automatic translation.", e);
 			System.exit(-1);
 			return null;
 		}

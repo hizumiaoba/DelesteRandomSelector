@@ -150,8 +150,7 @@ public class DelesteRandomSelector extends JFrame {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e1) {
-				// TODO 自動生成された catch ブロック
-				e1.printStackTrace();
+				this.logger.error("Thread has been interrupted during waiting cooldown.", e1);
 			}
 			this.btnImport.setEnabled(true);
 			this.btnImport.setText(Messages.MSGNarrowingDownSongs.toString());
