@@ -77,7 +77,7 @@ public class DelesteRandomSelector extends JFrame {
 	private Logger logger = LoggerFactory.getLogger(DelesteRandomSelector.class);
 	private ManualUpdateThreadImpl impl;
 	private Thread manualUpdateThread;
-	private JButton btnNewButton;
+	private JButton btnManualUpdate;
 
 	/**
 	 * Launch the application.
@@ -361,15 +361,15 @@ public class DelesteRandomSelector extends JFrame {
 			}
 		});
 
-		this.btnNewButton = new JButton(Messages.MSGManualUpdate.toString());
-		this.btnNewButton.addActionListener(e -> {
+		this.btnManualUpdate = new JButton(Messages.MSGManualUpdate.toString());
+		this.btnManualUpdate.addActionListener(e -> {
 			this.impl = new ManualUpdateThreadImpl();
 			this.manualUpdateThread = new Thread(this.impl);
 			this.manualUpdateThread.setName("ManualUpdate-thread");
 			this.manualUpdateThread.setDaemon(false);
 			this.manualUpdateThread.start();
 		});
-		this.panelEast.add(this.btnNewButton, "1, 9");
+		this.panelEast.add(this.btnManualUpdate, "1, 9");
 		this.panelEast.add(this.btnTwitterIntegration, "1, 11");
 
 		this.btnExit = new JButton(Messages.MSGTerminate.toString());

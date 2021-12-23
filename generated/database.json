@@ -14517,5 +14517,40 @@
     "level" : 30,
     "notes" : 977,
     "albumType" : "ALBUM A"
+  }, {
+    "attribute" : "クール",
+    "name" : "VOY＠GER",
+    "difficulty" : "DEBUT",
+    "level" : 8,
+    "notes" : 132,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "VOY＠GER",
+    "difficulty" : "REGULAR",
+    "level" : 14,
+    "notes" : 206,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "VOY＠GER",
+    "difficulty" : "PRO",
+    "level" : 19,
+    "notes" : 486,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "VOY＠GER",
+    "difficulty" : "MASTER",
+    "level" : 27,
+    "notes" : 782,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "VOY＠GER",
+    "difficulty" : "MASTER+",
+    "level" : 30,
+    "notes" : 999,
+    "albumType" : "Not-implemented"
   } ]
 }
