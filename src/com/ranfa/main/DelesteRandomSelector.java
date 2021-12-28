@@ -33,6 +33,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.ranfa.lib.CheckVersion;
+import com.ranfa.lib.Easter;
 import com.ranfa.lib.EstimateAlbumTypeCycle;
 import com.ranfa.lib.ManualUpdateThreadImpl;
 import com.ranfa.lib.Scraping;
@@ -78,6 +79,7 @@ public class DelesteRandomSelector extends JFrame {
 	private ManualUpdateThreadImpl impl;
 	private Thread manualUpdateThread;
 	private JButton btnManualUpdate;
+	private Easter easter;
 
 	/**
 	 * Launch the application.
@@ -165,6 +167,8 @@ public class DelesteRandomSelector extends JFrame {
 			CompletableFuture<Void> updatedFuture = getWholeDataFuture.thenAcceptBothAsync(getFromJsonFuture, updateConsumer, es);
 			updatedFuture.thenRunAsync(setEnabled, es);
 		}
+		this.easter = new Easter();
+		this.setTitle(this.easter.getTodaysBirth());
 		this.logger.debug("Version: {}", CheckVersion.getVersion());
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		// this.setBounds(100, 100, this.property.getWindowWidth(), this.property.getWindowHeight());

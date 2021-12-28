@@ -14552,5 +14552,33 @@
     "level" : 30,
     "notes" : 999,
     "albumType" : "Not-implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "冬空プレシャス",
+    "difficulty" : "LIGHT",
+    "level" : 8,
+    "notes" : 145,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "冬空プレシャス",
+    "difficulty" : "TRICK",
+    "level" : 16,
+    "notes" : 367,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "Happy New Yeah！",
+    "difficulty" : "LIGHT",
+    "level" : 7,
+    "notes" : 166,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "Happy New Yeah！",
+    "difficulty" : "TRICK",
+    "level" : 16,
+    "notes" : 405,
+    "albumType" : "Not-Implemented"
   } ]
 }
