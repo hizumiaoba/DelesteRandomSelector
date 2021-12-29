@@ -154,7 +154,7 @@ public class DelesteRandomSelector extends JFrame {
 		};
 		Runnable setEnabled = () -> {
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(3 * 1000L);
 			} catch (InterruptedException e1) {
 				this.logger.error("Thread has been interrupted during waiting cooldown.", e1);
 			}
@@ -368,10 +368,7 @@ public class DelesteRandomSelector extends JFrame {
 		this.btnManualUpdate = new JButton(Messages.MSGManualUpdate.toString());
 		this.btnManualUpdate.addActionListener(e -> {
 			this.impl = new ManualUpdateThreadImpl();
-			this.manualUpdateThread = new Thread(this.impl);
-			this.manualUpdateThread.setName("ManualUpdate-thread");
-			this.manualUpdateThread.setDaemon(false);
-			this.manualUpdateThread.start();
+			es.submit(this.impl);
 		});
 		this.panelEast.add(this.btnManualUpdate, "1, 9");
 		this.panelEast.add(this.btnTwitterIntegration, "1, 11");
@@ -379,7 +376,9 @@ public class DelesteRandomSelector extends JFrame {
 		this.btnExit = new JButton(Messages.MSGTerminate.toString());
 		this.btnExit.addActionListener(e -> {
 			if(DelesteRandomSelector.this.softwareUpdateFuture.isDone() || DelesteRandomSelector.this.albumTypeEstimateFuture.isDone() || !this.impl.getFlag()) {
-				DelesteRandomSelector.this.logger.info("Requested Exit by Button");
+				DelesteRandomSelector.this.logger.info("Requested Exit by Button.");
+				this.logger.info("Shut down thread pool.");
+				es.shutdown();
 				System.exit(0);
 			} else {
 				JOptionPane.showMessageDialog(null, Messages.MSGInternalYpdateNotDoneYet.toString());

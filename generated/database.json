@@ -14100,10 +14100,10 @@
   }, {
     "attribute" : "クール",
     "name" : "Drastic Melody",
-    "difficulty" : "MASTER+",
+    "difficulty" : "ⓁMASTER+",
     "level" : 29,
     "notes" : 926,
-    "albumType" : "Not-implemented"
+    "albumType" : "ALBUM B"
   }, {
     "attribute" : "キュート",
     "name" : "いとしーさー♥",
@@ -14580,5 +14580,19 @@
     "level" : 16,
     "notes" : 405,
     "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "Drastic Melody",
+    "difficulty" : "MASTER+",
+    "level" : 29,
+    "notes" : 934,
+    "albumType" : "ALBUM B"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "夕映えプレゼント",
+    "difficulty" : "MASTER+",
+    "level" : 29,
+    "notes" : 887,
+    "albumType" : "ALBUM B"
   } ]
 }
