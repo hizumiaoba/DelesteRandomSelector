@@ -2,7 +2,6 @@ package com.ranfa.lib;
 
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
@@ -45,12 +44,16 @@ public class ManualUpdateThreadImpl implements Runnable {
 		this.logger.info("Checking database updates...");
 		CompletableFuture<ArrayList<Song>> webData = CompletableFuture.supplyAsync(Scraping::getWholeData, this.executor);
 		CompletableFuture<ArrayList<Song>> localData = CompletableFuture.supplyAsync(Scraping::getFromJson, this.executor);
-		try {
-			this.updateConsumer.accept(webData.get(), localData.get());
-		} catch (InterruptedException | ExecutionException e) {
-			this.logger.warn("Update failed.", e);
-		}
-		flag = true;
+		CompletableFuture<Void> afterUpdateFuture = webData.thenAcceptBothAsync(localData, this.updateConsumer, this.executor);
+		afterUpdateFuture.whenCompleteAsync((ret, e) -> {
+			if(e != null) {
+				this.logger.warn("Manual update process has been ended with exception.", e);
+			} else {
+				this.logger.info("Manual update process has been ended successfully.");
+				flag = true;
+			}
+
+		}, this.executor);
 	}
 
 	public boolean getFlag() {
