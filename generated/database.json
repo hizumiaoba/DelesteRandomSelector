@@ -13729,10 +13729,10 @@
   }, {
     "attribute" : "キュート",
     "name" : "Secret Mirage",
-    "difficulty" : "MASTER+",
+    "difficulty" : "ⓁMASTER+",
     "level" : 28,
     "notes" : 757,
-    "albumType" : "Not-implemented"
+    "albumType" : "ALBUM A"
   }, {
     "attribute" : "キュート",
     "name" : "とんでいっちゃいたいの",
@@ -14100,10 +14100,10 @@
   }, {
     "attribute" : "クール",
     "name" : "Drastic Melody",
-    "difficulty" : "MASTER+",
+    "difficulty" : "ⓁMASTER+",
     "level" : 29,
     "notes" : 926,
-    "albumType" : "Not-implemented"
+    "albumType" : "ALBUM B"
   }, {
     "attribute" : "キュート",
     "name" : "いとしーさー♥",
@@ -14503,5 +14503,96 @@
     "level" : 27,
     "notes" : 500,
     "albumType" : "Not-implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "Secret Mirage",
+    "difficulty" : "MASTER+",
+    "level" : 28,
+    "notes" : 759,
+    "albumType" : "ALBUM A"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "Shine！！",
+    "difficulty" : "MASTER+",
+    "level" : 30,
+    "notes" : 977,
+    "albumType" : "ALBUM A"
+  }, {
+    "attribute" : "クール",
+    "name" : "VOY＠GER",
+    "difficulty" : "DEBUT",
+    "level" : 8,
+    "notes" : 132,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "VOY＠GER",
+    "difficulty" : "REGULAR",
+    "level" : 14,
+    "notes" : 206,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "VOY＠GER",
+    "difficulty" : "PRO",
+    "level" : 19,
+    "notes" : 486,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "VOY＠GER",
+    "difficulty" : "MASTER",
+    "level" : 27,
+    "notes" : 782,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "VOY＠GER",
+    "difficulty" : "MASTER+",
+    "level" : 30,
+    "notes" : 999,
+    "albumType" : "Not-implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "冬空プレシャス",
+    "difficulty" : "LIGHT",
+    "level" : 8,
+    "notes" : 145,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "冬空プレシャス",
+    "difficulty" : "TRICK",
+    "level" : 16,
+    "notes" : 367,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "Happy New Yeah！",
+    "difficulty" : "LIGHT",
+    "level" : 7,
+    "notes" : 166,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "Happy New Yeah！",
+    "difficulty" : "TRICK",
+    "level" : 16,
+    "notes" : 405,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "Drastic Melody",
+    "difficulty" : "MASTER+",
+    "level" : 29,
+    "notes" : 934,
+    "albumType" : "ALBUM B"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "夕映えプレゼント",
+    "difficulty" : "MASTER+",
+    "level" : 29,
+    "notes" : 887,
+    "albumType" : "ALBUM B"
   } ]
 }

@@ -23,6 +23,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.ranfa.lib.AlbumTypeEstimate.MASTERPLUS_TYPE;
+import com.ranfa.main.Messages;
 
 public class Scraping {
 
@@ -93,16 +94,18 @@ public class Scraping {
 				tmp.setNotes(notes);
 				if(difficulty.equals(LEGACYMASTERPLUS)) {
 					ArrayList<Album> newTypeList = typeLists.get(MASTERPLUS_TYPE.LEGACYMASTERPLUS.ordinal());
-					for(int j = 0; j < newTypeList.size(); j++) {
-						if(newTypeList.get(j).getSongName().equals(name))
-							tmp.setAlbumType(newTypeList.get(j).getAlbumType());
-					}
+					newTypeList.stream()
+					.filter(element -> element.getSongName().equals(name))
+					.forEach(element -> {
+						tmp.setAlbumType(element.getAlbumType());
+					});
 				} else if(difficulty.equals(MASTERPLUS)) {
 					ArrayList<Album> legacyTypeList = typeLists.get(MASTERPLUS_TYPE.NEWMASTERPLUS.ordinal());
-					for(int j = 0; j < legacyTypeList.size(); j++) {
-						if(legacyTypeList.get(j).getSongName().equals(name))
-							tmp.setAlbumType(legacyTypeList.get(j).getAlbumType());
-					}
+					legacyTypeList.stream()
+					.filter(element -> element.getSongName().equals(name))
+					.forEach(element -> {
+						tmp.setAlbumType(element.getAlbumType());
+					});
 				} else {
 					tmp.setAlbumType("Not-Implemented");
 				}
@@ -111,7 +114,7 @@ public class Scraping {
 		} catch (IOException | InterruptedException | ExecutionException e) {
 			logger.error("Exception was thrown during web scraping", e);
 		}
-		logger.info("scraping compeleted in " + (System.currentTimeMillis() - time)+ "ms");
+		logger.info("scraping compeleted in {} ms", (System.currentTimeMillis() - time));
 		return res;
 	}
 
@@ -120,14 +123,15 @@ public class Scraping {
 				&& !attribute.equals(CUTE)
 				&& !attribute.equals(COOL)
 				&& !attribute.equals(PASSION)
-				&& !attribute.equals(NONSELECTED))
+				&& !attribute.equals(Messages.MSGNonSelected.toString())) {
 			throw new IllegalArgumentException("Illegal attribute value: " + attribute);
+		}
 		if(data.isEmpty()) {
 			JOptionPane.showMessageDialog(null, "指定された属性の曲は存在しません。\n条件を変えてみてください");
 			throw new IllegalArgumentException("ArrayList must not empty.");
 		}
-		ArrayList<Song> res = new ArrayList<Song>();
-		if(attribute.equals(NONSELECTED)) {
+		ArrayList<Song> res = new ArrayList<>();
+		if(attribute.equals(Messages.MSGNonSelected.toString())) {
 			res = data;
 		} else {
 			data.stream()
@@ -149,12 +153,14 @@ public class Scraping {
 				&& !difficulty.equals(PIANO)
 				&& !difficulty.equals(FORTE)
 				&& !difficulty.equals(WITCH)
-				&& !difficulty.equals(NONSELECTED))
+				&& !difficulty.equals(Messages.MSGNonSelected.toString())) {
 			throw new IllegalArgumentException("Illegal difficulty value.");
-		if(data.isEmpty())
+		}
+		if(data.isEmpty()) {
 			throw new IllegalArgumentException("ArrayList must not empty.");
-		ArrayList<Song> res = new ArrayList<Song>();
-		if(difficulty.equals(NONSELECTED)) {
+		}
+		ArrayList<Song> res = new ArrayList<>();
+		if(difficulty.equals(Messages.MSGNonSelected.toString())) {
 			res = data;
 		} else {
 			data.stream()
@@ -165,15 +171,19 @@ public class Scraping {
 	}
 
 	public static  ArrayList<Song> getSpecificLevelSongs(ArrayList<Song> data, int level, boolean isLess, boolean isMore) {
-		if(level <= 0)
+		if(level <= 0) {
 			throw new IllegalArgumentException("Level must not negative.");
-		if(data.isEmpty())
+		}
+		if(data.isEmpty()) {
 			throw new IllegalArgumentException("ArrayList must not empty.");
-		if(!(isLess || isMore))
+		}
+		if(!(isLess || isMore)) {
 			throw new IllegalArgumentException("Illegal boolean value.");
-		if(isLess && isMore)
+		}
+		if(isLess && isMore) {
 			return getOnlyLevelSongs(data, level);
-		ArrayList<Song> res = new ArrayList<Song>();
+		}
+		ArrayList<Song> res = new ArrayList<>();
 		if(isLess) {
 			data.stream()
 			.filter(element -> element.getLevel() < level)
@@ -187,19 +197,21 @@ public class Scraping {
 	}
 
 	public static ArrayList<Song> getSpecificAlbumTypeSongs(ArrayList<Song> data, String type) {
-		if(type == null)
+		if(type == null) {
 			throw new IllegalArgumentException("type must not null.");
-		if(data.isEmpty())
+		}
+		if(data.isEmpty()) {
 			throw new IllegalArgumentException("ArrayList must not empty");
+		}
 		ArrayList<Song> res = new ArrayList<>();
 		data.stream()
-			.filter(element -> element.getAlbumType().equals(type))
-			.forEach(res::add);
+		.filter(element -> element.getAlbumType().equals(type))
+		.forEach(res::add);
 		return res;
 	}
 
 	private static ArrayList<Song> getOnlyLevelSongs(ArrayList<Song> data, int level) {
-		ArrayList<Song> res = new ArrayList<Song>();
+		ArrayList<Song> res = new ArrayList<>();
 		data.stream()
 		.filter(element -> element.getLevel() == level)
 		.forEach(res::add);
@@ -215,13 +227,13 @@ public class Scraping {
 		} catch (IOException e) {
 			logger.error("IOException was thrown during reading From JSON Database file.", e);
 		}
-		ArrayList<Song> res = new ArrayList<Song>();
+		ArrayList<Song> res = new ArrayList<>();
 		if(property != null) {
 			res.addAll(property.getList());
 		} else {
 			throw new NullPointerException("json is null.");
 		}
-		logger.info("JSON reading compeleted in " + (System.currentTimeMillis() - time) + "ms");
+		logger.info("JSON reading compeleted in {} ms", (System.currentTimeMillis() - time));
 		return res;
 	}
 
@@ -231,8 +243,9 @@ public class Scraping {
 		property.setList(list);
 		ObjectWriter writer = new ObjectMapper().writer(new DefaultPrettyPrinter());
 		try {
-			if(Files.notExists(Paths.get("generated")))
+			if(Files.notExists(Paths.get("generated"))) {
 				Files.createDirectory(Paths.get("generated"));
+			}
 			writer.writeValue(Paths.get(DBPATH).toFile(), property);
 		} catch (IOException e) {
 			logger.error("IOException was thrown during writing to JSON database file.", e);
