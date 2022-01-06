@@ -43,7 +43,7 @@ import com.ranfa.lib.Song;
 import com.ranfa.lib.TwitterIntegration;
 import com.ranfa.lib.Version;
 
-@Version(major = 3, minor = 0, patch = 0)
+@Version(major = 3, minor = 0, patch = 1)
 public class DelesteRandomSelector extends JFrame {
 
 	private static ArrayList<Song> selectedSongsList = new ArrayList<>();
@@ -171,8 +171,8 @@ public class DelesteRandomSelector extends JFrame {
 		this.setTitle(this.easter.getTodaysBirth());
 		this.logger.debug("Version: {}", CheckVersion.getVersion());
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		// this.setBounds(100, 100, this.property.getWindowWidth(), this.property.getWindowHeight());
-		this.setBounds(100, 100, 640, 360);
+		this.setBounds(100, 100, this.property.getWindowWidth(), this.property.getWindowHeight());
+		// this.setBounds(100, 100, 640, 360);
 		this.contentPane = new JPanel();
 		this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		this.setContentPane(this.contentPane);

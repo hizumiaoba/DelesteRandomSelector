@@ -105,7 +105,7 @@ public class EstimateAlbumTypeCycle {
 	}
 
 	private static String cycling(String currentType, int times) {
-		int cyclingDelta = (times / 14) % 3;
+		int cyclingDelta = ((times / 14) + 1) % 3;
 		String[] typeArray = {
 				ALBUM_A,
 				ALBUM_B,
