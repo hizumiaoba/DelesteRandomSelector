@@ -14594,5 +14594,54 @@
     "level" : 29,
     "notes" : 887,
     "albumType" : "ALBUM B"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "ココカラミライヘ！",
+    "difficulty" : "DEBUT",
+    "level" : 7,
+    "notes" : 111,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "ココカラミライヘ！",
+    "difficulty" : "REGULAR",
+    "level" : 13,
+    "notes" : 172,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "ココカラミライヘ！",
+    "difficulty" : "PRO",
+    "level" : 18,
+    "notes" : 361,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "ココカラミライヘ！",
+    "difficulty" : "MASTER",
+    "level" : 26,
+    "notes" : 563,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "ココカラミライヘ！",
+    "difficulty" : "MASTER+",
+    "level" : 30,
+    "notes" : 843,
+    "albumType" : "Not-implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "ココカラミライヘ！",
+    "difficulty" : "PIANO",
+    "level" : 26,
+    "notes" : 563,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "ココカラミライヘ！",
+    "difficulty" : "FORTE",
+    "level" : 32,
+    "notes" : 924,
+    "albumType" : "Not-Implemented"
   } ]
 }
