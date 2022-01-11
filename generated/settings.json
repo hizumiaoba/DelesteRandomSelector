@@ -3,6 +3,6 @@
   "checkVersion" : true,
   "windowHeight" : 360,
   "songLimit" : 15,
-  "saveScoreLog" : false,
+  "saveScoreLog" : true,
   "windowWidth" : 640
 }

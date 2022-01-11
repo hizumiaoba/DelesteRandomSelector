@@ -39,7 +39,8 @@ public enum Messages {
 	MSGNarrowDownProcedure,
 	MSGCurrentAlbumType,
 	MSGManualUpdate,
-	MSGManualUpdateNotCompleteYet;
+	MSGManualUpdateNotCompleteYet,
+	MSGConfigurations;
 
 
 	@Override
