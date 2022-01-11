@@ -3,6 +3,7 @@ package com.ranfa.main;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ import com.ranfa.lib.Song;
 import com.ranfa.lib.TwitterIntegration;
 import com.ranfa.lib.Version;
 
-@Version(major = 3, minor = 0, patch = 1)
+@Version(major = 3, minor = 1, patch = 0)
 public class DelesteRandomSelector extends JFrame {
 
 	private static ArrayList<Song> selectedSongsList = new ArrayList<>();
@@ -80,6 +81,7 @@ public class DelesteRandomSelector extends JFrame {
 	private Thread manualUpdateThread;
 	private JButton btnManualUpdate;
 	private Easter easter;
+	private JButton btnConfig;
 
 	/**
 	 * Launch the application.
@@ -313,6 +315,18 @@ public class DelesteRandomSelector extends JFrame {
 			DelesteRandomSelector.this.integratorBool = true;
 			DelesteRandomSelector.this.logger.info("show up completed.");
 		});
+
+		this.btnConfig = new JButton(Messages.MSGConfigurations.toString());
+		this.btnConfig.addActionListener(e -> {
+			ProcessBuilder builder = new ProcessBuilder("java", "-jar", "Configurations.jar");
+			try {
+				builder.start();
+			} catch (IOException e1) {
+				// TODO 自動生成された catch ブロック
+				e1.printStackTrace();
+			}
+		});
+		this.panelEast.add(this.btnConfig, "1, 5");
 		this.btnStart.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 		this.panelEast.add(this.btnStart, "1, 7, fill, fill");
 
