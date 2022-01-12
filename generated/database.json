@@ -14643,5 +14643,12 @@
     "level" : 32,
     "notes" : 924,
     "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "GOIN’！！！",
+    "difficulty" : "MASTER+",
+    "level" : 30,
+    "notes" : 964,
+    "albumType" : "ALBUM C"
   } ]
 }
