@@ -1,6 +1,7 @@
 package com.ranfa.main;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.io.IOException;
@@ -13,7 +14,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -47,373 +47,374 @@ import com.ranfa.lib.Version;
 @Version(major = 3, minor = 1, patch = 0)
 public class DelesteRandomSelector extends JFrame {
 
-	private static ArrayList<Song> selectedSongsList = new ArrayList<>();
+    private static ArrayList<Song> selectedSongsList = new ArrayList<>();
 
-	private JPanel contentPane;
-	private JPanel panelNorth;
-	private JPanel panelWest;
-	private JLabel labelVersion;
-	private JLabel labelTitle;
-	private JLabel labelDifficulty;
-	private JLabel labelLevel;
-	private JSpinner spinnerLevel;
-	private JCheckBox checkMoreLv;
-	private JCheckBox checkLessLv;
-	private JPanel panelEast;
-	private JPanel panelCentre;
-	private JButton btnImport;
-	private JButton btnStart;
-	private JButton btnExit;
-	private JComboBox comboDifficultySelect;
-	private JLabel labelLvCaution;
-	private JComboBox comboAttribute;
-	private SettingJSONProperty property = new SettingJSONProperty();
-	private JButton btnTwitterIntegration;
-	private String[] integratorArray;
-	private boolean integratorBool = false;
-	private JTextArea textArea;
-	private JScrollPane scrollPane;
-	private CompletableFuture<Void> softwareUpdateFuture = null;
-	private CompletableFuture<Void> albumTypeEstimateFuture = null;
-	private String albumType = Messages.MSGAlbumTypeBeingCalculated.toString();
-	private Logger logger = LoggerFactory.getLogger(DelesteRandomSelector.class);
-	private ManualUpdateThreadImpl impl;
-	private Thread manualUpdateThread;
-	private JButton btnManualUpdate;
-	private Easter easter;
-	private JButton btnConfig;
+    private JPanel contentPane;
+    private SettingJSONProperty property = new SettingJSONProperty();
+    private String[] integratorArray;
+    private boolean integratorBool = false;
+    private CompletableFuture<Void> softwareUpdateFuture = null;
+    private CompletableFuture<Void> albumTypeEstimateFuture = null;
+    private String albumType = Messages.MSGAlbumTypeBeingCalculated.toString();
+    private Logger logger = LoggerFactory.getLogger(DelesteRandomSelector.class);
+    private ManualUpdateThreadImpl impl;
+    private Thread manualUpdateThread;
+    private Easter easter;
+    private JPanel panelMain;
+    private JPanel panelNorth;
+    private JLabel labelTitle;
+    private JLabel labelVersion;
+    private JPanel panelWest;
+    private JLabel labelDifficulty;
+    private JComboBox comboDifficultySelect;
+    private JComboBox comboAttribute;
+    private JLabel labelLevel;
+    private JSpinner spinnerLevel;
+    private JCheckBox checkLessLv;
+    private JCheckBox checkMoreLv;
+    private JLabel labelLvCaution;
+    private JPanel panelEast;
+    private JButton btnImport;
+    private JButton btnConfig;
+    private JButton btnStart;
+    private JButton btnManualUpdate;
+    private JButton btnTwitterIntegration;
+    private JButton btnExit;
+    private JPanel panelCenter;
+    private JScrollPane scrollPane;
+    private JTextArea textArea;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(() -> {
-			try {
-				DelesteRandomSelector frame = new DelesteRandomSelector();
-				frame.setVisible(true);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
+    /**
+     * Launch the application.
+     */
+    public static void main(String[] args) {
+	EventQueue.invokeLater(() -> {
+	    try {
+		DelesteRandomSelector frame = new DelesteRandomSelector();
+		frame.setVisible(true);
+	    } catch (Exception e) {
+		e.printStackTrace();
+	    }
+
+	});
+    }
+
+    /**
+     * log file prefix:
+     *  this.getClass() + ":[LEVEL]: " +
+     */
+
+    /**
+     * Create the frame.
+     */
+    public DelesteRandomSelector() {
+	this.contentPane = new JPanel();
+	boolean isFirst = !Scraping.databaseExists();
+	if(isFirst) {
+	    JOptionPane.showMessageDialog(this, Messages.MSGDatabaseNotExist.toString());
+	    if(!Scraping.writeToJson(Scraping.getWholeData())) {
+		JOptionPane.showMessageDialog(this, "Exception:NullPointerException\nCannot Keep up! Please re-download this Application!");
+		throw new NullPointerException("FATAL: cannot continue!");
+	    }
 	}
-
-	/**
-	 * log file prefix:
-	 *  this.getClass() + ":[LEVEL]: " +
-	 */
-
-	/**
-	 * Create the frame.
-	 */
-	public DelesteRandomSelector() {
-		boolean isFirst = !Scraping.databaseExists();
-		if(isFirst) {
-			JOptionPane.showMessageDialog(this, Messages.MSGDatabaseNotExist.toString());
-			if(!Scraping.writeToJson(Scraping.getWholeData())) {
-				JOptionPane.showMessageDialog(this, "Exception:NullPointerException\nCannot Keep up! Please re-download this Application!");
-				throw new NullPointerException("FATAL: cannot continue!");
-			}
-		}
-		ExecutorService es = Executors.newWorkStealingPool();
-		CompletableFuture<ArrayList<Song>> getFromJsonFuture = CompletableFuture.supplyAsync(() -> Scraping.getFromJson(), es);
-		CompletableFuture<ArrayList<Song>> getWholeDataFuture = CompletableFuture.supplyAsync(() -> Scraping.getWholeData(), es);
-		if(!Settings.fileExists() && !Settings.writeDownJSON()) {
-			JOptionPane.showMessageDialog(this, "Exception:NullPointerException\nCannot Keep up! Please re-download this Application!");
-			throw new NullPointerException("FATAL: cannot continue!");
-		}
-		this.logger.debug("Loading settings...");
-		this.property.setCheckLibraryUpdates(Settings.needToCheckLibraryUpdates());
-		this.property.setCheckVersion(Settings.needToCheckVersion());
-		this.property.setWindowWidth(Settings.getWindowWidth());
-		this.property.setWindowHeight(Settings.getWindowHeight());
-		this.property.setSongLimit(Settings.getSongsLimit());
-		this.property.setSaveScoreLog(Settings.saveScoreLog());
-		this.logger.debug("Load settings done.");
-		this.logger.debug("Version check: {}", this.property.isCheckVersion());
-		this.logger.debug("Library update check: {}", this.property.isCheckLibraryUpdates());
-		this.logger.debug("Window Width: {}", this.property.getWindowWidth());
-		this.logger.debug("Window Height: {}", this.property.getWindowHeight());
-		this.logger.debug("Song Limit: {}", this.property.getSongLimit());
-		this.logger.debug("SaveScoreLog: {}", this.property.isSaveScoreLog());
-		EstimateAlbumTypeCycle.Initialization();
-		if(Files.exists(Paths.get("generated/albumCycle.json"))) {
-			this.albumType = EstimateAlbumTypeCycle.getCurrentCycle();
-		}
-		if(this.property.isCheckVersion()) {
-			this.softwareUpdateFuture = CompletableFuture.runAsync(() -> CheckVersion.needToBeUpdated(), es);
-		}
-		BiConsumer<ArrayList<Song>, ArrayList<Song>> updateConsumer = (list1, list2) -> {
-			this.logger.info("Checking database updates...");
-			if(list1.size() > list2.size()) {
-				long time = System.currentTimeMillis();
-				this.logger.info("{} Update detected.", (list1.size() - list2.size()));
-				Scraping.writeToJson(list1);
-				this.logger.info("Update completed in {} ms", (System.currentTimeMillis() - time));
-				this.logger.info("Updated database size: {}", list1.size());
-			} else {
-				this.logger.info("database is up-to-date.");
-			}
-		};
-		Runnable setEnabled = () -> {
-			try {
-				Thread.sleep(3 * 1000L);
-			} catch (InterruptedException e1) {
-				this.logger.error("Thread has been interrupted during waiting cooldown.", e1);
-			}
-			this.btnImport.setEnabled(true);
-			this.btnImport.setText(Messages.MSGNarrowingDownSongs.toString());
-		};
-		getWholeDataFuture.thenAcceptAsync(list -> this.logger.info("Scraping data size:" + list.size()), es);
-		getFromJsonFuture.thenAcceptAsync(list -> this.logger.info("Currently database size:" + list.size()), es);
-		if(this.property.isCheckLibraryUpdates()) {
-			CompletableFuture<Void> updatedFuture = getWholeDataFuture.thenAcceptBothAsync(getFromJsonFuture, updateConsumer, es);
-			updatedFuture.thenRunAsync(setEnabled, es);
-		}
-		this.easter = new Easter();
-		this.setTitle(this.easter.getTodaysBirth());
-		this.logger.debug("Version: {}", CheckVersion.getVersion());
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setBounds(100, 100, this.property.getWindowWidth(), this.property.getWindowHeight());
-		// this.setBounds(100, 100, 640, 360);
-		this.contentPane = new JPanel();
-		this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		this.setContentPane(this.contentPane);
-		this.contentPane.setLayout(new BorderLayout(0, 0));
-
-		this.panelNorth = new JPanel();
-		this.contentPane.add(this.panelNorth, BorderLayout.NORTH);
-		this.panelNorth.setLayout(new FormLayout(new ColumnSpec[] {
-				ColumnSpec.decode("max(302dlu;default)"),
-				FormSpecs.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("40px"),},
-				new RowSpec[] {
-						RowSpec.decode("20px"),}));
-
-		this.labelTitle = new JLabel(Messages.MSGTitle.toString());
-		this.labelTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 16));
-		this.panelNorth.add(this.labelTitle, "1, 1, center, top");
-
-		this.labelVersion = new JLabel(CheckVersion.getVersion());
-		this.labelVersion.setFont(new Font("SansSerif", Font.BOLD, 12));
-		this.panelNorth.add(this.labelVersion, "3, 1, right, top");
-
-		this.panelWest = new JPanel();
-		this.contentPane.add(this.panelWest, BorderLayout.WEST);
-		this.panelWest.setLayout(new FormLayout(new ColumnSpec[] {
-				FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
-				ColumnSpec.decode("112px:grow"),},
-				new RowSpec[] {
-						FormSpecs.LINE_GAP_ROWSPEC,
-						RowSpec.decode("19px"),
-						FormSpecs.RELATED_GAP_ROWSPEC,
-						RowSpec.decode("max(12dlu;default)"),
-						FormSpecs.RELATED_GAP_ROWSPEC,
-						RowSpec.decode("max(12dlu;default)"),
-						FormSpecs.RELATED_GAP_ROWSPEC,
-						RowSpec.decode("12dlu"),
-						FormSpecs.RELATED_GAP_ROWSPEC,
-						RowSpec.decode("max(12dlu;default)"),
-						FormSpecs.RELATED_GAP_ROWSPEC,
-						RowSpec.decode("max(12dlu;default)"),
-						FormSpecs.RELATED_GAP_ROWSPEC,
-						RowSpec.decode("max(12dlu;default)"),
-						FormSpecs.RELATED_GAP_ROWSPEC,
-						RowSpec.decode("max(52dlu;default)"),}));
-
-		this.labelDifficulty = new JLabel(Messages.MSGSelectDifficulty.toString());
-		this.labelDifficulty.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-		this.panelWest.add(this.labelDifficulty, "2, 2, center, default");
-
-		this.comboDifficultySelect = new JComboBox();
-		this.comboDifficultySelect.setFont(new Font("Dialog", Font.BOLD, 12));
-		this.comboDifficultySelect.setModel(new DefaultComboBoxModel(new String[] {Messages.MSGNonSelected.toString(), "DEBUT", "REGULAR", "PRO", "MASTER", "MASTER+", "ⓁMASTER+", "LIGHT", "TRICK", "PIANO", "FORTE", "WITCH"}));
-		this.panelWest.add(this.comboDifficultySelect, "2, 4, fill, default");
-
-		this.comboAttribute = new JComboBox();
-		this.comboAttribute.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-		this.comboAttribute.setModel(new DefaultComboBoxModel(new String[] {Messages.MSGNonSelected.toString(), "全タイプ", "キュート", "クール", "パッション"}));
-		this.panelWest.add(this.comboAttribute, "2, 6, fill, default");
-
-		this.labelLevel = new JLabel(Messages.MSGSongLevel.toString());
-		this.labelLevel.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-		this.panelWest.add(this.labelLevel, "2, 8, center, default");
-
-		this.spinnerLevel = new JSpinner();
-		this.panelWest.add(this.spinnerLevel, "2, 10");
-
-		this.checkLessLv = new JCheckBox(Messages.MSGBelowSpecificLevel.toString());
-		this.checkLessLv.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-		this.panelWest.add(this.checkLessLv, "2, 12");
-
-		this.checkMoreLv = new JCheckBox(Messages.MSGOverSpecificLevel.toString());
-		this.checkMoreLv.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-		this.panelWest.add(this.checkMoreLv, "2, 14");
-
-		this.labelLvCaution = new JLabel(Messages.MSGLevelCheckboxInfo.toString());
-		this.labelLvCaution.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-		this.panelWest.add(this.labelLvCaution, "2, 16, fill, fill");
-
-		this.panelEast = new JPanel();
-		this.contentPane.add(this.panelEast, BorderLayout.EAST);
-		this.panelEast.setLayout(new FormLayout(new ColumnSpec[] {
-				ColumnSpec.decode("98px"),},
-				new RowSpec[] {
-						RowSpec.decode("26px"),
-						FormSpecs.RELATED_GAP_ROWSPEC,
-						RowSpec.decode("max(36dlu;default)"),
-						FormSpecs.RELATED_GAP_ROWSPEC,
-						FormSpecs.DEFAULT_ROWSPEC,
-						FormSpecs.RELATED_GAP_ROWSPEC,
-						RowSpec.decode("max(30dlu;default)"),
-						FormSpecs.RELATED_GAP_ROWSPEC,
-						RowSpec.decode("max(15dlu;default)"),
-						FormSpecs.RELATED_GAP_ROWSPEC,
-						RowSpec.decode("max(11dlu;default)"),
-						FormSpecs.RELATED_GAP_ROWSPEC,
-						FormSpecs.DEFAULT_ROWSPEC,
-						FormSpecs.RELATED_GAP_ROWSPEC,
-						FormSpecs.DEFAULT_ROWSPEC,
-						FormSpecs.RELATED_GAP_ROWSPEC,
-						FormSpecs.DEFAULT_ROWSPEC,}));
-
-		this.btnImport = new JButton(Messages.MSGUpdatingDatabase.toString());
-		this.btnImport.setEnabled(false);
-		this.btnImport.addActionListener(e -> {
-			if(this.impl != null) {
-				if(!this.impl.getFlag()) {
-					JOptionPane.showMessageDialog(null, Messages.MSGManualUpdateNotCompleteYet.toString());
-				}
-			}
-			ArrayList<Song> fromJson = Scraping.getFromJson();
-			ArrayList<Song> specificlevelList = Scraping.getSpecificLevelSongs(fromJson, (Integer)DelesteRandomSelector.this.spinnerLevel.getValue(), DelesteRandomSelector.this.checkLessLv.isSelected(), DelesteRandomSelector.this.checkMoreLv.isSelected());
-			ArrayList<Song> specificDifficultyList = Scraping.getSpecificDifficultySongs(specificlevelList, DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().toString());
-			ArrayList<Song> specificAttributeList = Scraping.getSpecificAttributeSongs(specificDifficultyList, DelesteRandomSelector.this.comboAttribute.getSelectedItem().toString());
-			ArrayList<Song> specificTypeList = Scraping.getSpecificAlbumTypeSongs(specificAttributeList, EstimateAlbumTypeCycle.getCurrentCycle());
-			if(!selectedSongsList.isEmpty()) {
-				selectedSongsList.clear();
-			}
-			selectedSongsList.addAll((DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().equals(Scraping.MASTERPLUS) || DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().equals(Scraping.LEGACYMASTERPLUS)) ? specificTypeList : specificAttributeList);
-			DelesteRandomSelector.this.logger.info("Songs are selected.We are Ready to go.");
-			JOptionPane.showMessageDialog(null, Messages.MSGCompleteNarrowDown.toString());
-		});
-		this.btnImport.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-		this.panelEast.add(this.btnImport, "1, 3, fill, fill");
-
-		this.btnStart = new JButton(Messages.MSGCalcStart.toString());
-		this.btnStart.addActionListener(e -> {
-			Random random = new Random(System.currentTimeMillis());
-			String paneString = "";
-			DelesteRandomSelector.this.integratorArray = new String[DelesteRandomSelector.this.property.getSongLimit()];
-			for(int i = 0; i < DelesteRandomSelector.this.property.getSongLimit(); i++) {
-				int randomInt = random.nextInt(selectedSongsList.size());
-				String typeString = DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().equals(Scraping.MASTERPLUS) || DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().equals(Scraping.LEGACYMASTERPLUS) ? EstimateAlbumTypeCycle.getCurrentCycle() : "";
-				paneString = paneString + (i + 1) + Messages.MSGNumberOfSongs.toString() + " " + selectedSongsList.get(randomInt).getAttribute() + " [" + selectedSongsList.get(randomInt).getDifficulty() + "]「" + selectedSongsList.get(randomInt).getName() + "」！(Lv:" + selectedSongsList.get(randomInt).getLevel() + " " + typeString + ")\n\n";
-				DelesteRandomSelector.this.integratorArray[i] = selectedSongsList.get(randomInt).getName() + "(Lv" + selectedSongsList.get(randomInt).getLevel() + ")\n";
-			}
-			paneString = paneString + Messages.MSGThisPhrase.toString() + DelesteRandomSelector.this.property.getSongLimit() + Messages.MSGPlayPhrase.toString();
-			DelesteRandomSelector.this.textArea.setText(paneString);
-			DelesteRandomSelector.this.integratorBool = true;
-			DelesteRandomSelector.this.logger.info("show up completed.");
-		});
-
-		this.btnConfig = new JButton(Messages.MSGConfigurations.toString());
-		this.btnConfig.addActionListener(e -> {
-			ProcessBuilder builder = new ProcessBuilder("java", "-jar", "Configurations.jar");
-			try {
-				builder.start();
-			} catch (IOException e1) {
-				// TODO 自動生成された catch ブロック
-				e1.printStackTrace();
-			}
-		});
-		this.panelEast.add(this.btnConfig, "1, 5");
-		this.btnStart.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-		this.panelEast.add(this.btnStart, "1, 7, fill, fill");
-
-		this.btnTwitterIntegration = new JButton(Messages.MSGTwitterIntegration.toString());
-		this.btnTwitterIntegration.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 11));
-		this.btnTwitterIntegration.addActionListener(e -> {
-			boolean authorizationStatus = TwitterIntegration.authorization();
-			String updatedStatus = Messages.MSGUsingThisAppPhrase.toString();
-			int lengthLimit = updatedStatus.length();
-			boolean isBroken = false;
-			if(!DelesteRandomSelector.this.integratorBool) {
-				JOptionPane.showMessageDialog(null, Messages.MSGNotPlayYet.toString());
-				return;
-			}
-			for (String element : DelesteRandomSelector.this.integratorArray) {
-				updatedStatus = updatedStatus + element;
-				lengthLimit += element.length();
-				if(lengthLimit > 69) {
-					isBroken = true;
-					break;
-				}
-			}
-			if(isBroken) {
-				updatedStatus = updatedStatus + Messages.MSGTwitterPlayOtherwisePhrase.toString() + "\n#DelesteRandomSelector #デレステ ";
-			} else {
-				updatedStatus = updatedStatus + Messages.MSGTwitterPlayOnlyPhrase.toString() + "\n#DelesteRandomSelector #デレステ ";
-			}
-			DelesteRandomSelector.this.logger.info("status message constructed.");
-			lengthLimit = updatedStatus.length();
-			if(authorizationStatus) {
-				int option = JOptionPane.showConfirmDialog(null, Messages.MSGTwitterIntegrationConfirm.toString() + updatedStatus + Messages.MSGStringLength.toString() + lengthLimit);
-				DelesteRandomSelector.this.logger.info("user seletced: " + option);
-				switch(option) {
-				case JOptionPane.OK_OPTION:
-					TwitterIntegration.PostTwitter(updatedStatus);
-					DelesteRandomSelector.this.logger.info("Success to update the status.");
-					JOptionPane.showMessageDialog(null, Messages.MSGCompletePost.toString());
-					break;
-				case JOptionPane.NO_OPTION:
-					DelesteRandomSelector.this.logger.info("There is no will to post.");
-					break;
-				case JOptionPane.CANCEL_OPTION:
-					DelesteRandomSelector.this.logger.info("The Operation was canceled by user.");
-					break;
-				default:
-					break;
-				}
-			} else {
-				DelesteRandomSelector.this.logger.info("seems to reject the permission.it should need try again.");
-			}
-		});
-
-		this.btnManualUpdate = new JButton(Messages.MSGManualUpdate.toString());
-		this.btnManualUpdate.addActionListener(e -> {
-			this.impl = new ManualUpdateThreadImpl();
-			es.submit(this.impl);
-		});
-		this.panelEast.add(this.btnManualUpdate, "1, 9");
-		this.panelEast.add(this.btnTwitterIntegration, "1, 11");
-
-		this.btnExit = new JButton(Messages.MSGTerminate.toString());
-		this.btnExit.addActionListener(e -> {
-			if(DelesteRandomSelector.this.softwareUpdateFuture.isDone() || DelesteRandomSelector.this.albumTypeEstimateFuture.isDone() || !this.impl.getFlag()) {
-				DelesteRandomSelector.this.logger.info("Requested Exit by Button.");
-				this.logger.info("Shut down thread pool.");
-				es.shutdown();
-				System.exit(0);
-			} else {
-				JOptionPane.showMessageDialog(null, Messages.MSGInternalYpdateNotDoneYet.toString());
-			}
-		});
-		this.btnExit.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-		this.panelEast.add(this.btnExit, "1, 13");
-
-		this.panelCentre = new JPanel();
-		this.contentPane.add(this.panelCentre, BorderLayout.CENTER);
-		this.panelCentre.setLayout(new BorderLayout(0, 0));
-
-		this.textArea = new JTextArea();
-		this.textArea.setText(Messages.MSGNarrowDownProcedure.toString() + this.property.getSongLimit() + Messages.MSGCurrentAlbumType.toString() + this.albumType);
-		this.textArea.setEditable(false);
-
-		this.scrollPane = new JScrollPane(this.textArea);
-		this.panelCentre.add(this.scrollPane, BorderLayout.CENTER);
-		if(isFirst || !this.property.isCheckLibraryUpdates()) {
-			setEnabled.run();
-		}
+	ExecutorService es = Executors.newWorkStealingPool();
+	CompletableFuture<ArrayList<Song>> getFromJsonFuture = CompletableFuture.supplyAsync(() -> Scraping.getFromJson(), es);
+	CompletableFuture<ArrayList<Song>> getWholeDataFuture = CompletableFuture.supplyAsync(() -> Scraping.getWholeData(), es);
+	if(!Settings.fileExists() && !Settings.writeDownJSON()) {
+	    JOptionPane.showMessageDialog(this, "Exception:NullPointerException\nCannot Keep up! Please re-download this Application!");
+	    throw new NullPointerException("FATAL: cannot continue!");
 	}
+	this.logger.debug("Loading settings...");
+	this.property.setCheckLibraryUpdates(Settings.needToCheckLibraryUpdates());
+	this.property.setCheckVersion(Settings.needToCheckVersion());
+	this.property.setWindowWidth(Settings.getWindowWidth());
+	this.property.setWindowHeight(Settings.getWindowHeight());
+	this.property.setSongLimit(Settings.getSongsLimit());
+	this.property.setSaveScoreLog(Settings.saveScoreLog());
+	this.logger.debug("Load settings done.");
+	this.logger.debug("Version check: {}", this.property.isCheckVersion());
+	this.logger.debug("Library update check: {}", this.property.isCheckLibraryUpdates());
+	this.logger.debug("Window Width: {}", this.property.getWindowWidth());
+	this.logger.debug("Window Height: {}", this.property.getWindowHeight());
+	this.logger.debug("Song Limit: {}", this.property.getSongLimit());
+	this.logger.debug("SaveScoreLog: {}", this.property.isSaveScoreLog());
+	EstimateAlbumTypeCycle.Initialization();
+	if(Files.exists(Paths.get("generated/albumCycle.json"))) {
+	    this.albumType = EstimateAlbumTypeCycle.getCurrentCycle();
+	}
+	if(this.property.isCheckVersion()) {
+	    this.softwareUpdateFuture = CompletableFuture.runAsync(() -> CheckVersion.needToBeUpdated(), es);
+	}
+	BiConsumer<ArrayList<Song>, ArrayList<Song>> updateConsumer = (list1, list2) -> {
+	    this.logger.info("Checking database updates...");
+	    if(list1.size() > list2.size()) {
+		long time = System.currentTimeMillis();
+		this.logger.info("{} Update detected.", (list1.size() - list2.size()));
+		Scraping.writeToJson(list1);
+		this.logger.info("Update completed in {} ms", (System.currentTimeMillis() - time));
+		this.logger.info("Updated database size: {}", list1.size());
+	    } else {
+		this.logger.info("database is up-to-date.");
+	    }
+	};
+	Runnable setEnabled = () -> {
+	    try {
+		Thread.sleep(3 * 1000L);
+	    } catch (InterruptedException e1) {
+		this.logger.error("Thread has been interrupted during waiting cooldown.", e1);
+	    }
+	    this.btnImport.setEnabled(true);
+	    this.btnImport.setText(Messages.MSGNarrowingDownSongs.toString());
+	};
+	getWholeDataFuture.thenAcceptAsync(list -> this.logger.info("Scraping data size:" + list.size()), es);
+	getFromJsonFuture.thenAcceptAsync(list -> this.logger.info("Currently database size:" + list.size()), es);
+	if(this.property.isCheckLibraryUpdates()) {
+	    CompletableFuture<Void> updatedFuture = getWholeDataFuture.thenAcceptBothAsync(getFromJsonFuture, updateConsumer, es);
+	    updatedFuture.thenRunAsync(setEnabled, es);
+	}
+	this.easter = new Easter();
+	this.setTitle(this.easter.getTodaysBirth());
+	this.logger.debug("Version: {}", CheckVersion.getVersion());
+	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	// this.setBounds(100, 100, this.property.getWindowWidth(), this.property.getWindowHeight());
+	this.setBounds(100, 100, 640, 360);
+	this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+	this.setContentPane(this.contentPane);
+	contentPane.setLayout(new CardLayout(0, 0));
+	
+	panelMain = new JPanel();
+	contentPane.add(panelMain, "name_297483264533700");
+	panelMain.setLayout(new BorderLayout(0, 0));
+	
+	panelNorth = new JPanel();
+	panelMain.add(panelNorth, BorderLayout.NORTH);
+	panelNorth.setLayout(new FormLayout(new ColumnSpec[] {
+			ColumnSpec.decode("192px"),
+			ColumnSpec.decode("330px"),
+			FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+			ColumnSpec.decode("33px"),},
+		new RowSpec[] {
+			RowSpec.decode("20px"),}));
+	
+	labelTitle = new JLabel(Messages.MSGTitle.toString());
+	labelTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 16));
+	panelNorth.add(labelTitle, "2, 1, left, top");
+	
+	labelVersion = new JLabel("v3.1.0");
+	labelVersion.setFont(new Font("SansSerif", Font.BOLD, 12));
+	panelNorth.add(labelVersion, "4, 1, left, center");
+	
+	panelWest = new JPanel();
+	panelMain.add(panelWest, BorderLayout.WEST);
+	panelWest.setLayout(new FormLayout(new ColumnSpec[] {
+			FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+			ColumnSpec.decode("120px"),},
+		new RowSpec[] {
+			FormSpecs.LINE_GAP_ROWSPEC,
+			RowSpec.decode("25px"),
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,}));
+	
+	labelDifficulty = new JLabel(Messages.MSGSelectDifficulty.toString());
+	labelDifficulty.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+	panelWest.add(labelDifficulty, "2, 2, center, center");
+	
+	comboDifficultySelect = new JComboBox();
+	comboDifficultySelect.setFont(new Font("Dialog", Font.BOLD, 12));
+	panelWest.add(comboDifficultySelect, "2, 4, fill, fill");
+	
+	comboAttribute = new JComboBox();
+	comboAttribute.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+	panelWest.add(comboAttribute, "2, 6, fill, top");
+	
+	labelLevel = new JLabel(Messages.MSGSongLevel.toString());
+	labelLevel.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+	panelWest.add(labelLevel, "2, 8, center, center");
+	
+	spinnerLevel = new JSpinner();
+	panelWest.add(spinnerLevel, "2, 10, fill, center");
+	
+	checkLessLv = new JCheckBox(Messages.MSGBelowSpecificLevel.toString());
+	checkLessLv.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+	panelWest.add(checkLessLv, "2, 12, left, top");
+	
+	checkMoreLv = new JCheckBox(Messages.MSGOverSpecificLevel.toString());
+	checkMoreLv.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+	panelWest.add(checkMoreLv, "2, 14, left, top");
+	
+	labelLvCaution = new JLabel(Messages.MSGLevelCheckboxInfo.toString());
+	labelLvCaution.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+	panelWest.add(labelLvCaution, "2, 16, left, center");
+	
+	panelEast = new JPanel();
+	panelMain.add(panelEast, BorderLayout.EAST);
+	panelEast.setLayout(new FormLayout(new ColumnSpec[] {
+			FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+			ColumnSpec.decode("100px"),},
+		new RowSpec[] {
+			FormSpecs.LINE_GAP_ROWSPEC,
+			RowSpec.decode("77px"),
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			RowSpec.decode("max(36dlu;default)"),
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,}));
+	
+	btnImport = new JButton(Messages.MSGUpdatingDatabase.toString());
+	btnImport.addActionListener(e -> {
+		if(impl != null) {
+			if(!impl.getFlag()) {
+				JOptionPane.showMessageDialog(null, Messages.MSGManualUpdateNotCompleteYet.toString());
+			}
+		}
+		ArrayList<Song> fromJson = Scraping.getFromJson();
+		ArrayList<Song> specificlevelList = Scraping.getSpecificLevelSongs(fromJson, (Integer)DelesteRandomSelector.this.spinnerLevel.getValue(), DelesteRandomSelector.this.checkLessLv.isSelected(), DelesteRandomSelector.this.checkMoreLv.isSelected());
+		ArrayList<Song> specificDifficultyList = Scraping.getSpecificDifficultySongs(specificlevelList, DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().toString());
+		ArrayList<Song> specificAttributeList = Scraping.getSpecificAttributeSongs(specificDifficultyList, DelesteRandomSelector.this.comboAttribute.getSelectedItem().toString());
+		ArrayList<Song> specificTypeList = Scraping.getSpecificAlbumTypeSongs(specificAttributeList, EstimateAlbumTypeCycle.getCurrentCycle());
+		if(!selectedSongsList.isEmpty()) {
+			selectedSongsList.clear();
+		}
+		selectedSongsList.addAll((DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().equals(Scraping.MASTERPLUS) || DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().equals(Scraping.LEGACYMASTERPLUS)) ? specificTypeList : specificAttributeList);
+		DelesteRandomSelector.this.logger.info("Songs are selected.We are Ready to go.");
+		JOptionPane.showMessageDialog(null, Messages.MSGCompleteNarrowDown.toString());
+	});
+	btnImport.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+	btnImport.setEnabled(false);
+	panelEast.add(btnImport, "2, 2, fill, fill");
+	
+	btnConfig = new JButton(Messages.MSGConfigurations.toString());
+	btnConfig.addActionListener(e -> {
+		ProcessBuilder builder = new ProcessBuilder("java", "-jar", "Configurations.jar");
+		try {
+			builder.start();
+		} catch (IOException e1) {
+			logger.error("Cannot start external jar file. maybe are you running this with mac or linux?", e);
+		}
+	});
+	panelEast.add(btnConfig, "2, 6, fill, fill");
+	
+	btnStart = new JButton(Messages.MSGCalcStart.toString());
+	btnStart.addActionListener(e -> {
+		Random random = new Random(System.currentTimeMillis());
+		String paneString = "";
+		DelesteRandomSelector.this.integratorArray = new String[DelesteRandomSelector.this.property.getSongLimit()];
+		for(int i = 0; i < DelesteRandomSelector.this.property.getSongLimit(); i++) {
+			int randomInt = random.nextInt(selectedSongsList.size());
+			String typeString = DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().equals(Scraping.MASTERPLUS) || DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().equals(Scraping.LEGACYMASTERPLUS) ? EstimateAlbumTypeCycle.getCurrentCycle() : "";
+			paneString = paneString + (i + 1) + Messages.MSGNumberOfSongs.toString() + " " + selectedSongsList.get(randomInt).getAttribute() + " [" + selectedSongsList.get(randomInt).getDifficulty() + "]「" + selectedSongsList.get(randomInt).getName() + "」！(Lv:" + selectedSongsList.get(randomInt).getLevel() + " " + typeString + ")\n\n";
+			DelesteRandomSelector.this.integratorArray[i] = selectedSongsList.get(randomInt).getName() + "(Lv" + selectedSongsList.get(randomInt).getLevel() + ")\n";
+		}
+		paneString = paneString + Messages.MSGThisPhrase.toString() + DelesteRandomSelector.this.property.getSongLimit() + Messages.MSGPlayPhrase.toString();
+		DelesteRandomSelector.this.textArea.setText(paneString);
+		DelesteRandomSelector.this.integratorBool = true;
+		DelesteRandomSelector.this.logger.info("show up completed.");
+	});
+	btnStart.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+	panelEast.add(btnStart, "2, 4, fill, fill");
+	
+	btnManualUpdate = new JButton(Messages.MSGManualUpdate.toString());
+	btnManualUpdate.addActionListener(e -> {
+		impl = new ManualUpdateThreadImpl();
+		es.submit(impl);
+	});
+	panelEast.add(btnManualUpdate, "2, 8, fill, fill");
+	
+	btnTwitterIntegration = new JButton(Messages.MSGTwitterIntegration.toString());
+	btnTwitterIntegration.addActionListener(e -> {
+		boolean authorizationStatus = TwitterIntegration.authorization();
+		String updatedStatus = Messages.MSGUsingThisAppPhrase.toString();
+		int lengthLimit = updatedStatus.length();
+		boolean isBroken = false;
+		if(!DelesteRandomSelector.this.integratorBool) {
+			JOptionPane.showMessageDialog(null, Messages.MSGNotPlayYet.toString());
+			return;
+		}
+		for (String element : DelesteRandomSelector.this.integratorArray) {
+			updatedStatus = updatedStatus + element;
+			lengthLimit += element.length();
+			if(lengthLimit > 69) {
+				isBroken = true;
+				break;
+			}
+		}
+		if(isBroken) {
+			updatedStatus = updatedStatus + Messages.MSGTwitterPlayOtherwisePhrase.toString() + "\n#DelesteRandomSelector #デレステ ";
+		} else {
+			updatedStatus = updatedStatus + Messages.MSGTwitterPlayOnlyPhrase.toString() + "\n#DelesteRandomSelector #デレステ ";
+		}
+		DelesteRandomSelector.this.logger.info("status message constructed.");
+		lengthLimit = updatedStatus.length();
+		if(authorizationStatus) {
+			int option = JOptionPane.showConfirmDialog(null, Messages.MSGTwitterIntegrationConfirm.toString() + updatedStatus + Messages.MSGStringLength.toString() + lengthLimit);
+			DelesteRandomSelector.this.logger.info("user seletced: " + option);
+			switch(option) {
+			case JOptionPane.OK_OPTION:
+				TwitterIntegration.PostTwitter(updatedStatus);
+				DelesteRandomSelector.this.logger.info("Success to update the status.");
+				JOptionPane.showMessageDialog(null, Messages.MSGCompletePost.toString());
+				break;
+			case JOptionPane.NO_OPTION:
+				DelesteRandomSelector.this.logger.info("There is no will to post.");
+				break;
+			case JOptionPane.CANCEL_OPTION:
+				DelesteRandomSelector.this.logger.info("The Operation was canceled by user.");
+				break;
+			default:
+				break;
+			}
+		} else {
+			DelesteRandomSelector.this.logger.info("seems to reject the permission.it should need try again.");
+		}
+	});
+	btnTwitterIntegration.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 11));
+	panelEast.add(btnTwitterIntegration, "2, 10, fill, fill");
+	
+	btnExit = new JButton(Messages.MSGTerminate.toString());
+	btnExit.addActionListener(e -> {
+		if(DelesteRandomSelector.this.softwareUpdateFuture.isDone() || DelesteRandomSelector.this.albumTypeEstimateFuture.isDone() || !this.impl.getFlag()) {
+			DelesteRandomSelector.this.logger.info("Requested Exit by Button.");
+			logger.info("Shut down thread pool.");
+			es.shutdown();
+			System.exit(0);
+		} else {
+			JOptionPane.showMessageDialog(null, Messages.MSGInternalYpdateNotDoneYet.toString());
+		}
+	});
+	btnExit.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
+	panelEast.add(btnExit, "2, 12, fill, fill");
+	
+	panelCenter = new JPanel();
+	panelMain.add(panelCenter, BorderLayout.CENTER);
+	panelCenter.setLayout(new BorderLayout(0, 0));
+	
+	scrollPane = new JScrollPane();
+	panelCenter.add(scrollPane);
+	
+	textArea = new JTextArea();
+	textArea.setText(Messages.MSGNarrowDownProcedure.toString() + property.getSongLimit() + Messages.MSGCurrentAlbumType.toString() + albumType);
+	textArea.setEditable(false);
+	scrollPane.setViewportView(textArea);
+	if(isFirst || !this.property.isCheckLibraryUpdates()) {
+	    setEnabled.run();
+	}
+    }
 
 }
