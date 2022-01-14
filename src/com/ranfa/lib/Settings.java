@@ -64,7 +64,7 @@ public class Settings {
 	}
 
 	public static int getWindowWidth() {
-		int res = 640;
+		int res = 960;
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			JsonNode node = mapper.readTree(new File(FILEPATH));
@@ -76,7 +76,7 @@ public class Settings {
 	}
 
 	public static int getWindowHeight() {
-		int res = 360;
+		int res = 540;
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			JsonNode node = mapper.readTree(new File(FILEPATH));

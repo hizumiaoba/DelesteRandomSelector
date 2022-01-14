@@ -14,6 +14,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -23,6 +24,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
@@ -61,10 +63,10 @@ public class DelesteRandomSelector extends JFrame {
     private Thread manualUpdateThread;
     private Easter easter;
     private JPanel panelMain;
-    private JPanel panelNorth;
+    private JPanel panelNorthMain;
     private JLabel labelTitle;
     private JLabel labelVersion;
-    private JPanel panelWest;
+    private JPanel panelWestMain;
     private JLabel labelDifficulty;
     private JComboBox comboDifficultySelect;
     private JComboBox comboAttribute;
@@ -73,16 +75,22 @@ public class DelesteRandomSelector extends JFrame {
     private JCheckBox checkLessLv;
     private JCheckBox checkMoreLv;
     private JLabel labelLvCaution;
-    private JPanel panelEast;
+    private JPanel panelEastMain;
     private JButton btnImport;
     private JButton btnConfig;
     private JButton btnStart;
     private JButton btnManualUpdate;
     private JButton btnTwitterIntegration;
     private JButton btnExit;
-    private JPanel panelCenter;
+    private JPanel panelCenterMain;
     private JScrollPane scrollPane;
     private JTextArea textArea;
+    private JTabbedPane tabbedPane;
+    private JPanel panelTool;
+    private JPanel panelNorthTool;
+    private JLabel labelSubToolTitle;
+    private JLabel labelVersionTool;
+    private JPanel panelCenterTool;
 
     /**
      * Launch the application.
@@ -177,36 +185,34 @@ public class DelesteRandomSelector extends JFrame {
 	this.logger.debug("Version: {}", CheckVersion.getVersion());
 	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	// this.setBounds(100, 100, this.property.getWindowWidth(), this.property.getWindowHeight());
-	this.setBounds(100, 100, 640, 360);
+	this.setBounds(100, 100, 960, 540);
 	this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 	this.setContentPane(this.contentPane);
 	contentPane.setLayout(new CardLayout(0, 0));
 	
 	panelMain = new JPanel();
-	contentPane.add(panelMain, "name_297483264533700");
 	panelMain.setLayout(new BorderLayout(0, 0));
 	
-	panelNorth = new JPanel();
-	panelMain.add(panelNorth, BorderLayout.NORTH);
-	panelNorth.setLayout(new FormLayout(new ColumnSpec[] {
-			ColumnSpec.decode("192px"),
-			ColumnSpec.decode("330px"),
+	panelNorthMain = new JPanel();
+	panelMain.add(panelNorthMain, BorderLayout.NORTH);
+	panelNorthMain.setLayout(new FormLayout(new ColumnSpec[] {
+			ColumnSpec.decode("829px"),
 			FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
-			ColumnSpec.decode("33px"),},
+			ColumnSpec.decode("center:94px"),},
 		new RowSpec[] {
 			RowSpec.decode("20px"),}));
 	
 	labelTitle = new JLabel(Messages.MSGTitle.toString());
 	labelTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 16));
-	panelNorth.add(labelTitle, "2, 1, left, top");
+	panelNorthMain.add(labelTitle, "1, 1, center, top");
 	
-	labelVersion = new JLabel("v3.1.0");
+	labelVersion = new JLabel(CheckVersion.getVersion());
 	labelVersion.setFont(new Font("SansSerif", Font.BOLD, 12));
-	panelNorth.add(labelVersion, "4, 1, left, center");
+	panelNorthMain.add(labelVersion, "3, 1, center, center");
 	
-	panelWest = new JPanel();
-	panelMain.add(panelWest, BorderLayout.WEST);
-	panelWest.setLayout(new FormLayout(new ColumnSpec[] {
+	panelWestMain = new JPanel();
+	panelMain.add(panelWestMain, BorderLayout.WEST);
+	panelWestMain.setLayout(new FormLayout(new ColumnSpec[] {
 			FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 			ColumnSpec.decode("120px"),},
 		new RowSpec[] {
@@ -225,42 +231,44 @@ public class DelesteRandomSelector extends JFrame {
 			FormSpecs.RELATED_GAP_ROWSPEC,
 			FormSpecs.DEFAULT_ROWSPEC,
 			FormSpecs.RELATED_GAP_ROWSPEC,
-			FormSpecs.DEFAULT_ROWSPEC,}));
+			RowSpec.decode("max(41dlu;default)"),}));
 	
 	labelDifficulty = new JLabel(Messages.MSGSelectDifficulty.toString());
 	labelDifficulty.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-	panelWest.add(labelDifficulty, "2, 2, center, center");
+	panelWestMain.add(labelDifficulty, "2, 2, center, center");
 	
 	comboDifficultySelect = new JComboBox();
+	comboDifficultySelect.setModel(new DefaultComboBoxModel(new String[] {Messages.MSGNonSelected.toString(), "DEBUT", "REGULAR", "PRO", "MASTER", "MASTER+", "ⓁMASTER+", "LIGHT", "TRICK", "PIANO", "FORTE", "WITCH"}));
 	comboDifficultySelect.setFont(new Font("Dialog", Font.BOLD, 12));
-	panelWest.add(comboDifficultySelect, "2, 4, fill, fill");
+	panelWestMain.add(comboDifficultySelect, "2, 4, fill, fill");
 	
 	comboAttribute = new JComboBox();
+	comboAttribute.setModel(new DefaultComboBoxModel(new String[] {Messages.MSGNonSelected.toString(), "全タイプ", "キュート", "クール", "パッション"}));
 	comboAttribute.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-	panelWest.add(comboAttribute, "2, 6, fill, top");
+	panelWestMain.add(comboAttribute, "2, 6, fill, top");
 	
 	labelLevel = new JLabel(Messages.MSGSongLevel.toString());
 	labelLevel.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-	panelWest.add(labelLevel, "2, 8, center, center");
+	panelWestMain.add(labelLevel, "2, 8, center, center");
 	
 	spinnerLevel = new JSpinner();
-	panelWest.add(spinnerLevel, "2, 10, fill, center");
+	panelWestMain.add(spinnerLevel, "2, 10, fill, center");
 	
 	checkLessLv = new JCheckBox(Messages.MSGBelowSpecificLevel.toString());
 	checkLessLv.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-	panelWest.add(checkLessLv, "2, 12, left, top");
+	panelWestMain.add(checkLessLv, "2, 12, left, top");
 	
 	checkMoreLv = new JCheckBox(Messages.MSGOverSpecificLevel.toString());
 	checkMoreLv.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-	panelWest.add(checkMoreLv, "2, 14, left, top");
+	panelWestMain.add(checkMoreLv, "2, 14, left, top");
 	
 	labelLvCaution = new JLabel(Messages.MSGLevelCheckboxInfo.toString());
 	labelLvCaution.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-	panelWest.add(labelLvCaution, "2, 16, left, center");
+	panelWestMain.add(labelLvCaution, "2, 16, left, center");
 	
-	panelEast = new JPanel();
-	panelMain.add(panelEast, BorderLayout.EAST);
-	panelEast.setLayout(new FormLayout(new ColumnSpec[] {
+	panelEastMain = new JPanel();
+	panelMain.add(panelEastMain, BorderLayout.EAST);
+	panelEastMain.setLayout(new FormLayout(new ColumnSpec[] {
 			FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 			ColumnSpec.decode("100px"),},
 		new RowSpec[] {
@@ -298,7 +306,7 @@ public class DelesteRandomSelector extends JFrame {
 	});
 	btnImport.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 	btnImport.setEnabled(false);
-	panelEast.add(btnImport, "2, 2, fill, fill");
+	panelEastMain.add(btnImport, "2, 2, fill, fill");
 	
 	btnConfig = new JButton(Messages.MSGConfigurations.toString());
 	btnConfig.addActionListener(e -> {
@@ -309,7 +317,7 @@ public class DelesteRandomSelector extends JFrame {
 			logger.error("Cannot start external jar file. maybe are you running this with mac or linux?", e);
 		}
 	});
-	panelEast.add(btnConfig, "2, 6, fill, fill");
+	panelEastMain.add(btnConfig, "2, 6, fill, fill");
 	
 	btnStart = new JButton(Messages.MSGCalcStart.toString());
 	btnStart.addActionListener(e -> {
@@ -328,14 +336,14 @@ public class DelesteRandomSelector extends JFrame {
 		DelesteRandomSelector.this.logger.info("show up completed.");
 	});
 	btnStart.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-	panelEast.add(btnStart, "2, 4, fill, fill");
+	panelEastMain.add(btnStart, "2, 4, fill, fill");
 	
 	btnManualUpdate = new JButton(Messages.MSGManualUpdate.toString());
 	btnManualUpdate.addActionListener(e -> {
 		impl = new ManualUpdateThreadImpl();
 		es.submit(impl);
 	});
-	panelEast.add(btnManualUpdate, "2, 8, fill, fill");
+	panelEastMain.add(btnManualUpdate, "2, 8, fill, fill");
 	
 	btnTwitterIntegration = new JButton(Messages.MSGTwitterIntegration.toString());
 	btnTwitterIntegration.addActionListener(e -> {
@@ -385,7 +393,7 @@ public class DelesteRandomSelector extends JFrame {
 		}
 	});
 	btnTwitterIntegration.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 11));
-	panelEast.add(btnTwitterIntegration, "2, 10, fill, fill");
+	panelEastMain.add(btnTwitterIntegration, "2, 10, fill, fill");
 	
 	btnExit = new JButton(Messages.MSGTerminate.toString());
 	btnExit.addActionListener(e -> {
@@ -399,19 +407,49 @@ public class DelesteRandomSelector extends JFrame {
 		}
 	});
 	btnExit.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
-	panelEast.add(btnExit, "2, 12, fill, fill");
+	panelEastMain.add(btnExit, "2, 12, fill, fill");
 	
-	panelCenter = new JPanel();
-	panelMain.add(panelCenter, BorderLayout.CENTER);
-	panelCenter.setLayout(new BorderLayout(0, 0));
+	panelCenterMain = new JPanel();
+	panelMain.add(panelCenterMain, BorderLayout.CENTER);
+	panelCenterMain.setLayout(new BorderLayout(0, 0));
 	
 	scrollPane = new JScrollPane();
-	panelCenter.add(scrollPane);
+	panelCenterMain.add(scrollPane);
 	
 	textArea = new JTextArea();
 	textArea.setText(Messages.MSGNarrowDownProcedure.toString() + property.getSongLimit() + Messages.MSGCurrentAlbumType.toString() + albumType);
 	textArea.setEditable(false);
 	scrollPane.setViewportView(textArea);
+	
+	tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+	tabbedPane.addTab("Main", null, panelMain, null);
+	contentPane.add(tabbedPane, "name_307238585319500");
+	
+	panelTool = new JPanel();
+	tabbedPane.addTab("SubTools", null, panelTool, null);
+	panelTool.setLayout(new BorderLayout(0, 0));
+	
+	panelNorthTool = new JPanel();
+	panelTool.add(panelNorthTool, BorderLayout.NORTH);
+	panelNorthTool.setLayout(new FormLayout(new ColumnSpec[] {
+			ColumnSpec.decode("center:max(524dlu;default)"),
+			FormSpecs.RELATED_GAP_COLSPEC,
+			ColumnSpec.decode("max(30dlu;default)"),},
+		new RowSpec[] {
+			RowSpec.decode("max(16dlu;default)"),}));
+	
+	labelSubToolTitle = new JLabel("補助ツール");
+	labelSubToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 16));
+	panelNorthTool.add(labelSubToolTitle, "1, 1");
+	
+	labelVersionTool = new JLabel(CheckVersion.getVersion());
+	labelVersionTool.setFont(new Font("SansSerif", Font.BOLD, 12));
+	panelNorthTool.add(labelVersionTool, "3, 1");
+	
+	panelCenterTool = new JPanel();
+	panelTool.add(panelCenterTool, BorderLayout.CENTER);
+	panelCenterTool.setLayout(new FormLayout(new ColumnSpec[] {},
+		new RowSpec[] {}));
 	if(isFirst || !this.property.isCheckLibraryUpdates()) {
 	    setEnabled.run();
 	}
