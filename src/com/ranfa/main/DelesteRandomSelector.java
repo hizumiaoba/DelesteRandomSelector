@@ -91,6 +91,7 @@ public class DelesteRandomSelector extends JFrame {
     private JLabel labelSubToolTitle;
     private JLabel labelVersionTool;
     private JPanel panelCenterTool;
+    private JLabel lblNewLabel;
 
     /**
      * Launch the application.
@@ -448,8 +449,15 @@ public class DelesteRandomSelector extends JFrame {
 	
 	panelCenterTool = new JPanel();
 	panelTool.add(panelCenterTool, BorderLayout.CENTER);
-	panelCenterTool.setLayout(new FormLayout(new ColumnSpec[] {},
-		new RowSpec[] {}));
+	panelCenterTool.setLayout(new FormLayout(new ColumnSpec[] {
+			FormSpecs.RELATED_GAP_COLSPEC,
+			ColumnSpec.decode("max(166dlu;default)"),},
+		new RowSpec[] {
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,}));
+	
+	lblNewLabel = new JLabel("New label");
+	panelCenterTool.add(lblNewLabel, "2, 2, center, default");
 	if(isFirst || !this.property.isCheckLibraryUpdates()) {
 	    setEnabled.run();
 	}
