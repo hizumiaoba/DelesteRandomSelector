@@ -60,7 +60,6 @@ public class DelesteRandomSelector extends JFrame {
     private String albumType = Messages.MSGAlbumTypeBeingCalculated.toString();
     private Logger logger = LoggerFactory.getLogger(DelesteRandomSelector.class);
     private ManualUpdateThreadImpl impl;
-    private Thread manualUpdateThread;
     private Easter easter;
     private JPanel panelMain;
     private JPanel panelNorthMain;
