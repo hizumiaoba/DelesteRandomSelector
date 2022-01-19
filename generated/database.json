@@ -14650,5 +14650,33 @@
     "level" : 30,
     "notes" : 964,
     "albumType" : "ALBUM C"
+  }, {
+    "attribute" : "キュート",
+    "name" : "cherry＊merry＊cherry",
+    "difficulty" : "DEBUT",
+    "level" : 8,
+    "notes" : 126,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "cherry＊merry＊cherry",
+    "difficulty" : "REGULAR",
+    "level" : 12,
+    "notes" : 178,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "cherry＊merry＊cherry",
+    "difficulty" : "PRO",
+    "level" : 17,
+    "notes" : 344,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "cherry＊merry＊cherry",
+    "difficulty" : "MASTER",
+    "level" : 25,
+    "notes" : 605,
+    "albumType" : "Not-Implemented"
   } ]
 }
