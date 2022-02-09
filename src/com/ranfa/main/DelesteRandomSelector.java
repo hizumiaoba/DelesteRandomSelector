@@ -67,8 +67,8 @@ public class DelesteRandomSelector extends JFrame {
     private JLabel labelVersion;
     private JPanel panelWestMain;
     private JLabel labelDifficulty;
-    private JComboBox comboDifficultySelect;
-    private JComboBox comboAttribute;
+    private JComboBox<String[]> comboDifficultySelect;
+    private JComboBox<String[]> comboAttribute;
     private JLabel labelLevel;
     private JSpinner spinnerLevel;
     private JCheckBox checkLessLv;

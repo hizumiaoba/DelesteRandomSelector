@@ -14678,5 +14678,47 @@
     "level" : 25,
     "notes" : 605,
     "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "スパイスパラダイス",
+    "difficulty" : "WITCH",
+    "level" : 27,
+    "notes" : 566,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "トロピカルガール",
+    "difficulty" : "DEBUT",
+    "level" : 8,
+    "notes" : 104,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "トロピカルガール",
+    "difficulty" : "REGULAR",
+    "level" : 14,
+    "notes" : 203,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "トロピカルガール",
+    "difficulty" : "PRO",
+    "level" : 18,
+    "notes" : 408,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "トロピカルガール",
+    "difficulty" : "MASTER",
+    "level" : 26,
+    "notes" : 694,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "トロピカルガール",
+    "difficulty" : "MASTER+",
+    "level" : 29,
+    "notes" : 988,
+    "albumType" : "Not-implemented"
   } ]
 }
