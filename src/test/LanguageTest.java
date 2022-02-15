@@ -24,12 +24,12 @@ public class LanguageTest {
 		// asserts
 		assertEquals("開始！", Messages.MSGCalcStart.toString());
 		assertEquals("楽曲データベースが見つかりませんでした。自動的に作成されます…\n注意：初回起動ではなく、かつ、Jarファイルと同じ階層に\"database.json\"というファイルが存在するにも関わらず\nこのポップアップが出た場合、開発者までご一報ください。\nGithub URL: https://github.com/hizumiaoba/DelesteRandomSelector/issues", Messages.MSGDatabaseNotExist.toString());
-		assertTrue(Messages.MSGAlbumTypeBeingCalculated.toString().equals("計算中..."));
-		assertTrue(Messages.MSGNarrowingDownSongs.toString().equals("<html><body>楽曲<br>絞り込み</body></html>"));
-		assertTrue(Messages.MSGTitle.toString().equals("デレステ課題曲セレクター"));
-		assertTrue(Messages.MSGSelectDifficulty.toString().equals("難易度選択"));
-		assertTrue(Messages.MSGNonSelected.toString().equals("指定なし"));
-		assertTrue(Messages.MSGSongLevel.toString().equals("楽曲Lv"));
+		assertEquals(Messages.MSGAlbumTypeBeingCalculated.toString(), "計算中...");
+		assertEquals(Messages.MSGNarrowingDownSongs.toString(), "<html><body>楽曲<br>絞り込み</body></html>");
+		assertEquals(Messages.MSGTitle.toString(), "デレステ課題曲セレクター");
+		assertEquals(Messages.MSGSelectDifficulty.toString(), "難易度選択");
+		assertEquals(Messages.MSGNonSelected.toString(), "指定なし");
+		assertEquals(Messages.MSGSongLevel.toString(), "楽曲Lv");
 		assertTrue(Messages.MSGBelowSpecificLevel.toString().equals("指定Lv以下"));
 		assertTrue(Messages.MSGOverSpecificLevel.toString().equals("指定Lv以上"));
 		assertTrue(Messages.MSGLevelCheckboxInfo.toString().equals("<html><body>以下以上両方にチェックをつけることで指定レベルのみ絞り込むことができます</body></html>"));
