@@ -62,7 +62,7 @@ public class DelesteRandomSelector extends JFrame {
     private Logger logger = LoggerFactory.getLogger(DelesteRandomSelector.class);
     private ManualUpdateThreadImpl impl;
     
-    private List<Song> toolIntegrateList = new ArrayList<>();
+    private List<Song> toolIntegrateList;
     private Easter easter;
     private JPanel panelMain;
     private JPanel panelNorthMain;
@@ -94,6 +94,21 @@ public class DelesteRandomSelector extends JFrame {
     private JLabel labelVersionTool;
     private JPanel panelCenterTool;
     private JLabel lblNewLabel;
+    private JLabel labelSongNameToolTitle;
+    private JLabel labelSongNameToolTip;
+    private JLabel labelAttributeToolTitle;
+    private JLabel labelAttributeToolTip;
+    private JLabel labelDifficultyToolTitle;
+    private JLabel labelDifficultyToolTip;
+    private JLabel labelLevelToolTitle;
+    private JLabel labelLevelToolTip;
+    private JLabel labelNotesToolTitle;
+    private JLabel labelNotesToolTip;
+    private JButton btnPrevSongTool;
+    private JButton btnNextSongTool;
+    private JLabel labelSlashTool;
+    private JLabel labelCurrentSongOrderTool;
+    private JLabel labelSongLimitTool;
 
     /**
      * Launch the application.
@@ -325,6 +340,7 @@ public class DelesteRandomSelector extends JFrame {
 	btnStart = new JButton(Messages.MSGCalcStart.toString());
 	btnStart.addActionListener(e -> {
 		Random random = new Random(System.currentTimeMillis());
+		toolIntegrateList = new ArrayList<>();
 		StringBuilder paneBuilder = new StringBuilder();
 		DelesteRandomSelector.this.integratorArray = new String[DelesteRandomSelector.this.property.getSongLimit()];
 		for(int i = 0; i < DelesteRandomSelector.this.property.getSongLimit(); i++) {
@@ -352,6 +368,7 @@ public class DelesteRandomSelector extends JFrame {
 		DelesteRandomSelector.this.textArea.setText(paneBuilder.toString());
 		DelesteRandomSelector.this.integratorBool = true;
 		DelesteRandomSelector.this.logger.info("show up completed.");
+		labelCurrentSongOrderTool.setText("null");
 	});
 	btnStart.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 	panelEastMain.add(btnStart, "2, 4, fill, fill");
@@ -445,6 +462,19 @@ public class DelesteRandomSelector extends JFrame {
 	scrollPane.setViewportView(textArea);
 	
 	tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+	tabbedPane.addChangeListener(e -> {
+		String currentTabName = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
+		if(currentTabName.equals("SubTools") && labelCurrentSongOrderTool.getText().equals("null")) {
+			logger.info("Detected switching tool tab");
+			Song firstSong = toolIntegrateList.get(0);
+			labelSongNameToolTip.setText(firstSong.getName());
+			labelAttributeToolTip.setText(firstSong.getAttribute());
+			labelDifficultyToolTip.setText(firstSong.getDifficulty());
+			labelLevelToolTip.setText(String.valueOf(firstSong.getLevel()));
+			labelNotesToolTip.setText(String.valueOf(firstSong.getNotes()));
+			labelCurrentSongOrderTool.setText("1");
+		}
+	});
 	tabbedPane.addTab("Main", null, panelMain, null);
 	contentPane.add(tabbedPane, "name_307238585319500");
 	
@@ -473,13 +503,131 @@ public class DelesteRandomSelector extends JFrame {
 	panelTool.add(panelCenterTool, BorderLayout.CENTER);
 	panelCenterTool.setLayout(new FormLayout(new ColumnSpec[] {
 			FormSpecs.RELATED_GAP_COLSPEC,
-			ColumnSpec.decode("max(166dlu;default)"),},
+			ColumnSpec.decode("max(130dlu;default)"),
+			FormSpecs.RELATED_GAP_COLSPEC,
+			ColumnSpec.decode("10dlu"),
+			FormSpecs.RELATED_GAP_COLSPEC,
+			ColumnSpec.decode("10dlu"),
+			FormSpecs.RELATED_GAP_COLSPEC,
+			ColumnSpec.decode("max(10dlu;default)"),
+			FormSpecs.RELATED_GAP_COLSPEC,
+			ColumnSpec.decode("max(130dlu;default)"),},
 		new RowSpec[] {
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,
 			FormSpecs.RELATED_GAP_ROWSPEC,
 			FormSpecs.DEFAULT_ROWSPEC,}));
 	
-	lblNewLabel = new JLabel("New label");
+	lblNewLabel = new JLabel("今回プレイした楽曲");
+	lblNewLabel.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(lblNewLabel, "2, 2, center, default");
+	
+	labelSongNameToolTitle = new JLabel("Song Name");
+	labelSongNameToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelCenterTool.add(labelSongNameToolTitle, "2, 6, center, default");
+	
+	labelSongNameToolTip = new JLabel("New label");
+	labelSongNameToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelCenterTool.add(labelSongNameToolTip, "10, 6, center, default");
+	
+	labelAttributeToolTitle = new JLabel("Song Attribute");
+	labelAttributeToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelCenterTool.add(labelAttributeToolTitle, "2, 10, center, default");
+	
+	labelAttributeToolTip = new JLabel("New label");
+	labelAttributeToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelCenterTool.add(labelAttributeToolTip, "10, 10, center, default");
+	
+	labelDifficultyToolTitle = new JLabel("Difficulty");
+	labelDifficultyToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelCenterTool.add(labelDifficultyToolTitle, "2, 14, center, default");
+	
+	labelDifficultyToolTip = new JLabel("New label");
+	labelDifficultyToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelCenterTool.add(labelDifficultyToolTip, "10, 14, center, default");
+	
+	labelLevelToolTitle = new JLabel("Song Level");
+	labelLevelToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelCenterTool.add(labelLevelToolTitle, "2, 18, center, default");
+	
+	labelLevelToolTip = new JLabel("New label");
+	labelLevelToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelCenterTool.add(labelLevelToolTip, "10, 18, center, default");
+	
+	labelNotesToolTitle = new JLabel("Notes");
+	labelNotesToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelCenterTool.add(labelNotesToolTitle, "2, 22, center, default");
+	
+	labelNotesToolTip = new JLabel("New label");
+	labelNotesToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelCenterTool.add(labelNotesToolTip, "10, 22, center, default");
+	
+	btnPrevSongTool = new JButton("prev");
+	btnPrevSongTool.addActionListener(e -> {
+		int currentIndex = Integer.parseInt(labelCurrentSongOrderTool.getText()) - 1;
+		if(currentIndex != 0) {
+			Song prevSong = toolIntegrateList.get(currentIndex - 1);
+			logger.info("currently : {} Next: {}", currentIndex, currentIndex - 1);
+			logger.info("prevSong: {}", prevSong);
+			labelSongNameToolTip.setText(prevSong.getName());
+			labelAttributeToolTip.setText(prevSong.getAttribute());
+			labelDifficultyToolTip.setText(prevSong.getDifficulty());
+			labelLevelToolTip.setText(String.valueOf(prevSong.getLevel()));
+			labelNotesToolTip.setText(String.valueOf(prevSong.getNotes()));
+			labelCurrentSongOrderTool.setText(String.valueOf(currentIndex));
+		}
+	});
+	btnPrevSongTool.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelCenterTool.add(btnPrevSongTool, "2, 26");
+	
+	labelCurrentSongOrderTool = new JLabel("null");
+	panelCenterTool.add(labelCurrentSongOrderTool, "4, 26");
+	
+	labelSlashTool = new JLabel("/");
+	panelCenterTool.add(labelSlashTool, "6, 26");
+	
+	labelSongLimitTool = new JLabel(String.valueOf(this.property.getSongLimit()));
+	panelCenterTool.add(labelSongLimitTool, "8, 26");
+	
+	btnNextSongTool = new JButton("next");
+	btnNextSongTool.addActionListener(e -> {
+		int currentIndex = Integer.parseInt(labelCurrentSongOrderTool.getText()) - 1;
+		if(currentIndex != property.getSongLimit() - 1) {
+			Song nextSong = toolIntegrateList.get(currentIndex + 1);
+			logger.info("currently : {} Next: {}", currentIndex, currentIndex + 1);
+			logger.info("nextSong: {}", nextSong);
+			labelSongNameToolTip.setText(nextSong.getName());
+			labelAttributeToolTip.setText(nextSong.getAttribute());
+			labelDifficultyToolTip.setText(nextSong.getDifficulty());
+			labelLevelToolTip.setText(String.valueOf(nextSong.getLevel()));
+			labelNotesToolTip.setText(String.valueOf(nextSong.getNotes()));
+			labelCurrentSongOrderTool.setText(String.valueOf(currentIndex + 2));
+		}
+	});
+	btnNextSongTool.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelCenterTool.add(btnNextSongTool, "10, 26");
 	if(isFirst || !this.property.isCheckLibraryUpdates()) {
 	    setEnabled.run();
 	}
