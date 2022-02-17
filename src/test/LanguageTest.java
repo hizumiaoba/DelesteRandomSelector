@@ -1,6 +1,6 @@
 package test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.Locale;
 
@@ -22,14 +22,14 @@ public class LanguageTest {
 		Locale.setDefault(this.jp);
 
 		// asserts
-		assertTrue(Messages.MSGCalcStart.toString().equals("開始！"));
-		assertTrue(Messages.MSGDatabaseNotExist.toString().equals("楽曲データベースが見つかりませんでした。自動的に作成されます…\n注意：初回起動ではなく、かつ、Jarファイルと同じ階層に\"database.json\"というファイルが存在するにも関わらず\nこのポップアップが出た場合、開発者までご一報ください。\nGithub URL: https://github.com/hizumiaoba/DelesteRandomSelector/issues"));
-		assertTrue(Messages.MSGAlbumTypeBeingCalculated.toString().equals("計算中..."));
-		assertTrue(Messages.MSGNarrowingDownSongs.toString().equals("<html><body>楽曲<br>絞り込み</body></html>"));
-		assertTrue(Messages.MSGTitle.toString().equals("デレステ課題曲セレクター"));
-		assertTrue(Messages.MSGSelectDifficulty.toString().equals("難易度選択"));
-		assertTrue(Messages.MSGNonSelected.toString().equals("指定なし"));
-		assertTrue(Messages.MSGSongLevel.toString().equals("楽曲Lv"));
+		assertEquals("開始！", Messages.MSGCalcStart.toString());
+		assertEquals("楽曲データベースが見つかりませんでした。自動的に作成されます…\n注意：初回起動ではなく、かつ、Jarファイルと同じ階層に\"database.json\"というファイルが存在するにも関わらず\nこのポップアップが出た場合、開発者までご一報ください。\nGithub URL: https://github.com/hizumiaoba/DelesteRandomSelector/issues", Messages.MSGDatabaseNotExist.toString());
+		assertEquals(Messages.MSGAlbumTypeBeingCalculated.toString(), "計算中...");
+		assertEquals(Messages.MSGNarrowingDownSongs.toString(), "<html><body>楽曲<br>絞り込み</body></html>");
+		assertEquals(Messages.MSGTitle.toString(), "デレステ課題曲セレクター");
+		assertEquals(Messages.MSGSelectDifficulty.toString(), "難易度選択");
+		assertEquals(Messages.MSGNonSelected.toString(), "指定なし");
+		assertEquals(Messages.MSGSongLevel.toString(), "楽曲Lv");
 		assertTrue(Messages.MSGBelowSpecificLevel.toString().equals("指定Lv以下"));
 		assertTrue(Messages.MSGOverSpecificLevel.toString().equals("指定Lv以上"));
 		assertTrue(Messages.MSGLevelCheckboxInfo.toString().equals("<html><body>以下以上両方にチェックをつけることで指定レベルのみ絞り込むことができます</body></html>"));
@@ -52,6 +52,7 @@ public class LanguageTest {
 		assertTrue(Messages.MSGCurrentAlbumType.toString().equals("\n現在のMASTER+アルバム周期（推定）："));
 		assertTrue(Messages.MSGManualUpdate.toString().equals("<html><body>手動更新</body></html>"));
 		assertTrue(Messages.MSGManualUpdateNotCompleteYet.toString().equals("手動更新が完了していません。もうしばらくお待ちください。"));
+		assertEquals("設定", Messages.MSGConfigurations.toString());
 	}
 
 	@Test
@@ -90,6 +91,7 @@ public class LanguageTest {
 		assertTrue(Messages.MSGCurrentAlbumType.toString().equals("\nCurrent MASTER+ ALBUM type(based on simulation):"));
 		assertTrue(Messages.MSGManualUpdate.toString().equals("<html><body>Manual<br>Update</body></html>"));
 		assertTrue(Messages.MSGManualUpdateNotCompleteYet.toString().equals("Manual Update has not been finished yet. Please wait a moment."));
+		assertEquals("Config", Messages.MSGConfigurations.toString());
 	}
 
 	@After

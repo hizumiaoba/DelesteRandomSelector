@@ -14,6 +14,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -58,7 +59,6 @@ public class DelesteRandomSelector extends JFrame {
     private String albumType = Messages.MSGAlbumTypeBeingCalculated.toString();
     private Logger logger = LoggerFactory.getLogger(DelesteRandomSelector.class);
     private ManualUpdateThreadImpl impl;
-    private Thread manualUpdateThread;
     private Easter easter;
     private JPanel panelMain;
     private JPanel panelNorth;
@@ -232,10 +232,12 @@ public class DelesteRandomSelector extends JFrame {
 	panelWest.add(labelDifficulty, "2, 2, center, center");
 	
 	comboDifficultySelect = new JComboBox();
+	comboDifficultySelect.setModel(new DefaultComboBoxModel(new String[] {Messages.MSGNonSelected.toString(), "DEBUT", "REGULAR", "PRO", "MASTER", "MASTER+", "ⓁMASTER+", "LIGHT", "TRICK", "PIANO", "FORTE", "WITCH"}));
 	comboDifficultySelect.setFont(new Font("Dialog", Font.BOLD, 12));
 	panelWest.add(comboDifficultySelect, "2, 4, fill, fill");
 	
 	comboAttribute = new JComboBox();
+	comboAttribute.setModel(new DefaultComboBoxModel(new String[] {Messages.MSGNonSelected.toString(), "全タイプ", "キュート", "クール", "パッション"}));
 	comboAttribute.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 	panelWest.add(comboAttribute, "2, 6, fill, top");
 	
@@ -333,7 +335,12 @@ public class DelesteRandomSelector extends JFrame {
 	btnManualUpdate = new JButton(Messages.MSGManualUpdate.toString());
 	btnManualUpdate.addActionListener(e -> {
 		impl = new ManualUpdateThreadImpl();
-		es.submit(impl);
+		CompletableFuture.runAsync(impl, es).whenCompleteAsync((t, u) -> {
+			if(u != null) {
+				logger.warn("Exception while processing update manually.", e);
+				JOptionPane.showMessageDialog(null, "There was a problem during processing library update manually.\nIf this appears repeatedly, please contact developer with your app log.");
+			}
+		}, es);
 	});
 	panelEast.add(btnManualUpdate, "2, 8, fill, fill");
 	

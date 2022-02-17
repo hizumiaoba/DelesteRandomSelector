@@ -14839,5 +14839,222 @@
     "level" : 25,
     "notes" : 579,
     "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "cherry＊merry＊cherry",
+    "difficulty" : "DEBUT",
+    "level" : 8,
+    "notes" : 126,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "cherry＊merry＊cherry",
+    "difficulty" : "REGULAR",
+    "level" : 12,
+    "notes" : 178,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "cherry＊merry＊cherry",
+    "difficulty" : "PRO",
+    "level" : 17,
+    "notes" : 344,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "cherry＊merry＊cherry",
+    "difficulty" : "MASTER",
+    "level" : 25,
+    "notes" : 605,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "cherry＊merry＊cherry",
+    "difficulty" : "DEBUT",
+    "level" : 8,
+    "notes" : 126,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "cherry＊merry＊cherry",
+    "difficulty" : "REGULAR",
+    "level" : 12,
+    "notes" : 178,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "cherry＊merry＊cherry",
+    "difficulty" : "PRO",
+    "level" : 17,
+    "notes" : 344,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "cherry＊merry＊cherry",
+    "difficulty" : "MASTER",
+    "level" : 25,
+    "notes" : 605,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "スパイスパラダイス",
+    "difficulty" : "WITCH",
+    "level" : 27,
+    "notes" : 566,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "トロピカルガール",
+    "difficulty" : "DEBUT",
+    "level" : 8,
+    "notes" : 104,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "トロピカルガール",
+    "difficulty" : "REGULAR",
+    "level" : 14,
+    "notes" : 203,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "トロピカルガール",
+    "difficulty" : "PRO",
+    "level" : 18,
+    "notes" : 408,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "トロピカルガール",
+    "difficulty" : "MASTER",
+    "level" : 26,
+    "notes" : 694,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "トロピカルガール",
+    "difficulty" : "MASTER+",
+    "level" : 29,
+    "notes" : 988,
+    "albumType" : "Not-implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "あこがれステッチ",
+    "difficulty" : "LIGHT",
+    "level" : 6,
+    "notes" : 133,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "あこがれステッチ",
+    "difficulty" : "TRICK",
+    "level" : 15,
+    "notes" : 319,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "双翼の独奏歌",
+    "difficulty" : "LIGHT",
+    "level" : 8,
+    "notes" : 172,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "双翼の独奏歌",
+    "difficulty" : "TRICK",
+    "level" : 17,
+    "notes" : 372,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "かぼちゃ姫",
+    "difficulty" : "MASTER+",
+    "level" : 29,
+    "notes" : 963,
+    "albumType" : "ALBUM A"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "つぼみ",
+    "difficulty" : "MASTER+",
+    "level" : 28,
+    "notes" : 688,
+    "albumType" : "ALBUM A"
+  }, {
+    "attribute" : "パッション",
+    "name" : "CoCo夏夏夏 Holiday",
+    "difficulty" : "DEBUT",
+    "level" : 8,
+    "notes" : 127,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "CoCo夏夏夏 Holiday",
+    "difficulty" : "REGULAR",
+    "level" : 14,
+    "notes" : 250,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "CoCo夏夏夏 Holiday",
+    "difficulty" : "PRO",
+    "level" : 19,
+    "notes" : 468,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "CoCo夏夏夏 Holiday",
+    "difficulty" : "MASTER",
+    "level" : 27,
+    "notes" : 819,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "CoCo夏夏夏 Holiday",
+    "difficulty" : "MASTER+",
+    "level" : 30,
+    "notes" : 999,
+    "albumType" : "Not-implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "堕ちる果実",
+    "difficulty" : "MASTER+",
+    "level" : 31,
+    "notes" : 734,
+    "albumType" : "ALBUM B"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "心もよう",
+    "difficulty" : "MASTER+",
+    "level" : 26,
+    "notes" : 500,
+    "albumType" : "ALBUM B"
+  }, {
+    "attribute" : "キュート",
+    "name" : "スローライフ・ファンタジー",
+    "difficulty" : "DEBUT",
+    "level" : 6,
+    "notes" : 80,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "スローライフ・ファンタジー",
+    "difficulty" : "REGULAR",
+    "level" : 12,
+    "notes" : 152,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "スローライフ・ファンタジー",
+    "difficulty" : "PRO",
+    "level" : 17,
+    "notes" : 304,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "スローライフ・ファンタジー",
+    "difficulty" : "MASTER",
+    "level" : 25,
+    "notes" : 579,
+    "albumType" : "Not-Implemented"
   } ]
 }
