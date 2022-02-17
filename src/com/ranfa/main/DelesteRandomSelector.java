@@ -341,7 +341,12 @@ public class DelesteRandomSelector extends JFrame {
 	btnManualUpdate = new JButton(Messages.MSGManualUpdate.toString());
 	btnManualUpdate.addActionListener(e -> {
 		impl = new ManualUpdateThreadImpl();
-		es.submit(impl);
+		CompletableFuture.runAsync(impl, es).whenCompleteAsync((t, u) -> {
+			if(u != null) {
+				logger.warn("Exception while processing update manually.", e);
+				JOptionPane.showMessageDialog(null, "There was a problem during processing library update manually.\nIf this appears repeatedly, please contact developer with your app log.");
+			}
+		}, es);
 	});
 	panelEastMain.add(btnManualUpdate, "2, 8, fill, fill");
 	
