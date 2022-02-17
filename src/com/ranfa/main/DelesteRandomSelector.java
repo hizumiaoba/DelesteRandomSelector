@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -60,6 +61,8 @@ public class DelesteRandomSelector extends JFrame {
     private String albumType = Messages.MSGAlbumTypeBeingCalculated.toString();
     private Logger logger = LoggerFactory.getLogger(DelesteRandomSelector.class);
     private ManualUpdateThreadImpl impl;
+    
+    private List<Song> toolIntegrateList = new ArrayList<>();
     private Easter easter;
     private JPanel panelMain;
     private JPanel panelNorthMain;
@@ -322,16 +325,31 @@ public class DelesteRandomSelector extends JFrame {
 	btnStart = new JButton(Messages.MSGCalcStart.toString());
 	btnStart.addActionListener(e -> {
 		Random random = new Random(System.currentTimeMillis());
-		String paneString = "";
+		StringBuilder paneBuilder = new StringBuilder();
 		DelesteRandomSelector.this.integratorArray = new String[DelesteRandomSelector.this.property.getSongLimit()];
 		for(int i = 0; i < DelesteRandomSelector.this.property.getSongLimit(); i++) {
 			int randomInt = random.nextInt(selectedSongsList.size());
 			String typeString = DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().equals(Scraping.MASTERPLUS) || DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().equals(Scraping.LEGACYMASTERPLUS) ? EstimateAlbumTypeCycle.getCurrentCycle() : "";
-			paneString = paneString + (i + 1) + Messages.MSGNumberOfSongs.toString() + " " + selectedSongsList.get(randomInt).getAttribute() + " [" + selectedSongsList.get(randomInt).getDifficulty() + "]「" + selectedSongsList.get(randomInt).getName() + "」！(Lv:" + selectedSongsList.get(randomInt).getLevel() + " " + typeString + ")\n\n";
-			DelesteRandomSelector.this.integratorArray[i] = selectedSongsList.get(randomInt).getName() + "(Lv" + selectedSongsList.get(randomInt).getLevel() + ")\n";
+			paneBuilder.append(i + 1)
+				.append(Messages.MSGNumberOfSongs.toString())
+				.append(" ")
+				.append(selectedSongsList.get(randomInt).getAttribute())
+				.append("[")
+				.append(selectedSongsList.get(randomInt).getDifficulty())
+				.append("]「")
+				.append(selectedSongsList.get(randomInt).getName())
+				.append("」！(Lv:")
+				.append(selectedSongsList.get(randomInt).getLevel())
+				.append(" ")
+				.append(typeString)
+				.append(")\n\n");
+			this.integratorArray[i] = selectedSongsList.get(randomInt).getName() + "(Lv" + selectedSongsList.get(randomInt).getLevel() + ")\n";
+			toolIntegrateList.add(selectedSongsList.get(randomInt));
 		}
-		paneString = paneString + Messages.MSGThisPhrase.toString() + DelesteRandomSelector.this.property.getSongLimit() + Messages.MSGPlayPhrase.toString();
-		DelesteRandomSelector.this.textArea.setText(paneString);
+			paneBuilder.append(Messages.MSGThisPhrase.toString())
+				.append(this.property.getSongLimit())
+				.append(Messages.MSGPlayPhrase.toString());
+		DelesteRandomSelector.this.textArea.setText(paneBuilder.toString());
 		DelesteRandomSelector.this.integratorBool = true;
 		DelesteRandomSelector.this.logger.info("show up completed.");
 	});
