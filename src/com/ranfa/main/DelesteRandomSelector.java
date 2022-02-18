@@ -109,6 +109,15 @@ public class DelesteRandomSelector extends JFrame {
     private JLabel labelSlashTool;
     private JLabel labelCurrentSongOrderTool;
     private JLabel labelSongLimitTool;
+    private JLabel labelLyricToolTitle;
+    private JLabel labelLyricToolTip;
+    private JLabel labelComposerToolTitle;
+    private JLabel labelArrangeToolTitle;
+    private JLabel labelComposerToolTip;
+    private JLabel labelArrangeToolTip;
+    private JLabel labelMemberToolTitle;
+    private JLabel labelMemberToolTip;
+    private JButton btnMoreInfoTool;
 
     /**
      * Launch the application.
@@ -503,7 +512,7 @@ public class DelesteRandomSelector extends JFrame {
 	panelTool.add(panelCenterTool, BorderLayout.CENTER);
 	panelCenterTool.setLayout(new FormLayout(new ColumnSpec[] {
 			FormSpecs.RELATED_GAP_COLSPEC,
-			ColumnSpec.decode("max(130dlu;default)"),
+			ColumnSpec.decode("max(40dlu;default)"),
 			FormSpecs.RELATED_GAP_COLSPEC,
 			ColumnSpec.decode("10dlu"),
 			FormSpecs.RELATED_GAP_COLSPEC,
@@ -511,8 +520,34 @@ public class DelesteRandomSelector extends JFrame {
 			FormSpecs.RELATED_GAP_COLSPEC,
 			ColumnSpec.decode("max(10dlu;default)"),
 			FormSpecs.RELATED_GAP_COLSPEC,
-			ColumnSpec.decode("max(130dlu;default)"),},
+			ColumnSpec.decode("max(90dlu;default)"),
+			FormSpecs.RELATED_GAP_COLSPEC,
+			FormSpecs.DEFAULT_COLSPEC,
+			FormSpecs.RELATED_GAP_COLSPEC,
+			FormSpecs.DEFAULT_COLSPEC,
+			FormSpecs.RELATED_GAP_COLSPEC,
+			FormSpecs.DEFAULT_COLSPEC,
+			FormSpecs.RELATED_GAP_COLSPEC,
+			ColumnSpec.decode("max(90dlu;default)"),
+			FormSpecs.RELATED_GAP_COLSPEC,
+			FormSpecs.DEFAULT_COLSPEC,
+			FormSpecs.RELATED_GAP_COLSPEC,
+			FormSpecs.DEFAULT_COLSPEC,
+			FormSpecs.RELATED_GAP_COLSPEC,
+			FormSpecs.DEFAULT_COLSPEC,
+			FormSpecs.RELATED_GAP_COLSPEC,
+			ColumnSpec.decode("max(90dlu;default)"),},
 		new RowSpec[] {
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,
 			FormSpecs.RELATED_GAP_ROWSPEC,
 			FormSpecs.DEFAULT_ROWSPEC,
 			FormSpecs.RELATED_GAP_ROWSPEC,
@@ -551,6 +586,14 @@ public class DelesteRandomSelector extends JFrame {
 	labelSongNameToolTip = new JLabel("New label");
 	labelSongNameToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelSongNameToolTip, "10, 6, center, default");
+	
+	labelMemberToolTitle = new JLabel("Member");
+	labelMemberToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelCenterTool.add(labelMemberToolTitle, "18, 6, center, default");
+	
+	labelMemberToolTip = new JLabel("New label");
+	labelMemberToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelCenterTool.add(labelMemberToolTip, "26, 6, center, default");
 	
 	labelAttributeToolTitle = new JLabel("Song Attribute");
 	labelAttributeToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
@@ -599,17 +642,32 @@ public class DelesteRandomSelector extends JFrame {
 			labelCurrentSongOrderTool.setText(String.valueOf(currentIndex));
 		}
 	});
+	
+	labelLyricToolTitle = new JLabel("Lyrics By");
+	labelLyricToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelCenterTool.add(labelLyricToolTitle, "2, 26, center, default");
+	
+	labelLyricToolTip = new JLabel("New label");
+	labelLyricToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelCenterTool.add(labelLyricToolTip, "10, 26, center, default");
+	
+	labelComposerToolTitle = new JLabel("Composed By");
+	labelComposerToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelCenterTool.add(labelComposerToolTitle, "2, 30, center, default");
+	
+	labelComposerToolTip = new JLabel("New label");
+	labelComposerToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelCenterTool.add(labelComposerToolTip, "10, 30, center, default");
+	
+	labelArrangeToolTitle = new JLabel("Arranged By");
+	labelArrangeToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelCenterTool.add(labelArrangeToolTitle, "2, 34, center, default");
+	
+	labelArrangeToolTip = new JLabel("New label");
+	labelArrangeToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelCenterTool.add(labelArrangeToolTip, "10, 34, center, default");
 	btnPrevSongTool.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
-	panelCenterTool.add(btnPrevSongTool, "2, 26");
-	
-	labelCurrentSongOrderTool = new JLabel("null");
-	panelCenterTool.add(labelCurrentSongOrderTool, "4, 26");
-	
-	labelSlashTool = new JLabel("/");
-	panelCenterTool.add(labelSlashTool, "6, 26");
-	
-	labelSongLimitTool = new JLabel(String.valueOf(this.property.getSongLimit()));
-	panelCenterTool.add(labelSongLimitTool, "8, 26");
+	panelCenterTool.add(btnPrevSongTool, "2, 36");
 	
 	btnNextSongTool = new JButton("next");
 	btnNextSongTool.addActionListener(e -> {
@@ -626,8 +684,21 @@ public class DelesteRandomSelector extends JFrame {
 			labelCurrentSongOrderTool.setText(String.valueOf(currentIndex + 2));
 		}
 	});
+	
+	labelCurrentSongOrderTool = new JLabel("null");
+	panelCenterTool.add(labelCurrentSongOrderTool, "4, 36");
+	
+	labelSlashTool = new JLabel("/");
+	panelCenterTool.add(labelSlashTool, "6, 36");
+	
+	labelSongLimitTool = new JLabel(String.valueOf(this.property.getSongLimit()));
+	panelCenterTool.add(labelSongLimitTool, "8, 36");
 	btnNextSongTool.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
-	panelCenterTool.add(btnNextSongTool, "10, 26");
+	panelCenterTool.add(btnNextSongTool, "10, 36");
+	
+	btnMoreInfoTool = new JButton("More Information");
+	btnMoreInfoTool.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelCenterTool.add(btnMoreInfoTool, "18, 36");
 	if(isFirst || !this.property.isCheckLibraryUpdates()) {
 	    setEnabled.run();
 	}
