@@ -8,12 +8,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -46,6 +49,8 @@ import com.ranfa.lib.Settings;
 import com.ranfa.lib.Song;
 import com.ranfa.lib.TwitterIntegration;
 import com.ranfa.lib.Version;
+import com.ranfa.lib.concurrent.CountedThreadFactory;
+import com.ranfa.lib.songinfo.FetchFromAPI;
 
 @Version(major = 3, minor = 1, patch = 0)
 public class DelesteRandomSelector extends JFrame {
@@ -61,8 +66,10 @@ public class DelesteRandomSelector extends JFrame {
     private String albumType = Messages.MSGAlbumTypeBeingCalculated.toString();
     private Logger logger = LoggerFactory.getLogger(DelesteRandomSelector.class);
     private ManualUpdateThreadImpl impl;
-    
     private List<Song> toolIntegrateList;
+    private FetchFromAPI fetchData;
+    private List<Map<String, String>> listToolMapData;
+    private CompletableFuture<List<Map<String, String>>> listToolMapDataFuture;
     private Easter easter;
     private JPanel panelMain;
     private JPanel panelNorthMain;
@@ -152,7 +159,7 @@ public class DelesteRandomSelector extends JFrame {
 		throw new NullPointerException("FATAL: cannot continue!");
 	    }
 	}
-	ExecutorService es = Executors.newWorkStealingPool();
+	ExecutorService es = Executors.newCachedThreadPool(new CountedThreadFactory(() -> "DRS", "AsyncEventInquery"));
 	CompletableFuture<ArrayList<Song>> getFromJsonFuture = CompletableFuture.supplyAsync(() -> Scraping.getFromJson(), es);
 	CompletableFuture<ArrayList<Song>> getWholeDataFuture = CompletableFuture.supplyAsync(() -> Scraping.getWholeData(), es);
 	if(!Settings.fileExists() && !Settings.writeDownJSON()) {
@@ -378,6 +385,14 @@ public class DelesteRandomSelector extends JFrame {
 		DelesteRandomSelector.this.integratorBool = true;
 		DelesteRandomSelector.this.logger.info("show up completed.");
 		labelCurrentSongOrderTool.setText("null");
+		listToolMapDataFuture = CompletableFuture.supplyAsync(() -> {
+			List<String> data = toolIntegrateList.stream()
+					.map(s -> s.getName())
+					.collect(Collectors.toList());
+			fetchData = new FetchFromAPI(data.toArray(new String[0]));
+			return fetchData.getInformation();
+		}, es);
+		logger.debug("api fetch inquery published");
 	});
 	btnStart.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 	panelEastMain.add(btnStart, "2, 4, fill, fill");
@@ -475,13 +490,25 @@ public class DelesteRandomSelector extends JFrame {
 		String currentTabName = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
 		if(currentTabName.equals("SubTools") && labelCurrentSongOrderTool.getText().equals("null")) {
 			logger.info("Detected switching tool tab");
+			listToolMapData = listToolMapDataFuture.join();
 			Song firstSong = toolIntegrateList.get(0);
+			Map<String, String> fetchMap = new HashMap<>();
+			for(Map<String, String> tmpMap : listToolMapData) {
+				if(tmpMap.get("songname").equals(firstSong.getName())) {
+					fetchMap = tmpMap;
+					break;
+				}
+			}
 			labelSongNameToolTip.setText(firstSong.getName());
 			labelAttributeToolTip.setText(firstSong.getAttribute());
 			labelDifficultyToolTip.setText(firstSong.getDifficulty());
 			labelLevelToolTip.setText(String.valueOf(firstSong.getLevel()));
 			labelNotesToolTip.setText(String.valueOf(firstSong.getNotes()));
 			labelCurrentSongOrderTool.setText("1");
+			labelLyricToolTip.setText(fetchMap.get("lyric"));
+			labelComposerToolTip.setText(fetchMap.get("composer"));
+			labelArrangeToolTip.setText(fetchMap.get("arrange"));
+			labelMemberToolTip.setText(fetchMap.get("member"));
 		}
 	});
 	tabbedPane.addTab("Main", null, panelMain, null);
@@ -632,14 +659,25 @@ public class DelesteRandomSelector extends JFrame {
 		int currentIndex = Integer.parseInt(labelCurrentSongOrderTool.getText()) - 1;
 		if(currentIndex != 0) {
 			Song prevSong = toolIntegrateList.get(currentIndex - 1);
-			logger.info("currently : {} Next: {}", currentIndex, currentIndex - 1);
+			logger.info("currently : {} Next: {}", currentIndex + 1, currentIndex);
 			logger.info("prevSong: {}", prevSong);
+			Map<String, String> fetchMap = new HashMap<>();
+			for(Map<String, String> tmpMap : listToolMapData) {
+				if(tmpMap.get("songname").equals(prevSong.getName())) {
+					fetchMap = tmpMap;
+					break;
+				}
+			}
 			labelSongNameToolTip.setText(prevSong.getName());
 			labelAttributeToolTip.setText(prevSong.getAttribute());
 			labelDifficultyToolTip.setText(prevSong.getDifficulty());
 			labelLevelToolTip.setText(String.valueOf(prevSong.getLevel()));
 			labelNotesToolTip.setText(String.valueOf(prevSong.getNotes()));
 			labelCurrentSongOrderTool.setText(String.valueOf(currentIndex));
+			labelLyricToolTip.setText(fetchMap.get("lyric"));
+			labelComposerToolTip.setText(fetchMap.get("composer"));
+			labelArrangeToolTip.setText(fetchMap.get("arrange"));
+			labelMemberToolTip.setText(fetchMap.get("member"));
 		}
 	});
 	
@@ -674,14 +712,25 @@ public class DelesteRandomSelector extends JFrame {
 		int currentIndex = Integer.parseInt(labelCurrentSongOrderTool.getText()) - 1;
 		if(currentIndex != property.getSongLimit() - 1) {
 			Song nextSong = toolIntegrateList.get(currentIndex + 1);
-			logger.info("currently : {} Next: {}", currentIndex, currentIndex + 1);
+			logger.info("currently : {} Next: {}", currentIndex + 1, currentIndex + 2);
 			logger.info("nextSong: {}", nextSong);
+			Map<String, String> fetchMap = new HashMap<>();
+			for(Map<String, String> tmpMap : listToolMapData) {
+				if(tmpMap.get("songname").equals(nextSong.getName())) {
+					fetchMap = tmpMap;
+					break;
+				}
+			}
 			labelSongNameToolTip.setText(nextSong.getName());
 			labelAttributeToolTip.setText(nextSong.getAttribute());
 			labelDifficultyToolTip.setText(nextSong.getDifficulty());
 			labelLevelToolTip.setText(String.valueOf(nextSong.getLevel()));
 			labelNotesToolTip.setText(String.valueOf(nextSong.getNotes()));
 			labelCurrentSongOrderTool.setText(String.valueOf(currentIndex + 2));
+			labelLyricToolTip.setText(fetchMap.get("lyric"));
+			labelComposerToolTip.setText(fetchMap.get("composer"));
+			labelArrangeToolTip.setText(fetchMap.get("arrange"));
+			labelMemberToolTip.setText(fetchMap.get("member"));
 		}
 	});
 	
@@ -697,6 +746,9 @@ public class DelesteRandomSelector extends JFrame {
 	panelCenterTool.add(btnNextSongTool, "10, 36");
 	
 	btnMoreInfoTool = new JButton("More Information");
+	btnMoreInfoTool.addActionListener(e -> {
+		
+	});
 	btnMoreInfoTool.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(btnMoreInfoTool, "18, 36");
 	if(isFirst || !this.property.isCheckLibraryUpdates()) {
