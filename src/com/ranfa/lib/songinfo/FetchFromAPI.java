@@ -70,7 +70,7 @@ public class FetchFromAPI {
 				.build();
 		List<Map<String, Object>> parse = Collections.emptyList();
 		try {
-			parse = new ObjectMapper().readValue( api.getAsync().join().traverse(), new TypeReference<List<Map<String, Object>>>() {});
+			parse = new ObjectMapper().readValue( api.getAsync(apiExecutor).join().traverse(), new TypeReference<List<Map<String, Object>>>() {});
 			TimeUnit.SECONDS.sleep(1);
 		} catch (IOException | InterruptedException e) {
 			logger.error("Exception while processing json map");

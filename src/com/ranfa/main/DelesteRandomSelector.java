@@ -128,6 +128,28 @@ public class DelesteRandomSelector extends JFrame {
     private JLabel labelMemberToolTitle;
     private JLabel labelMemberToolTip;
     private JButton btnMoreInfoTool;
+    
+    BiConsumer<ArrayList<Song>, ArrayList<Song>> updateConsumer = (list1, list2) -> {
+	    this.logger.info("Checking database updates...");
+	    if(list1.size() > list2.size()) {
+		long time = System.currentTimeMillis();
+		this.logger.info("{} Update detected.", (list1.size() - list2.size()));
+		Scraping.writeToJson(list1);
+		this.logger.info("Update completed in {} ms", (System.currentTimeMillis() - time));
+		this.logger.info("Updated database size: {}", list1.size());
+	    } else {
+		this.logger.info("database is up-to-date.");
+	    }
+	};
+	Runnable setEnabled = () -> {
+	    try {
+		Thread.sleep(3 * 1000L);
+	    } catch (InterruptedException e1) {
+		this.logger.error("Thread has been interrupted during waiting cooldown.", e1);
+	    }
+	    this.btnImport.setEnabled(true);
+	    this.btnImport.setText(Messages.MSGNarrowingDownSongs.toString());
+	};
 
     /**
      * Launch the application.
@@ -153,72 +175,83 @@ public class DelesteRandomSelector extends JFrame {
      * Create the frame.
      */
     public DelesteRandomSelector() {
+    ExecutorService es = Executors.newCachedThreadPool(new CountedThreadFactory(() -> "DRS", "AsyncEventInquerier"));
 	this.contentPane = new JPanel();
 	boolean isFirst = !Scraping.databaseExists();
-	if(isFirst) {
-	    JOptionPane.showMessageDialog(this, Messages.MSGDatabaseNotExist.toString());
-	    if(!Scraping.writeToJson(Scraping.getWholeData())) {
-		JOptionPane.showMessageDialog(this, "Exception:NullPointerException\nCannot Keep up! Please re-download this Application!");
-		throw new NullPointerException("FATAL: cannot continue!");
-	    }
-	}
-	ExecutorService es = Executors.newCachedThreadPool(new CountedThreadFactory(() -> "DRS", "AsyncEventInquerier"));
+	// database check phase
+	CompletableFuture.runAsync(() -> {
+		if(isFirst) {
+		    JOptionPane.showMessageDialog(this, Messages.MSGDatabaseNotExist.toString());
+		    if(!Scraping.writeToJson(Scraping.getWholeData())) {
+			JOptionPane.showMessageDialog(this, "Exception:NullPointerException\nCannot Keep up! Please re-download this Application!");
+			throw new NullPointerException("FATAL: cannot continue!");
+		    }
+		}
+	}, es).whenCompleteAsync((ret, ex) -> {
+		if(ex != null) {
+			logger.error("Exception was thrown during concurrent process", ex);
+			if(ex instanceof NullPointerException) {
+				throw new RuntimeException(ex);
+			}
+			throw new IllegalStateException(ex);
+		}
+	}, es);
 	CompletableFuture<ArrayList<Song>> getFromJsonFuture = CompletableFuture.supplyAsync(() -> Scraping.getFromJson(), es);
 	CompletableFuture<ArrayList<Song>> getWholeDataFuture = CompletableFuture.supplyAsync(() -> Scraping.getWholeData(), es);
-	if(!Settings.fileExists() && !Settings.writeDownJSON()) {
-	    JOptionPane.showMessageDialog(this, "Exception:NullPointerException\nCannot Keep up! Please re-download this Application!");
-	    throw new NullPointerException("FATAL: cannot continue!");
-	}
-	this.logger.debug("Loading settings...");
-	this.property.setCheckLibraryUpdates(Settings.needToCheckLibraryUpdates());
-	this.property.setCheckVersion(Settings.needToCheckVersion());
-	this.property.setWindowWidth(Settings.getWindowWidth());
-	this.property.setWindowHeight(Settings.getWindowHeight());
-	this.property.setSongLimit(Settings.getSongsLimit());
-	this.property.setSaveScoreLog(Settings.saveScoreLog());
-	this.logger.debug("Load settings done.");
-	this.logger.debug("Version check: {}", this.property.isCheckVersion());
-	this.logger.debug("Library update check: {}", this.property.isCheckLibraryUpdates());
-	this.logger.debug("Window Width: {}", this.property.getWindowWidth());
-	this.logger.debug("Window Height: {}", this.property.getWindowHeight());
-	this.logger.debug("Song Limit: {}", this.property.getSongLimit());
-	this.logger.debug("SaveScoreLog: {}", this.property.isSaveScoreLog());
-	EstimateAlbumTypeCycle.Initialization();
-	if(Files.exists(Paths.get("generated/albumCycle.json"))) {
-	    this.albumType = EstimateAlbumTypeCycle.getCurrentCycle();
-	}
-	if(this.property.isCheckVersion()) {
-	    this.softwareUpdateFuture = CompletableFuture.runAsync(() -> CheckVersion.needToBeUpdated(), es);
-	}
-	BiConsumer<ArrayList<Song>, ArrayList<Song>> updateConsumer = (list1, list2) -> {
-	    this.logger.info("Checking database updates...");
-	    if(list1.size() > list2.size()) {
-		long time = System.currentTimeMillis();
-		this.logger.info("{} Update detected.", (list1.size() - list2.size()));
-		Scraping.writeToJson(list1);
-		this.logger.info("Update completed in {} ms", (System.currentTimeMillis() - time));
-		this.logger.info("Updated database size: {}", list1.size());
-	    } else {
-		this.logger.info("database is up-to-date.");
-	    }
-	};
-	Runnable setEnabled = () -> {
-	    try {
-		Thread.sleep(3 * 1000L);
-	    } catch (InterruptedException e1) {
-		this.logger.error("Thread has been interrupted during waiting cooldown.", e1);
-	    }
-	    this.btnImport.setEnabled(true);
-	    this.btnImport.setText(Messages.MSGNarrowingDownSongs.toString());
-	};
+	// setting check phase
+	CompletableFuture.runAsync(() -> {
+		if(!Settings.fileExists() && !Settings.writeDownJSON()) {
+		    JOptionPane.showMessageDialog(this, "Exception:NullPointerException\nCannot Keep up! Please re-download this Application!");
+		    throw new NullPointerException("FATAL: cannot continue!");
+		}
+	}, es).whenCompleteAsync((ret, ex) -> {
+		if(ex != null) {
+			logger.error("Exception was thrown during concurrent process", ex);
+			if(ex instanceof NullPointerException) {
+				throw new RuntimeException(ex);
+			}
+			throw new IllegalStateException(ex);
+		}
+		this.logger.debug("Loading settings...");
+		this.property.setCheckLibraryUpdates(Settings.needToCheckLibraryUpdates());
+		this.property.setCheckVersion(Settings.needToCheckVersion());
+		this.property.setWindowWidth(Settings.getWindowWidth());
+		this.property.setWindowHeight(Settings.getWindowHeight());
+		this.property.setSongLimit(Settings.getSongsLimit());
+		this.property.setSaveScoreLog(Settings.saveScoreLog());
+		this.logger.debug("Load settings done.");
+		this.logger.debug("Version check: {}", this.property.isCheckVersion());
+		this.logger.debug("Library update check: {}", this.property.isCheckLibraryUpdates());
+		this.logger.debug("Window Width: {}", this.property.getWindowWidth());
+		this.logger.debug("Window Height: {}", this.property.getWindowHeight());
+		this.logger.debug("Song Limit: {}", this.property.getSongLimit());
+		this.logger.debug("SaveScoreLog: {}", this.property.isSaveScoreLog());
+		if(this.property.isCheckVersion()) {
+		    this.softwareUpdateFuture = CompletableFuture.runAsync(() -> CheckVersion.needToBeUpdated(), es);
+		}
+		if(this.property.isCheckLibraryUpdates()) {
+		    CompletableFuture<Void> updatedFuture = getWholeDataFuture.thenAcceptBothAsync(getFromJsonFuture, updateConsumer, es);
+		    updatedFuture.thenRunAsync(setEnabled, es);
+		}
+	}, es);
+	CompletableFuture.runAsync(() -> {
+		EstimateAlbumTypeCycle.Initialization();
+		if(Files.exists(Paths.get("generated/albumCycle.json"))) {
+		    this.albumType = EstimateAlbumTypeCycle.getCurrentCycle();
+		}
+	}).whenCompleteAsync((ret, ex) -> {
+		if(ex != null) {
+			logger.error("Exception was thrown during concurrent process", ex);
+			throw new IllegalStateException(ex);
+		}
+	});
 	getWholeDataFuture.thenAcceptAsync(list -> this.logger.info("Scraping data size:" + list.size()), es);
 	getFromJsonFuture.thenAcceptAsync(list -> this.logger.info("Currently database size:" + list.size()), es);
-	if(this.property.isCheckLibraryUpdates()) {
-	    CompletableFuture<Void> updatedFuture = getWholeDataFuture.thenAcceptBothAsync(getFromJsonFuture, updateConsumer, es);
-	    updatedFuture.thenRunAsync(setEnabled, es);
-	}
-	this.easter = new Easter();
-	this.setTitle(this.easter.getTodaysBirth());
+	// easter phase
+	CompletableFuture.runAsync(() -> {
+		this.easter = new Easter();
+		this.setTitle(this.easter.getTodaysBirth());
+	}, es);
 	this.logger.debug("Version: {}", CheckVersion.getVersion());
 	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	// this.setBounds(100, 100, this.property.getWindowWidth(), this.property.getWindowHeight());
@@ -324,22 +357,29 @@ public class DelesteRandomSelector extends JFrame {
 	
 	btnImport = new JButton(Messages.MSGUpdatingDatabase.toString());
 	btnImport.addActionListener(e -> {
-		if(impl != null) {
-			if(!impl.getFlag()) {
-				JOptionPane.showMessageDialog(null, Messages.MSGManualUpdateNotCompleteYet.toString());
+		CompletableFuture.runAsync(() -> {
+			if(impl != null) {
+				if(!impl.getFlag()) {
+					JOptionPane.showMessageDialog(null, Messages.MSGManualUpdateNotCompleteYet.toString());
+				}
 			}
-		}
-		ArrayList<Song> fromJson = Scraping.getFromJson();
-		ArrayList<Song> specificlevelList = Scraping.getSpecificLevelSongs(fromJson, (Integer)DelesteRandomSelector.this.spinnerLevel.getValue(), DelesteRandomSelector.this.checkLessLv.isSelected(), DelesteRandomSelector.this.checkMoreLv.isSelected());
-		ArrayList<Song> specificDifficultyList = Scraping.getSpecificDifficultySongs(specificlevelList, DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().toString());
-		ArrayList<Song> specificAttributeList = Scraping.getSpecificAttributeSongs(specificDifficultyList, DelesteRandomSelector.this.comboAttribute.getSelectedItem().toString());
-		ArrayList<Song> specificTypeList = Scraping.getSpecificAlbumTypeSongs(specificAttributeList, EstimateAlbumTypeCycle.getCurrentCycle());
-		if(!selectedSongsList.isEmpty()) {
-			selectedSongsList.clear();
-		}
-		selectedSongsList.addAll((DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().equals(Scraping.MASTERPLUS) || DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().equals(Scraping.LEGACYMASTERPLUS)) ? specificTypeList : specificAttributeList);
-		DelesteRandomSelector.this.logger.info("Songs are selected.We are Ready to go.");
-		JOptionPane.showMessageDialog(null, Messages.MSGCompleteNarrowDown.toString());
+			ArrayList<Song> fromJson = Scraping.getFromJson();
+			ArrayList<Song> specificlevelList = Scraping.getSpecificLevelSongs(fromJson, (Integer)DelesteRandomSelector.this.spinnerLevel.getValue(), DelesteRandomSelector.this.checkLessLv.isSelected(), DelesteRandomSelector.this.checkMoreLv.isSelected());
+			ArrayList<Song> specificDifficultyList = Scraping.getSpecificDifficultySongs(specificlevelList, DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().toString());
+			ArrayList<Song> specificAttributeList = Scraping.getSpecificAttributeSongs(specificDifficultyList, DelesteRandomSelector.this.comboAttribute.getSelectedItem().toString());
+			ArrayList<Song> specificTypeList = Scraping.getSpecificAlbumTypeSongs(specificAttributeList, EstimateAlbumTypeCycle.getCurrentCycle());
+			if(!selectedSongsList.isEmpty()) {
+				selectedSongsList.clear();
+			}
+			selectedSongsList.addAll((DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().equals(Scraping.MASTERPLUS) || DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().equals(Scraping.LEGACYMASTERPLUS)) ? specificTypeList : specificAttributeList);
+			DelesteRandomSelector.this.logger.info("Songs are selected.We are Ready to go.");
+			JOptionPane.showMessageDialog(null, Messages.MSGCompleteNarrowDown.toString());
+		}, es).whenCompleteAsync((ret, ex) -> {
+			if(ex != null) {
+				logger.error("Exception was thrown during concurrent process", ex);
+				throw new IllegalStateException(ex);
+			}
+		}, es);
 	});
 	btnImport.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 	btnImport.setEnabled(false);
@@ -347,55 +387,68 @@ public class DelesteRandomSelector extends JFrame {
 	
 	btnConfig = new JButton(Messages.MSGConfigurations.toString());
 	btnConfig.addActionListener(e -> {
-		ProcessBuilder builder = new ProcessBuilder("java", "-jar", "Configurations.jar");
-		try {
-			builder.start();
-		} catch (IOException e1) {
-			logger.error("Cannot start external jar file. maybe are you running this with mac or linux?", e);
-		}
+		CompletableFuture.runAsync(() -> {
+			ProcessBuilder builder = new ProcessBuilder("java", "-jar", "Configurations.jar");
+			try {
+				builder.start();
+			} catch (IOException e1) {
+				logger.error("Cannot start external jar file. maybe are you running this with mac or linux?", e);
+			}
+		}).whenCompleteAsync((ret, ex) -> {
+			if(ex != null) {
+				logger.error("Exception was thrown during concurrent process", ex);
+				throw new RuntimeException(ex);
+			}
+		});
 	});
 	panelEastMain.add(btnConfig, "2, 6, fill, fill");
 	
 	btnStart = new JButton(Messages.MSGCalcStart.toString());
 	btnStart.addActionListener(e -> {
-		Random random = new Random(System.currentTimeMillis());
-		toolIntegrateList = new ArrayList<>();
-		StringBuilder paneBuilder = new StringBuilder();
-		DelesteRandomSelector.this.integratorArray = new String[DelesteRandomSelector.this.property.getSongLimit()];
-		for(int i = 0; i < DelesteRandomSelector.this.property.getSongLimit(); i++) {
-			int randomInt = random.nextInt(selectedSongsList.size());
-			String typeString = DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().equals(Scraping.MASTERPLUS) || DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().equals(Scraping.LEGACYMASTERPLUS) ? EstimateAlbumTypeCycle.getCurrentCycle() : "";
-			paneBuilder.append(i + 1)
-				.append(Messages.MSGNumberOfSongs.toString())
-				.append(" ")
-				.append(selectedSongsList.get(randomInt).getAttribute())
-				.append("[")
-				.append(selectedSongsList.get(randomInt).getDifficulty())
-				.append("]「")
-				.append(selectedSongsList.get(randomInt).getName())
-				.append("」！(Lv:")
-				.append(selectedSongsList.get(randomInt).getLevel())
-				.append(" ")
-				.append(typeString)
-				.append(")\n\n");
-			this.integratorArray[i] = selectedSongsList.get(randomInt).getName() + "(Lv" + selectedSongsList.get(randomInt).getLevel() + ")\n";
-			toolIntegrateList.add(selectedSongsList.get(randomInt));
-		}
-			paneBuilder.append(Messages.MSGThisPhrase.toString())
-				.append(this.property.getSongLimit())
-				.append(Messages.MSGPlayPhrase.toString());
-		DelesteRandomSelector.this.textArea.setText(paneBuilder.toString());
-		DelesteRandomSelector.this.integratorBool = true;
-		DelesteRandomSelector.this.logger.info("show up completed.");
-		labelCurrentSongOrderTool.setText("null");
-		listToolMapDataFuture = CompletableFuture.supplyAsync(() -> {
-			List<String> data = toolIntegrateList.stream()
-					.map(s -> s.getName())
-					.collect(Collectors.toList());
-			fetchData = new FetchFromAPI(data.toArray(new String[0]));
-			return fetchData.getInformation();
+		CompletableFuture.runAsync(() -> {
+			Random random = new Random(System.currentTimeMillis());
+			toolIntegrateList = new ArrayList<>();
+			StringBuilder paneBuilder = new StringBuilder();
+			DelesteRandomSelector.this.integratorArray = new String[DelesteRandomSelector.this.property.getSongLimit()];
+			for(int i = 0; i < DelesteRandomSelector.this.property.getSongLimit(); i++) {
+				int randomInt = random.nextInt(selectedSongsList.size());
+				String typeString = DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().equals(Scraping.MASTERPLUS) || DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().equals(Scraping.LEGACYMASTERPLUS) ? EstimateAlbumTypeCycle.getCurrentCycle() : "";
+				paneBuilder.append(i + 1)
+					.append(Messages.MSGNumberOfSongs.toString())
+					.append(" ")
+					.append(selectedSongsList.get(randomInt).getAttribute())
+					.append("[")
+					.append(selectedSongsList.get(randomInt).getDifficulty())
+					.append("]「")
+					.append(selectedSongsList.get(randomInt).getName())
+					.append("」！(Lv:")
+					.append(selectedSongsList.get(randomInt).getLevel())
+					.append(" ")
+					.append(typeString)
+					.append(")\n\n");
+				this.integratorArray[i] = selectedSongsList.get(randomInt).getName() + "(Lv" + selectedSongsList.get(randomInt).getLevel() + ")\n";
+				toolIntegrateList.add(selectedSongsList.get(randomInt));
+			}
+				paneBuilder.append(Messages.MSGThisPhrase.toString())
+					.append(this.property.getSongLimit())
+					.append(Messages.MSGPlayPhrase.toString());
+			DelesteRandomSelector.this.textArea.setText(paneBuilder.toString());
+			DelesteRandomSelector.this.integratorBool = true;
+			DelesteRandomSelector.this.logger.info("show up completed.");
+			labelCurrentSongOrderTool.setText("null");
+			listToolMapDataFuture = CompletableFuture.supplyAsync(() -> {
+				List<String> data = toolIntegrateList.stream()
+						.map(s -> s.getName())
+						.collect(Collectors.toList());
+				fetchData = new FetchFromAPI(data.toArray(new String[0]));
+				return fetchData.getInformation();
+			}, es);
+			logger.debug("api fetch inquery published");
+		}, es).whenCompleteAsync((ret, ex) -> {
+			if(ex != null) {
+				logger.error("Exception was thrown during concurrent process", ex);
+			}
 		}, es);
-		logger.debug("api fetch inquery published");
 	});
 	btnStart.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 	panelEastMain.add(btnStart, "2, 4, fill, fill");
@@ -414,50 +467,56 @@ public class DelesteRandomSelector extends JFrame {
 	
 	btnTwitterIntegration = new JButton(Messages.MSGTwitterIntegration.toString());
 	btnTwitterIntegration.addActionListener(e -> {
-		boolean authorizationStatus = TwitterIntegration.authorization();
-		String updatedStatus = Messages.MSGUsingThisAppPhrase.toString();
-		int lengthLimit = updatedStatus.length();
-		boolean isBroken = false;
-		if(!DelesteRandomSelector.this.integratorBool) {
-			JOptionPane.showMessageDialog(null, Messages.MSGNotPlayYet.toString());
-			return;
-		}
-		for (String element : DelesteRandomSelector.this.integratorArray) {
-			updatedStatus = updatedStatus + element;
-			lengthLimit += element.length();
-			if(lengthLimit > 69) {
-				isBroken = true;
-				break;
+		CompletableFuture.runAsync(() -> {
+			boolean authorizationStatus = TwitterIntegration.authorization();
+			String updatedStatus = Messages.MSGUsingThisAppPhrase.toString();
+			int lengthLimit = updatedStatus.length();
+			boolean isBroken = false;
+			if(!DelesteRandomSelector.this.integratorBool) {
+				JOptionPane.showMessageDialog(null, Messages.MSGNotPlayYet.toString());
+				return;
 			}
-		}
-		if(isBroken) {
-			updatedStatus = updatedStatus + Messages.MSGTwitterPlayOtherwisePhrase.toString() + "\n#DelesteRandomSelector #デレステ ";
-		} else {
-			updatedStatus = updatedStatus + Messages.MSGTwitterPlayOnlyPhrase.toString() + "\n#DelesteRandomSelector #デレステ ";
-		}
-		DelesteRandomSelector.this.logger.info("status message constructed.");
-		lengthLimit = updatedStatus.length();
-		if(authorizationStatus) {
-			int option = JOptionPane.showConfirmDialog(null, Messages.MSGTwitterIntegrationConfirm.toString() + updatedStatus + Messages.MSGStringLength.toString() + lengthLimit);
-			DelesteRandomSelector.this.logger.info("user seletced: " + option);
-			switch(option) {
-			case JOptionPane.OK_OPTION:
-				TwitterIntegration.PostTwitter(updatedStatus);
-				DelesteRandomSelector.this.logger.info("Success to update the status.");
-				JOptionPane.showMessageDialog(null, Messages.MSGCompletePost.toString());
-				break;
-			case JOptionPane.NO_OPTION:
-				DelesteRandomSelector.this.logger.info("There is no will to post.");
-				break;
-			case JOptionPane.CANCEL_OPTION:
-				DelesteRandomSelector.this.logger.info("The Operation was canceled by user.");
-				break;
-			default:
-				break;
+			for (String element : DelesteRandomSelector.this.integratorArray) {
+				updatedStatus = updatedStatus + element;
+				lengthLimit += element.length();
+				if(lengthLimit > 69) {
+					isBroken = true;
+					break;
+				}
 			}
-		} else {
-			DelesteRandomSelector.this.logger.info("seems to reject the permission.it should need try again.");
-		}
+			if(isBroken) {
+				updatedStatus = updatedStatus + Messages.MSGTwitterPlayOtherwisePhrase.toString() + "\n#DelesteRandomSelector #デレステ ";
+			} else {
+				updatedStatus = updatedStatus + Messages.MSGTwitterPlayOnlyPhrase.toString() + "\n#DelesteRandomSelector #デレステ ";
+			}
+			DelesteRandomSelector.this.logger.info("status message constructed.");
+			lengthLimit = updatedStatus.length();
+			if(authorizationStatus) {
+				int option = JOptionPane.showConfirmDialog(null, Messages.MSGTwitterIntegrationConfirm.toString() + updatedStatus + Messages.MSGStringLength.toString() + lengthLimit);
+				DelesteRandomSelector.this.logger.info("user seletced: " + option);
+				switch(option) {
+				case JOptionPane.OK_OPTION:
+					TwitterIntegration.PostTwitter(updatedStatus);
+					DelesteRandomSelector.this.logger.info("Success to update the status.");
+					JOptionPane.showMessageDialog(null, Messages.MSGCompletePost.toString());
+					break;
+				case JOptionPane.NO_OPTION:
+					DelesteRandomSelector.this.logger.info("There is no will to post.");
+					break;
+				case JOptionPane.CANCEL_OPTION:
+					DelesteRandomSelector.this.logger.info("The Operation was canceled by user.");
+					break;
+				default:
+					break;
+				}
+			} else {
+				DelesteRandomSelector.this.logger.info("seems to reject the permission.it should need try again.");
+			}
+		}, es).whenCompleteAsync((ret, ex) -> {
+			if(ex != null) {
+				logger.error("Exception was thrown during concurrent process");
+			}
+		}, es);
 	});
 	btnTwitterIntegration.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 11));
 	panelEastMain.add(btnTwitterIntegration, "2, 10, fill, fill");
@@ -490,29 +549,35 @@ public class DelesteRandomSelector extends JFrame {
 	
 	tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 	tabbedPane.addChangeListener(e -> {
-		String currentTabName = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
-		if(currentTabName.equals("SubTools") && labelCurrentSongOrderTool.getText().equals("null")) {
-			logger.info("Detected switching tool tab");
-			listToolMapData = listToolMapDataFuture.join();
-			Song firstSong = toolIntegrateList.get(0);
-			Map<String, String> fetchMap = new HashMap<>();
-			for(Map<String, String> tmpMap : listToolMapData) {
-				if(tmpMap.get("songname").equals(firstSong.getName())) {
-					fetchMap = tmpMap;
-					break;
+		CompletableFuture.runAsync(() -> {
+			String currentTabName = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
+			if(currentTabName.equals("SubTools") && labelCurrentSongOrderTool.getText().equals("null")) {
+				logger.info("Detected switching tool tab");
+				listToolMapData = listToolMapDataFuture.join();
+				Song firstSong = toolIntegrateList.get(0);
+				Map<String, String> fetchMap = new HashMap<>();
+				for(Map<String, String> tmpMap : listToolMapData) {
+					if(tmpMap.get("songname").equals(firstSong.getName())) {
+						fetchMap = tmpMap;
+						break;
+					}
 				}
+				labelSongNameToolTip.setText(firstSong.getName());
+				labelAttributeToolTip.setText(firstSong.getAttribute());
+				labelDifficultyToolTip.setText(firstSong.getDifficulty());
+				labelLevelToolTip.setText(String.valueOf(firstSong.getLevel()));
+				labelNotesToolTip.setText(String.valueOf(firstSong.getNotes()));
+				labelCurrentSongOrderTool.setText("1");
+				labelLyricToolTip.setText(fetchMap.get("lyric"));
+				labelComposerToolTip.setText(fetchMap.get("composer"));
+				labelArrangeToolTip.setText(fetchMap.get("arrange"));
+				labelMemberToolTip.setText(fetchMap.get("member"));
 			}
-			labelSongNameToolTip.setText(firstSong.getName());
-			labelAttributeToolTip.setText(firstSong.getAttribute());
-			labelDifficultyToolTip.setText(firstSong.getDifficulty());
-			labelLevelToolTip.setText(String.valueOf(firstSong.getLevel()));
-			labelNotesToolTip.setText(String.valueOf(firstSong.getNotes()));
-			labelCurrentSongOrderTool.setText("1");
-			labelLyricToolTip.setText(fetchMap.get("lyric"));
-			labelComposerToolTip.setText(fetchMap.get("composer"));
-			labelArrangeToolTip.setText(fetchMap.get("arrange"));
-			labelMemberToolTip.setText(fetchMap.get("member"));
-		}
+		}, es).whenCompleteAsync((ret, ex) -> {
+			if(ex != null) {
+				logger.error("Exception was thrown during concurrent process", ex);
+			}
+		}, es);
 	});
 	tabbedPane.addTab("Main", null, panelMain, null);
 	contentPane.add(tabbedPane, "name_307238585319500");
@@ -613,7 +678,7 @@ public class DelesteRandomSelector extends JFrame {
 	labelSongNameToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelSongNameToolTitle, "2, 6, center, default");
 	
-	labelSongNameToolTip = new JLabel("New label");
+	labelSongNameToolTip = new JLabel("Please wait...");
 	labelSongNameToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelSongNameToolTip, "10, 6, center, default");
 	
@@ -621,7 +686,7 @@ public class DelesteRandomSelector extends JFrame {
 	labelMemberToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelMemberToolTitle, "18, 6, center, default");
 	
-	labelMemberToolTip = new JLabel("New label");
+	labelMemberToolTip = new JLabel("Please wait...");
 	labelMemberToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelMemberToolTip, "26, 6, center, default");
 	
@@ -629,7 +694,7 @@ public class DelesteRandomSelector extends JFrame {
 	labelAttributeToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelAttributeToolTitle, "2, 10, center, default");
 	
-	labelAttributeToolTip = new JLabel("New label");
+	labelAttributeToolTip = new JLabel("Please wait...");
 	labelAttributeToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelAttributeToolTip, "10, 10, center, default");
 	
@@ -637,7 +702,7 @@ public class DelesteRandomSelector extends JFrame {
 	labelDifficultyToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelDifficultyToolTitle, "2, 14, center, default");
 	
-	labelDifficultyToolTip = new JLabel("New label");
+	labelDifficultyToolTip = new JLabel("Please wait...");
 	labelDifficultyToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelDifficultyToolTip, "10, 14, center, default");
 	
@@ -645,7 +710,7 @@ public class DelesteRandomSelector extends JFrame {
 	labelLevelToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelLevelToolTitle, "2, 18, center, default");
 	
-	labelLevelToolTip = new JLabel("New label");
+	labelLevelToolTip = new JLabel("Please wait...");
 	labelLevelToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelLevelToolTip, "10, 18, center, default");
 	
@@ -653,35 +718,41 @@ public class DelesteRandomSelector extends JFrame {
 	labelNotesToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelNotesToolTitle, "2, 22, center, default");
 	
-	labelNotesToolTip = new JLabel("New label");
+	labelNotesToolTip = new JLabel("Please wait...");
 	labelNotesToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelNotesToolTip, "10, 22, center, default");
 	
 	btnPrevSongTool = new JButton("prev");
 	btnPrevSongTool.addActionListener(e -> {
-		int currentIndex = Integer.parseInt(labelCurrentSongOrderTool.getText()) - 1;
-		if(currentIndex != 0) {
-			Song prevSong = toolIntegrateList.get(currentIndex - 1);
-			logger.info("currently : {} Next: {}", currentIndex + 1, currentIndex);
-			logger.info("prevSong: {}", prevSong);
-			Map<String, String> fetchMap = new HashMap<>();
-			for(Map<String, String> tmpMap : listToolMapData) {
-				if(tmpMap.get("songname").equals(prevSong.getName())) {
-					fetchMap = tmpMap;
-					break;
+		CompletableFuture.runAsync(() -> {
+			int currentIndex = Integer.parseInt(labelCurrentSongOrderTool.getText()) - 1;
+			if(currentIndex != 0) {
+				Song prevSong = toolIntegrateList.get(currentIndex - 1);
+				logger.info("currently : {} Next: {}", currentIndex + 1, currentIndex);
+				logger.info("prevSong: {}", prevSong);
+				Map<String, String> fetchMap = new HashMap<>();
+				for(Map<String, String> tmpMap : listToolMapData) {
+					if(tmpMap.get("songname").equals(prevSong.getName())) {
+						fetchMap = tmpMap;
+						break;
+					}
 				}
+				labelSongNameToolTip.setText(prevSong.getName());
+				labelAttributeToolTip.setText(prevSong.getAttribute());
+				labelDifficultyToolTip.setText(prevSong.getDifficulty());
+				labelLevelToolTip.setText(String.valueOf(prevSong.getLevel()));
+				labelNotesToolTip.setText(String.valueOf(prevSong.getNotes()));
+				labelCurrentSongOrderTool.setText(String.valueOf(currentIndex));
+				labelLyricToolTip.setText(fetchMap.get("lyric"));
+				labelComposerToolTip.setText(fetchMap.get("composer"));
+				labelArrangeToolTip.setText(fetchMap.get("arrange"));
+				labelMemberToolTip.setText(fetchMap.get("member"));
 			}
-			labelSongNameToolTip.setText(prevSong.getName());
-			labelAttributeToolTip.setText(prevSong.getAttribute());
-			labelDifficultyToolTip.setText(prevSong.getDifficulty());
-			labelLevelToolTip.setText(String.valueOf(prevSong.getLevel()));
-			labelNotesToolTip.setText(String.valueOf(prevSong.getNotes()));
-			labelCurrentSongOrderTool.setText(String.valueOf(currentIndex));
-			labelLyricToolTip.setText(fetchMap.get("lyric"));
-			labelComposerToolTip.setText(fetchMap.get("composer"));
-			labelArrangeToolTip.setText(fetchMap.get("arrange"));
-			labelMemberToolTip.setText(fetchMap.get("member"));
-		}
+		}, es).whenCompleteAsync((ret, ex) -> {
+			if(ex != null) {
+				logger.error("Exception was thrown during concurrent process", ex);
+			}
+		}, es);
 	});
 	
 	labelLyricToolTitle = new JLabel("Lyrics By");
@@ -712,29 +783,35 @@ public class DelesteRandomSelector extends JFrame {
 	
 	btnNextSongTool = new JButton("next");
 	btnNextSongTool.addActionListener(e -> {
-		int currentIndex = Integer.parseInt(labelCurrentSongOrderTool.getText()) - 1;
-		if(currentIndex != property.getSongLimit() - 1) {
-			Song nextSong = toolIntegrateList.get(currentIndex + 1);
-			logger.info("currently : {} Next: {}", currentIndex + 1, currentIndex + 2);
-			logger.info("nextSong: {}", nextSong);
-			Map<String, String> fetchMap = new HashMap<>();
-			for(Map<String, String> tmpMap : listToolMapData) {
-				if(tmpMap.get("songname").equals(nextSong.getName())) {
-					fetchMap = tmpMap;
-					break;
+		CompletableFuture.runAsync(() -> {
+			int currentIndex = Integer.parseInt(labelCurrentSongOrderTool.getText()) - 1;
+			if(currentIndex != property.getSongLimit() - 1) {
+				Song nextSong = toolIntegrateList.get(currentIndex + 1);
+				logger.info("currently : {} Next: {}", currentIndex + 1, currentIndex + 2);
+				logger.info("nextSong: {}", nextSong);
+				Map<String, String> fetchMap = new HashMap<>();
+				for(Map<String, String> tmpMap : listToolMapData) {
+					if(tmpMap.get("songname").equals(nextSong.getName())) {
+						fetchMap = tmpMap;
+						break;
+					}
 				}
+				labelSongNameToolTip.setText(nextSong.getName());
+				labelAttributeToolTip.setText(nextSong.getAttribute());
+				labelDifficultyToolTip.setText(nextSong.getDifficulty());
+				labelLevelToolTip.setText(String.valueOf(nextSong.getLevel()));
+				labelNotesToolTip.setText(String.valueOf(nextSong.getNotes()));
+				labelCurrentSongOrderTool.setText(String.valueOf(currentIndex + 2));
+				labelLyricToolTip.setText(fetchMap.get("lyric"));
+				labelComposerToolTip.setText(fetchMap.get("composer"));
+				labelArrangeToolTip.setText(fetchMap.get("arrange"));
+				labelMemberToolTip.setText(fetchMap.get("member"));
 			}
-			labelSongNameToolTip.setText(nextSong.getName());
-			labelAttributeToolTip.setText(nextSong.getAttribute());
-			labelDifficultyToolTip.setText(nextSong.getDifficulty());
-			labelLevelToolTip.setText(String.valueOf(nextSong.getLevel()));
-			labelNotesToolTip.setText(String.valueOf(nextSong.getNotes()));
-			labelCurrentSongOrderTool.setText(String.valueOf(currentIndex + 2));
-			labelLyricToolTip.setText(fetchMap.get("lyric"));
-			labelComposerToolTip.setText(fetchMap.get("composer"));
-			labelArrangeToolTip.setText(fetchMap.get("arrange"));
-			labelMemberToolTip.setText(fetchMap.get("member"));
-		}
+		}, es).whenCompleteAsync((ret, ex) -> {
+			if(ex != null) {
+				logger.error("Exception was thrown during concurrent process", ex);
+			}
+		});
 	});
 	
 	labelCurrentSongOrderTool = new JLabel("null");

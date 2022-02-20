@@ -23,6 +23,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.ranfa.lib.AlbumTypeEstimate.MASTERPLUS_TYPE;
+import com.ranfa.lib.concurrent.CountedThreadFactory;
 import com.ranfa.main.Messages;
 
 public class Scraping {
@@ -58,7 +59,7 @@ public class Scraping {
 
 	public static ArrayList<Song> getWholeData() {
 		long time = System.currentTimeMillis();
-		ExecutorService es = Executors.newWorkStealingPool();
+		ExecutorService es = Executors.newCachedThreadPool(new CountedThreadFactory(() -> "DRS", "WebdataFetchThread"));
 		CompletableFuture<ArrayList<ArrayList<Album>>> typeFetchFuture = CompletableFuture.supplyAsync(() -> AlbumTypeEstimate.getAlbumType(), es);
 		// if(databaseExists())
 		// 	return null;

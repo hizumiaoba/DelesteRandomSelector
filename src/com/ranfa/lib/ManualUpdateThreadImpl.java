@@ -9,13 +9,15 @@ import java.util.function.BiConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ranfa.lib.concurrent.CountedThreadFactory;
+
 public class ManualUpdateThreadImpl implements Runnable {
 
 	//Declare flag
 	private static boolean flag = true;
 
 	//Declare Executor service
-	private Executor executor = Executors.newWorkStealingPool();
+	private Executor executor = Executors.newCachedThreadPool(new CountedThreadFactory(() -> "DRS", "ManualUpdateThread"));
 	private BiConsumer<ArrayList<Song>, ArrayList<Song>> updateConsumer = (list1, list2) -> {
 		this.logger.info("Checking database updates...");
 		if(list1.size() > list2.size()) {
