@@ -2,9 +2,12 @@ package com.ranfa.main;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Desktop;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -159,7 +162,7 @@ public class DelesteRandomSelector extends JFrame {
 		throw new NullPointerException("FATAL: cannot continue!");
 	    }
 	}
-	ExecutorService es = Executors.newCachedThreadPool(new CountedThreadFactory(() -> "DRS", "AsyncEventInquery"));
+	ExecutorService es = Executors.newCachedThreadPool(new CountedThreadFactory(() -> "DRS", "AsyncEventInquerier"));
 	CompletableFuture<ArrayList<Song>> getFromJsonFuture = CompletableFuture.supplyAsync(() -> Scraping.getFromJson(), es);
 	CompletableFuture<ArrayList<Song>> getWholeDataFuture = CompletableFuture.supplyAsync(() -> Scraping.getWholeData(), es);
 	if(!Settings.fileExists() && !Settings.writeDownJSON()) {
@@ -747,7 +750,32 @@ public class DelesteRandomSelector extends JFrame {
 	
 	btnMoreInfoTool = new JButton("More Information");
 	btnMoreInfoTool.addActionListener(e -> {
-		
+		CompletableFuture.runAsync(() -> {
+			int currentIndex = Integer.parseInt(labelCurrentSongOrderTool.getText()) - 1;
+			Song currentSong = toolIntegrateList.get(currentIndex);
+			Map<String, String> fetchMap = new HashMap<>();
+			for(Map<String, String> tmpMap : listToolMapData) {
+				if(tmpMap.get("songname").equals(currentSong.getName())) {
+					fetchMap = tmpMap;
+					break;
+				}
+			}
+			Desktop desk = Desktop.getDesktop();
+			String api = fetchMap.get("link");
+			URI uri;
+			try {
+				uri = new URI(api);
+				logger.info("Opening default browser with : {}", uri);
+				desk.browse(uri);
+			} catch (URISyntaxException | IOException e1) {
+				JOptionPane.showMessageDialog(null, "このメッセージは仮です。Exception : " + e1.getClass().getSimpleName());
+				logger.error("Exception while opening default browser.", e1);
+			}
+		}, es).whenCompleteAsync((ret, ex) -> {
+			if(ex != null) {
+				logger.warn("Exception was thrown during action events.", ex);
+			}
+		}, es);
 	});
 	btnMoreInfoTool.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(btnMoreInfoTool, "18, 36");
@@ -755,5 +783,4 @@ public class DelesteRandomSelector extends JFrame {
 	    setEnabled.run();
 	}
     }
-
 }
