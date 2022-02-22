@@ -10,6 +10,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -239,12 +240,12 @@ public class DelesteRandomSelector extends JFrame {
 		if(Files.exists(Paths.get("generated/albumCycle.json"))) {
 		    this.albumType = EstimateAlbumTypeCycle.getCurrentCycle();
 		}
-	}).whenCompleteAsync((ret, ex) -> {
+	}, es).whenCompleteAsync((ret, ex) -> {
 		if(ex != null) {
 			logger.error("Exception was thrown during concurrent process", ex);
 			throw new IllegalStateException(ex);
 		}
-	});
+	}, es);
 	getWholeDataFuture.thenAcceptAsync(list -> this.logger.info("Scraping data size:" + list.size()), es);
 	getFromJsonFuture.thenAcceptAsync(list -> this.logger.info("Currently database size:" + list.size()), es);
 	// easter phase
@@ -307,12 +308,12 @@ public class DelesteRandomSelector extends JFrame {
 	labelDifficulty.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 	panelWestMain.add(labelDifficulty, "2, 2, center, center");
 	
-	comboDifficultySelect = new JComboBox();
+	comboDifficultySelect = new JComboBox<>();
 	comboDifficultySelect.setModel(new DefaultComboBoxModel(new String[] {Messages.MSGNonSelected.toString(), "DEBUT", "REGULAR", "PRO", "MASTER", "MASTER+", "ⓁMASTER+", "LIGHT", "TRICK", "PIANO", "FORTE", "WITCH"}));
 	comboDifficultySelect.setFont(new Font("Dialog", Font.BOLD, 12));
 	panelWestMain.add(comboDifficultySelect, "2, 4, fill, fill");
 	
-	comboAttribute = new JComboBox();
+	comboAttribute = new JComboBox<>();
 	comboAttribute.setModel(new DefaultComboBoxModel(new String[] {Messages.MSGNonSelected.toString(), "全タイプ", "キュート", "クール", "パッション"}));
 	comboAttribute.setFont(new Font("UD デジタル 教科書体 NP-B", Font.BOLD, 13));
 	panelWestMain.add(comboAttribute, "2, 6, fill, top");
@@ -557,7 +558,9 @@ public class DelesteRandomSelector extends JFrame {
 				Song firstSong = toolIntegrateList.get(0);
 				Map<String, String> fetchMap = new HashMap<>();
 				for(Map<String, String> tmpMap : listToolMapData) {
-					if(tmpMap.get("songname").equals(firstSong.getName())) {
+					String normalizeApiName = Normalizer.normalize(tmpMap.get("songname").toString(), Normalizer.Form.NFKD);
+					String normalizeLocalName = Normalizer.normalize(firstSong.getName(), Normalizer.Form.NFKD);
+					if(normalizeApiName.equals(normalizeLocalName)) {
 						fetchMap = tmpMap;
 						break;
 					}
@@ -732,7 +735,9 @@ public class DelesteRandomSelector extends JFrame {
 				logger.info("prevSong: {}", prevSong);
 				Map<String, String> fetchMap = new HashMap<>();
 				for(Map<String, String> tmpMap : listToolMapData) {
-					if(tmpMap.get("songname").equals(prevSong.getName())) {
+					String normalizeApiName = Normalizer.normalize(tmpMap.get("songname").toString(), Normalizer.Form.NFKD);
+					String normalizeLocalName = Normalizer.normalize(prevSong.getName(), Normalizer.Form.NFKD);
+					if(normalizeApiName.equals(normalizeLocalName)) {
 						fetchMap = tmpMap;
 						break;
 					}
@@ -759,7 +764,7 @@ public class DelesteRandomSelector extends JFrame {
 	labelLyricToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelLyricToolTitle, "2, 26, center, default");
 	
-	labelLyricToolTip = new JLabel("New label");
+	labelLyricToolTip = new JLabel("Please wait...");
 	labelLyricToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelLyricToolTip, "10, 26, center, default");
 	
@@ -767,7 +772,7 @@ public class DelesteRandomSelector extends JFrame {
 	labelComposerToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelComposerToolTitle, "2, 30, center, default");
 	
-	labelComposerToolTip = new JLabel("New label");
+	labelComposerToolTip = new JLabel("Please wait...");
 	labelComposerToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelComposerToolTip, "10, 30, center, default");
 	
@@ -775,7 +780,7 @@ public class DelesteRandomSelector extends JFrame {
 	labelArrangeToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelArrangeToolTitle, "2, 34, center, default");
 	
-	labelArrangeToolTip = new JLabel("New label");
+	labelArrangeToolTip = new JLabel("Please wait...");
 	labelArrangeToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelArrangeToolTip, "10, 34, center, default");
 	btnPrevSongTool.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
@@ -791,7 +796,9 @@ public class DelesteRandomSelector extends JFrame {
 				logger.info("nextSong: {}", nextSong);
 				Map<String, String> fetchMap = new HashMap<>();
 				for(Map<String, String> tmpMap : listToolMapData) {
-					if(tmpMap.get("songname").equals(nextSong.getName())) {
+					String normalizeApiName = Normalizer.normalize(tmpMap.get("songname").toString(), Normalizer.Form.NFKD);
+					String normalizeLocalName = Normalizer.normalize(nextSong.getName(), Normalizer.Form.NFKD);
+					if(normalizeApiName.equals(normalizeLocalName)) {
 						fetchMap = tmpMap;
 						break;
 					}
@@ -832,7 +839,9 @@ public class DelesteRandomSelector extends JFrame {
 			Song currentSong = toolIntegrateList.get(currentIndex);
 			Map<String, String> fetchMap = new HashMap<>();
 			for(Map<String, String> tmpMap : listToolMapData) {
-				if(tmpMap.get("songname").equals(currentSong.getName())) {
+				String normalizeApiName = Normalizer.normalize(tmpMap.get("songname").toString(), Normalizer.Form.NFKD);
+				String normalizeLocalName = Normalizer.normalize(currentSong.getName(), Normalizer.Form.NFKD);
+				if(normalizeApiName.equals(normalizeLocalName)) {
 					fetchMap = tmpMap;
 					break;
 				}

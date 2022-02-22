@@ -1,6 +1,7 @@
 package com.ranfa.lib.songinfo;
 
 import java.io.IOException;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,62 +22,70 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ranfa.lib.concurrent.CountedThreadFactory;
 
+import HajimeAPI4J.api.HajimeAPI4J;
 import HajimeAPI4J.api.HajimeAPI4J.List_Params;
 import HajimeAPI4J.api.HajimeAPI4J.List_Type;
 import HajimeAPI4J.api.HajimeAPI4J.Music_Params;
 import HajimeAPI4J.api.HajimeAPI4J.Token;
 import HajimeAPI4J.api.HajimeAPIBuilder;
-import HajimeAPI4J.api.util.HajimeAPI4JImpl;
 import HajimeAPI4J.api.util.datatype.Member;
+import HajimeAPI4J.exception.NoSuchURIException;
 
 public class FetchFromAPI {
 	
 	private Logger logger = LoggerFactory.getLogger(FetchFromAPI.class);
 	
 	
-	private ExecutorService apiExecutor = Executors.newCachedThreadPool(new CountedThreadFactory(() -> "DRS", "HajimeAPIInquerier"));
+	private ExecutorService localDispatcher = Executors.newCachedThreadPool(new CountedThreadFactory(() -> "DRS", "LocalDispatcher"));
 	private List<JsonNode> nodes;
 	
 	// constructor
 	
 	public FetchFromAPI(String... songnames) {
-		List<CompletableFuture<JsonNode>> listFutures = new ArrayList<>();
+		List<JsonNode> listFutures = new ArrayList<>();
 		for(String songname : Arrays.asList(songnames)) {
 			Map<String, Object> data = fetchList(songname);
 			if(data.getOrDefault("error", "false").equals("true")) {
 				JsonNode errorNode = new ObjectMapper().valueToTree(data);
-				CompletableFuture<JsonNode> error = CompletableFuture.supplyAsync(() -> errorNode, apiExecutor);
-				listFutures.add(error);
+				listFutures.add(errorNode);
 				continue;
 			}
 			int taxId = Integer.parseInt(data.get("song_id").toString());
-			HajimeAPI4JImpl impl = HajimeAPIBuilder.createDefault(Token.MUSIC)
+			HajimeAPI4J impl = HajimeAPIBuilder.createDefault(Token.MUSIC)
 					.addParameter(Music_Params.ID	, String.valueOf(taxId))
 					.build();
 			logger.info("fetch data : {}", taxId);
-			listFutures.add(impl.getAsync(apiExecutor));
+			try {
+				listFutures.add(impl.get());
+			} catch (NoSuchURIException | IOException | InterruptedException e) {
+				logger.error("Exception while processing json.", e);
+			}
 		}
-		CompletableFuture.allOf(listFutures.toArray(new CompletableFuture[listFutures.size()])).join();
-		nodes = new ArrayList<>();
-		listFutures.stream().forEach(cf -> {
-			nodes.add(cf.join());
-		});
+		nodes = listFutures;
 	}
 	
 	private Map<String, Object> fetchList(String songname) {
-		HajimeAPI4JImpl api = HajimeAPIBuilder.createDefault(Token.LIST)
+		HajimeAPI4J api = HajimeAPIBuilder.createDefault(Token.LIST)
 				.addParameter(List_Params.TYPE, List_Type.MUSIC.toString())
 				.addParameter(List_Params.SEARCH, songname)
 				.build();
 		List<Map<String, Object>> parse = Collections.emptyList();
 		try {
-			parse = new ObjectMapper().readValue( api.getAsync(apiExecutor).join().traverse(), new TypeReference<List<Map<String, Object>>>() {});
+			parse = new ObjectMapper().readValue( api.get().traverse(), new TypeReference<List<Map<String, Object>>>() {});
 			TimeUnit.SECONDS.sleep(1);
-		} catch (IOException | InterruptedException e) {
+		} catch (IOException | InterruptedException | NoSuchURIException e) {
 			logger.error("Exception while processing json map");
 		}
+		if(parse == null || parse.isEmpty()) {
+			parse = new ArrayList<>(1);
+			Map<String, Object> tmp = new HashMap<>();
+			tmp.put("error", "true");
+			parse.add(tmp);
+		}
 		for(Map<String, Object> tmp : parse ) {
-			if(tmp.get("name").toString().equals(songname))
+			String normalizeApiName = Normalizer.normalize(tmp.get("name").toString(), Normalizer.Form.NFKD);
+			String normalizeLocalName = Normalizer.normalize(songname, Normalizer.Form.NFKD);
+			if(normalizeApiName.equalsIgnoreCase(normalizeLocalName))
 				return tmp;
 		}
 		HashMap<String, Object> altRes = new HashMap<>();
@@ -88,7 +97,20 @@ public class FetchFromAPI {
 		List<Map<String, String>> resultList = new ArrayList<>();
 		int nodeSize = nodes.size();
 		try {
+			TimeUnit.SECONDS.sleep(1);
 			for(JsonNode node : nodes) {
+				if(node.get("error").asText().equals("true")) {
+					Map<String, String> tmp = new HashMap<>();
+					String errorStr = "Failed to get.";
+					tmp.put("songname", errorStr);
+					tmp.put("link", errorStr);
+					tmp.put("lyric", errorStr);
+					tmp.put("composer", errorStr);
+					tmp.put("arrange", errorStr);
+					tmp.put("member", errorStr);
+					resultList.add(tmp);
+					continue;
+				}
 				LinkedHashMap<String, String> result = new LinkedHashMap<>();
 				result.put("songname", node.get("name").asText());
 				result.put("link", node.get("link").asText());
@@ -100,22 +122,23 @@ public class FetchFromAPI {
 				List<Map<String, Object>> lyricList = mapper.readValue(node.get("lyrics").traverse(), typeRef),
 						composerList = mapper.readValue(node.get("composer").traverse(), typeRef),
 						arrangeList = mapper.readValue(node.get("arrange").traverse(), typeRef);
-				lyric = CompletableFuture.supplyAsync(() -> getArrayedNames(lyricList), apiExecutor).join();
-				composer = CompletableFuture.supplyAsync(() -> getArrayedNames(composerList), apiExecutor).join();
-				arrange = CompletableFuture.supplyAsync(() -> getArrayedNames(arrangeList), apiExecutor).join();
+				lyric = CompletableFuture.supplyAsync(() -> getArrayedNames(lyricList), localDispatcher).join();
+				composer = CompletableFuture.supplyAsync(() -> getArrayedNames(composerList), localDispatcher).join();
+				arrange = CompletableFuture.supplyAsync(() -> getArrayedNames(arrangeList), localDispatcher).join();
 				result.put("lyric", lyric);
 				result.put("composer", composer);
 				result.put("arrange", arrange);
 				StringBuilder memberBuilder = new StringBuilder();
 				for(Member tmpMember : mapper.readValue(node.get("member").traverse(), new TypeReference<List<Member>>() {})) {
-					memberBuilder.append(tmpMember.getName()).append(",");
+					if(tmpMember.getProduction().equals("cg"))
+						memberBuilder.append(tmpMember.getName()).append(",");
 				}
 				memberBuilder.deleteCharAt(memberBuilder.length() - 1);
 				result.put("member", memberBuilder.toString());
 				logger.info("data fetch complete. : {}", result);
 				resultList.add(result);
 			}
-		} catch(IOException e) {
+		} catch(IOException | InterruptedException e) {
 			logger.warn("Exception while processing json", e);
 			String errorStr = "No data";
 			for(int i = 0; i < nodeSize; i++) {

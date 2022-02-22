@@ -2,7 +2,7 @@
   "checkLibraryUpdates" : true,
   "checkVersion" : true,
   "windowHeight" : 360,
-  "songLimit" : 2,
+  "songLimit" : 5,
   "saveScoreLog" : true,
   "windowWidth" : 640
 }
