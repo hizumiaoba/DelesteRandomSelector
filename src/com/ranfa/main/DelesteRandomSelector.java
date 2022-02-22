@@ -176,7 +176,7 @@ public class DelesteRandomSelector extends JFrame {
      * Create the frame.
      */
     public DelesteRandomSelector() {
-    ExecutorService es = Executors.newCachedThreadPool(new CountedThreadFactory(() -> "DRS", "AsyncEventInquerier"));
+    ExecutorService es = Executors.newCachedThreadPool(new CountedThreadFactory(() -> "DRS", "AsyncEventInquerier", false));
 	this.contentPane = new JPanel();
 	boolean isFirst = !Scraping.databaseExists();
 	// database check phase

@@ -76,10 +76,17 @@ public class FetchFromAPI {
 		} catch (IOException | InterruptedException | NoSuchURIException e) {
 			logger.error("Exception while processing json map");
 		}
-		if(parse == null || parse.isEmpty()) {
+		if(parse == null) {
 			parse = new ArrayList<>(1);
 			Map<String, Object> tmp = new HashMap<>();
 			tmp.put("error", "true");
+			tmp.put("name", songname);
+			parse.add(tmp);
+		} else if(parse.isEmpty()) {
+			parse = new ArrayList<>(1);
+			Map<String, Object> tmp = new HashMap<>();
+			tmp.put("error", "true");
+			tmp.put("name", songname);
 			parse.add(tmp);
 		}
 		for(Map<String, Object> tmp : parse ) {
@@ -90,6 +97,7 @@ public class FetchFromAPI {
 		}
 		HashMap<String, Object> altRes = new HashMap<>();
 		altRes.put("error", "true");
+		altRes.put("name", songname);
 		return altRes;
 	}
 	
@@ -99,10 +107,22 @@ public class FetchFromAPI {
 		try {
 			TimeUnit.SECONDS.sleep(1);
 			for(JsonNode node : nodes) {
-				if(node.get("error").asText().equals("true")) {
+				if(node == null) {
 					Map<String, String> tmp = new HashMap<>();
 					String errorStr = "Failed to get.";
 					tmp.put("songname", errorStr);
+					tmp.put("link", errorStr);
+					tmp.put("lyric", errorStr);
+					tmp.put("composer", errorStr);
+					tmp.put("arrange", errorStr);
+					tmp.put("member", errorStr);
+					resultList.add(tmp);
+					continue;
+				}
+				if(node.get("error") != null) {
+					Map<String, String> tmp = new HashMap<>();
+					String errorStr = "Failed to get.";
+					tmp.put("songname", node.get("name").asText());
 					tmp.put("link", errorStr);
 					tmp.put("lyric", errorStr);
 					tmp.put("composer", errorStr);
@@ -135,7 +155,6 @@ public class FetchFromAPI {
 				}
 				memberBuilder.deleteCharAt(memberBuilder.length() - 1);
 				result.put("member", memberBuilder.toString());
-				logger.info("data fetch complete. : {}", result);
 				resultList.add(result);
 			}
 		} catch(IOException | InterruptedException e) {
@@ -153,7 +172,7 @@ public class FetchFromAPI {
 				resultList.add(tmp);
 			}
 		}
-		
+		resultList.stream().forEach(map -> logger.debug("data fetch complete : {}", map));
 		return resultList;
 	}
 	
