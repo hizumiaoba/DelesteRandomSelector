@@ -1,8 +1,8 @@
 {
   "checkLibraryUpdates" : true,
   "checkVersion" : true,
-  "windowHeight" : 360,
+  "windowHeight" : 960,
   "songLimit" : 5,
   "saveScoreLog" : true,
-  "windowWidth" : 640
+  "windowWidth" : 540
 }

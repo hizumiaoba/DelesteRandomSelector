@@ -2,8 +2,27 @@ package com.ranfa.lib;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.ranfa.lib.concurrent.CountedThreadFactory;
+
+/**
+ * ファン計算用とのライブラリ
+ * ファン数計算とスコア計算を実装
+ * @author hizum
+ *
+ */
 public class FanCalc {
+	
+	private static final Logger logger = LoggerFactory.getLogger(FanCalc.class);
+	private static final ExecutorService async = Executors.newSingleThreadExecutor(new CountedThreadFactory(() -> "DRS", "FanCalcThread", false));
 	
 	/**
 	 * 計算式は
@@ -35,5 +54,44 @@ public class FanCalc {
 	resPremiumed = resPremiumed.setScale(0, RoundingMode.UP);
     	return (resPremiumed.compareTo(BigDecimal.ZERO) == 0) || (resPremiumed == null) ? 0 : Integer.parseInt(resPremiumed.toString());
     }
+	
+	/**
+	 * 目標スコアを計算。
+	 * 初期実装の思想は並列処理による再帰計算。
+	 * @param fan 目標ファン
+	 * @param multiplier LIVEの繰り返し回数
+	 * @param room ルームアイテム補正値（百分率）
+	 * @param center センター、ゲスト効果による補正値
+	 * @param produce プロデュース方針にとる補正値
+	 * @param premium プレミアムパスによる補正値
+	 * @return LIVE一回当たりの目標スコア
+	 */
+	public static CompletableFuture<Integer> scoreAsync(int fan, int multiplier, int room, int center, int produce, int premium) {
+		return CompletableFuture.supplyAsync(() -> score(fan, multiplier, room, center, produce, premium), async);
+	}
+	
+	/**
+	 * @param fan 目標ファン
+	 * @param multiplier LIVEの繰り返し回数
+	 * @param room ルームアイテム補正値（百分率）
+	 * @param center センター、ゲスト効果による補正値
+	 * @param produce プロデュース方針にとる補正値
+	 * @param premium プレミアムパスによる補正値
+	 * @return LIVE一回当たりの目標スコア
+	 */
+	private static int score(int fan, int multiplier, int room, int center, int produce, int premium) {
+		BigDecimal goalFan = new BigDecimal(fan).divide(new BigDecimal(multiplier), 0, RoundingMode.UP);
+		final AtomicInteger result = new AtomicInteger(0);
+		final AtomicBoolean flag = new AtomicBoolean(false);
+			logger.info("Started to calculate score at dedicated thread.");
+			while(!flag.get()) {
+                int localFan = fan(result.incrementAndGet(), room, center, produce, premium) * 5;
+                if(goalFan.compareTo(new BigDecimal(localFan)) <= 0) {
+                    flag.set(true);
+                }
+            }
+		return Integer.parseInt(result.toString());
+	}
+	
 
 }
