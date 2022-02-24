@@ -13,6 +13,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ranfa.lib.concurrent.CountedThreadFactory;
+import com.ranfa.main.DelesteRandomSelector;
 
 import HajimeAPI4J.api.HajimeAPI4J;
 import HajimeAPI4J.api.HajimeAPI4J.List_Params;
@@ -43,7 +45,10 @@ public class FetchFromAPI {
 	
 	public FetchFromAPI(String... songnames) {
 		List<JsonNode> listFutures = new ArrayList<>();
+		final AtomicInteger n = new AtomicInteger(0);
 		for(String songname : Arrays.asList(songnames)) {
+			DelesteRandomSelector.progressTool.setValue(n.incrementAndGet());
+			DelesteRandomSelector.labelInfoProgressSongName.setText("<html><body>Processing : " + songname + "</body></html>");
 			Map<String, Object> data = fetchList(songname);
 			if(data.getOrDefault("error", "false").equals("true")) {
 				JsonNode errorNode = new ObjectMapper().valueToTree(data);
@@ -61,6 +66,7 @@ public class FetchFromAPI {
 				logger.error("Exception while processing json.", e);
 			}
 		}
+		DelesteRandomSelector.labelInfoProgressSongName.setText("");
 		nodes = listFutures;
 	}
 	
