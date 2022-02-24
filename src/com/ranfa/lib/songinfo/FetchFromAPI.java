@@ -148,12 +148,11 @@ public class FetchFromAPI {
 				List<Map<String, Object>> lyricList = mapper.readValue(node.get("lyrics").traverse(), typeRef),
 						composerList = mapper.readValue(node.get("composer").traverse(), typeRef),
 						arrangeList = mapper.readValue(node.get("arrange").traverse(), typeRef);
-				lyric = CompletableFuture.supplyAsync(() -> getArrayedNames(lyricList), localDispatcher).join();
-				composer = CompletableFuture.supplyAsync(() -> getArrayedNames(composerList), localDispatcher).join();
-				arrange = CompletableFuture.supplyAsync(() -> getArrayedNames(arrangeList), localDispatcher).join();
-				result.put("lyric", lyric);
-				result.put("composer", composer);
-				result.put("arrange", arrange);
+				List<CompletableFuture<String>> nameArraySupplyFutures = List.of(
+						CompletableFuture.supplyAsync(() -> getArrayedNames(lyricList), localDispatcher),
+						CompletableFuture.supplyAsync(() -> getArrayedNames(composerList), localDispatcher),
+						CompletableFuture.supplyAsync(() -> getArrayedNames(arrangeList), localDispatcher)
+				);
 				StringBuilder memberBuilder = new StringBuilder();
 				for(Member tmpMember : mapper.readValue(node.get("member").traverse(), new TypeReference<List<Member>>() {})) {
 					if(tmpMember.getProduction().equals("cg"))
@@ -161,6 +160,13 @@ public class FetchFromAPI {
 				}
 				memberBuilder.deleteCharAt(memberBuilder.length() - 1);
 				result.put("member", memberBuilder.toString());
+				CompletableFuture.allOf(nameArraySupplyFutures.toArray(new CompletableFuture[] {})).join();
+				lyric = nameArraySupplyFutures.get(0).join();
+				composer = nameArraySupplyFutures.get(1).join();
+				arrange = nameArraySupplyFutures.get(2).join();
+				result.put("lyric", lyric);
+				result.put("composer", composer);
+				result.put("arrange", arrange);
 				resultList.add(result);
 			}
 		} catch(IOException | InterruptedException e) {
