@@ -8,6 +8,7 @@ import java.lang.management.RuntimeMXBean;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
+import java.util.concurrent.CompletionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +41,12 @@ public class CrashHandler {
 				"// These Easter sentences were inspired by Minecraft Crash Report!"
 		};
 		
+		private static final int EXIT_WITH_NESTED_CAUSE = 2;
+		private static final int EXIT_WITH_NULL_POINTER_EXCEPTION = 3;
+		private static final int EXIT_WITH_ILLEGAL_STATE_EXCEPTION = 5;
+		private static final int EXIT_WITH_COMPLETION_EXCEPTION = 7;
+		private static final int EXIT_WITH_ILLEGAL_ARGUMENT_EXCEPTION = 9;
+		
 		public CrashHandler() {
 			this(DEFAULT_DESCRIPTION);
 		}
@@ -66,7 +73,9 @@ public class CrashHandler {
 		public void execute() {
 			if(e == null)
 				throw new NullPointerException("Cannot execute crash because throwable is null.");
+			estimateExitCode = calcExitCode();
 			LOG.error("Cannot keep up application! : {}", e.toString());
+			LOG.error("Application will exit with exit code : {}", estimateExitCode);
 			LOG.error(outputReport());
 			crashReportLines.outCrashReport();
 			System.exit(estimateExitCode);
@@ -147,5 +156,38 @@ public class CrashHandler {
 		
 		public int getEstimateExitCode() {
 			return estimateExitCode;
+		}
+		
+		private int calcExitCode() {
+			int res = 1;
+			if(e.getCause() != null)
+				res *= EXIT_WITH_NESTED_CAUSE;
+			if(e instanceof NullPointerException )
+				res *= EXIT_WITH_NULL_POINTER_EXCEPTION;
+			if(e instanceof IllegalStateException)
+				res *= EXIT_WITH_ILLEGAL_STATE_EXCEPTION;
+			if(e instanceof CompletionException	)
+				res *= EXIT_WITH_COMPLETION_EXCEPTION;
+			if(e instanceof IllegalArgumentException)
+				res *= EXIT_WITH_ILLEGAL_ARGUMENT_EXCEPTION;
+			if(e.getCause() != null)
+				return calcExitCode(e.getCause(), res);
+			return res;
+		}
+		
+		private static int calcExitCode(Throwable e, int current) {
+			if(e == null)
+				return current;
+			if(e.getCause() != null)
+				current *= EXIT_WITH_NESTED_CAUSE;
+			if(e instanceof NullPointerException )
+				current *= EXIT_WITH_NULL_POINTER_EXCEPTION;
+			if(e instanceof IllegalStateException)
+				current *= EXIT_WITH_ILLEGAL_STATE_EXCEPTION;
+			if(e instanceof CompletionException	)
+				current *= EXIT_WITH_COMPLETION_EXCEPTION;
+			if(e instanceof IllegalArgumentException)
+				current *= EXIT_WITH_ILLEGAL_ARGUMENT_EXCEPTION;
+			return calcExitCode(e.getCause(), current);
 		}
 }
