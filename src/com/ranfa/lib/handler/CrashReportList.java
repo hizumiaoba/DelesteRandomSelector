@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
+import java.util.List;
 
 import org.slf4j.LoggerFactory;
 
@@ -14,26 +14,31 @@ public class CrashReportList <E> extends ArrayList<E> {
 
 	private static final String EMPTY_LINE_PLACEHOLDER = "{empty}";
 	
-	private final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss.txt");
+	private final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+	
+	private List<E> store;
 	
 	public CrashReportList() {
 		super();
+		store = new ArrayList<>();
 	}
 	
+	@Override
+	public boolean add(E e) {
+		return store.add(e);
+	}
+	
+	@SuppressWarnings("unchecked")
 	public String generateCrashReport() {
 		StringBuilder builder = new StringBuilder();
-		Iterator<E> itr = super.iterator();
-		if(!itr.hasNext())
-			throw new IllegalStateException("There is no lines to generate crash report.");
-		while(itr.hasNext()) {
-			String next = itr.next().toString();
-			if(next.equals(EMPTY_LINE_PLACEHOLDER))
-				next.replaceAll(EMPTY_LINE_PLACEHOLDER, "\n");
-			builder.append(next).append("\n");
+		for(E str : store) {
+			if(str.equals(EMPTY_LINE_PLACEHOLDER))
+				str = (E) "\n";
+			builder.append(str).append("\n");
 		}
-		builder.deleteCharAt(builder.length()).deleteCharAt(builder.length());
 		try {
-			FileWriter writer = new FileWriter(Paths.get(FORMAT.format(new Date())).toFile());
+			FileWriter writer = new FileWriter(Paths.get("Crash-Report/" + FORMAT.format(new Date()) + ".txt").toFile());
+			writer.write(builder.toString());
 			writer.close();
 		} catch (IOException e) {
 			LoggerFactory.getLogger(CrashReportList.class).error("Cannot write crash report.", e);
@@ -42,7 +47,7 @@ public class CrashReportList <E> extends ArrayList<E> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void emptyLine() {
-		super.add((E) EMPTY_LINE_PLACEHOLDER);
+	public boolean emptyLine() {
+		return store.add((E) EMPTY_LINE_PLACEHOLDER);
 	}
 }

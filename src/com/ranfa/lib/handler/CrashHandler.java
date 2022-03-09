@@ -5,7 +5,6 @@ import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
-import java.lang.management.ThreadMXBean;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
@@ -54,23 +53,25 @@ public class CrashHandler {
 		}
 		
 		public CrashHandler(String description, Throwable e) {
-			LOG.warn("Unexpected Exception has occured. : {}", e.toString());
+			LOG.warn("Unexpected Exception has occured. : {}", e == null ? "null" : e.toString());
 			LOG.warn("Provided Detail Message : {}", description);
 			this.e = e;
 			this.description = description;
 			estimateExitCode = Integer.MIN_VALUE;
-			crashReportLines.add("---- Multween Crash Report ----");
+			crashReportLines.add("---- DelesteRandomSelector Crash Report ----");
 			int randomInt = random.nextInt(EASTER_LINES.length);
 			crashReportLines.add(EASTER_LINES[randomInt]);
 		}
 		
 		public void execute() {
+			if(e == null)
+				throw new NullPointerException("Cannot execute crash because throwable is null.");
 			LOG.error("Cannot keep up application! : {}", e.toString());
-			outputReport();
+			LOG.error(outputReport());
 			System.exit(estimateExitCode);
 		}
 		
-		public void outputReport() {
+		private String outputReport() {
 			crashReportLines.emptyLine();
 			crashReportLines.add("Time: " + FORMAT.format(new Date()));
 			crashReportLines.add("Description: " + description);
@@ -95,7 +96,6 @@ public class CrashHandler {
 			OperatingSystemMXBean operatingBean = ManagementFactory.getOperatingSystemMXBean();
 			MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
 			MemoryUsage memUsage = memoryBean.getHeapMemoryUsage();
-			ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();
 			crashReportLines.emptyLine();
 			crashReportLines.add("-- System Details --");
 			crashReportLines.add("Details:");
@@ -104,20 +104,22 @@ public class CrashHandler {
 					+ operatingBean.getName() + " ("
 					+ operatingBean.getArch() + ") version "
 					+ operatingBean.getVersion());
-			crashReportLines.add("Java Version: " + runtimeBean.getSpecVersion() + ", " + runtimeBean.getSpecName());
-			crashReportLines.add("Java VM Version: " + runtimeBean.getVmName() + ", version " + runtimeBean.getVmVersion());
-			crashReportLines.add("Memory: " + memUsage.getUsed() + " bytes / " + memUsage.getInit() + " bytes up to " + memUsage.getMax() + " bytes");
-			crashReportLines.add("JVM Flags: " + runtimeBean.getInputArguments().size() + " total: " + runtimeBean.getInputArguments().toString());
-			crashReportLines.generateCrashReport();
+			crashReportLines.add("\tJava Version: " + runtimeBean.getSpecVersion() + ", " + runtimeBean.getVmVendor());
+			crashReportLines.add("\tJava VM Version: " + runtimeBean.getVmName() + ", version " + runtimeBean.getVmVersion());
+			crashReportLines.add("\tMemory: " + memUsage.getUsed() + " bytes / " + memUsage.getInit() + " bytes up to " + memUsage.getMax() + " bytes");
+			crashReportLines.add("\tJVM Flags: " + runtimeBean.getInputArguments().size() + " total: " + runtimeBean.getInputArguments().toString());
+			return crashReportLines.generateCrashReport();
 		}
 		
-		public void outSystemInfo() {
+		public String outSystemInfo() {
 			// Override fields
 			this.e = null;
 			this.description = "Loading screen debug info\n"
 					+ "\n"
 					+ "This is just a prompt for computer specs to be printed. THIS IS NOT A ERROR";
-			outputReport();
+			String res = outputReport();
+			LOG.info(res);
+			return res;
 		}
 		
 		public static CrashReportList<String> addLinesRecursively(Throwable e, CrashReportList<String> list) {
@@ -132,5 +134,17 @@ public class CrashHandler {
 				addLinesRecursively(e.getCause(), list);
 			}
 			return list;
+		}
+		
+		public String getDescription() {
+			return description;
+		}
+		
+		public Throwable getThrowable() {
+			return e;
+		}
+		
+		public int getEstimateExitCode() {
+			return estimateExitCode;
 		}
 }
