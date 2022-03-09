@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ranfa.lib.concurrent.CountedThreadFactory;
+import com.ranfa.lib.database.Scraping;
+import com.ranfa.lib.database.Song;
 
 public class ManualUpdateThreadImpl implements Runnable {
 

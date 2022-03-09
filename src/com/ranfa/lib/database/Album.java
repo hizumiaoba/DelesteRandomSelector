@@ -1,4 +1,4 @@
-package com.ranfa.lib;
+package com.ranfa.lib.database;
 
 public class Album {
 

@@ -47,7 +47,6 @@ public class FetchFromAPI {
 		List<JsonNode> listFutures = new ArrayList<>();
 		final AtomicInteger n = new AtomicInteger(0);
 		for(String songname : Arrays.asList(songnames)) {
-			DelesteRandomSelector.progressTool.setValue(n.incrementAndGet());
 			DelesteRandomSelector.labelInfoProgressSongName.setText("<html><body>Processing : " + songname + "</body></html>");
 			Map<String, Object> data = fetchList(songname);
 			if(data.getOrDefault("error", "false").equals("true")) {
@@ -60,10 +59,13 @@ public class FetchFromAPI {
 					.addParameter(Music_Params.ID	, String.valueOf(taxId))
 					.build();
 			logger.info("fetch data : {}", taxId);
+			
 			try {
 				listFutures.add(impl.get());
 			} catch (NoSuchURIException | IOException | InterruptedException e) {
 				logger.error("Exception while processing json.", e);
+			} finally {
+				DelesteRandomSelector.progressTool.setValue(n.incrementAndGet());
 			}
 		}
 		DelesteRandomSelector.labelInfoProgressSongName.setText("");
@@ -140,18 +142,15 @@ public class FetchFromAPI {
 				LinkedHashMap<String, String> result = new LinkedHashMap<>();
 				result.put("songname", node.get("name").asText());
 				result.put("link", node.get("link").asText());
-				String lyric = "",
-						composer = "",
-						arrange = "";
 				TypeReference<List<Map<String, Object>>> typeRef = new TypeReference<List<Map<String,Object>>>() {};
 				ObjectMapper mapper = new ObjectMapper();
 				List<Map<String, Object>> lyricList = mapper.readValue(node.get("lyrics").traverse(), typeRef),
 						composerList = mapper.readValue(node.get("composer").traverse(), typeRef),
 						arrangeList = mapper.readValue(node.get("arrange").traverse(), typeRef);
-				List<CompletableFuture<String>> nameArraySupplyFutures = List.of(
-						CompletableFuture.supplyAsync(() -> getArrayedNames(lyricList), localDispatcher),
-						CompletableFuture.supplyAsync(() -> getArrayedNames(composerList), localDispatcher),
-						CompletableFuture.supplyAsync(() -> getArrayedNames(arrangeList), localDispatcher)
+				List<CompletableFuture<Void>> nameArraySupplyFutures = List.of(
+						CompletableFuture.supplyAsync(() -> getArrayedNames(lyricList), localDispatcher).thenAcceptAsync(str -> result.put("lyric", str), localDispatcher),
+						CompletableFuture.supplyAsync(() -> getArrayedNames(composerList), localDispatcher).thenAcceptAsync(str -> result.put("composer", str), localDispatcher),
+						CompletableFuture.supplyAsync(() -> getArrayedNames(arrangeList), localDispatcher).thenAcceptAsync(str -> result.put("arrange", str), localDispatcher)
 				);
 				StringBuilder memberBuilder = new StringBuilder();
 				for(Member tmpMember : mapper.readValue(node.get("member").traverse(), new TypeReference<List<Member>>() {})) {
@@ -161,12 +160,6 @@ public class FetchFromAPI {
 				memberBuilder.deleteCharAt(memberBuilder.length() - 1);
 				result.put("member", memberBuilder.toString());
 				CompletableFuture.allOf(nameArraySupplyFutures.toArray(new CompletableFuture[] {})).join();
-				lyric = nameArraySupplyFutures.get(0).join();
-				composer = nameArraySupplyFutures.get(1).join();
-				arrange = nameArraySupplyFutures.get(2).join();
-				result.put("lyric", lyric);
-				result.put("composer", composer);
-				result.put("arrange", arrange);
 				resultList.add(result);
 			}
 		} catch(IOException | InterruptedException e) {

@@ -14401,10 +14401,10 @@
   }, {
     "attribute" : "全タイプ",
     "name" : "EVERLASTING",
-    "difficulty" : "MASTER+",
+    "difficulty" : "ⓁMASTER+",
     "level" : 30,
     "notes" : 939,
-    "albumType" : "Not-implemented"
+    "albumType" : "ALBUM A"
   }, {
     "attribute" : "全タイプ",
     "name" : "秋風に手を振って",
@@ -14716,52 +14716,10 @@
   }, {
     "attribute" : "パッション",
     "name" : "トロピカルガール",
-    "difficulty" : "MASTER+",
+    "difficulty" : "ⓁMASTER+",
     "level" : 29,
     "notes" : 988,
-    "albumType" : "Not-implemented"
-  }, {
-    "attribute" : "パッション",
-    "name" : "スパイスパラダイス",
-    "difficulty" : "WITCH",
-    "level" : 27,
-    "notes" : 566,
-    "albumType" : "Not-Implemented"
-  }, {
-    "attribute" : "パッション",
-    "name" : "トロピカルガール",
-    "difficulty" : "DEBUT",
-    "level" : 8,
-    "notes" : 104,
-    "albumType" : "Not-Implemented"
-  }, {
-    "attribute" : "パッション",
-    "name" : "トロピカルガール",
-    "difficulty" : "REGULAR",
-    "level" : 14,
-    "notes" : 203,
-    "albumType" : "Not-Implemented"
-  }, {
-    "attribute" : "パッション",
-    "name" : "トロピカルガール",
-    "difficulty" : "PRO",
-    "level" : 18,
-    "notes" : 408,
-    "albumType" : "Not-Implemented"
-  }, {
-    "attribute" : "パッション",
-    "name" : "トロピカルガール",
-    "difficulty" : "MASTER",
-    "level" : 26,
-    "notes" : 694,
-    "albumType" : "Not-Implemented"
-  }, {
-    "attribute" : "パッション",
-    "name" : "トロピカルガール",
-    "difficulty" : "MASTER+",
-    "level" : 29,
-    "notes" : 988,
-    "albumType" : "Not-implemented"
+    "albumType" : "ALBUM C"
   }, {
     "attribute" : "クール",
     "name" : "あこがれステッチ",
@@ -14916,5 +14874,96 @@
     "level" : 30,
     "notes" : 997,
     "albumType" : "Not-implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "トロピカルガール",
+    "difficulty" : "MASTER+",
+    "level" : 29,
+    "notes" : 988,
+    "albumType" : "ALBUM C"
+  }, {
+    "attribute" : "パッション",
+    "name" : "青空リレーション",
+    "difficulty" : "MASTER+",
+    "level" : 28,
+    "notes" : 919,
+    "albumType" : "ALBUM C"
+  }, {
+    "attribute" : "クール",
+    "name" : "＃HE4DSHOT",
+    "difficulty" : "LIGHT",
+    "level" : 8,
+    "notes" : 184,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "＃HE4DSHOT",
+    "difficulty" : "TRICK",
+    "level" : 17,
+    "notes" : 381,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "Twin☆くるっ★テール",
+    "difficulty" : "LIGHT",
+    "level" : 7,
+    "notes" : 157,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "Twin☆くるっ★テール",
+    "difficulty" : "TRICK",
+    "level" : 16,
+    "notes" : 359,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "ストリート・ランウェイ",
+    "difficulty" : "DEBUT",
+    "level" : 7,
+    "notes" : 115,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "ストリート・ランウェイ",
+    "difficulty" : "REGULAR",
+    "level" : 13,
+    "notes" : 236,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "ストリート・ランウェイ",
+    "difficulty" : "PRO",
+    "level" : 18,
+    "notes" : 465,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "ストリート・ランウェイ",
+    "difficulty" : "MASTER",
+    "level" : 27,
+    "notes" : 802,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "ストリート・ランウェイ",
+    "difficulty" : "MASTER+",
+    "level" : 30,
+    "notes" : 999,
+    "albumType" : "Not-implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "EVERLASTING",
+    "difficulty" : "MASTER+",
+    "level" : 30,
+    "notes" : 941,
+    "albumType" : "ALBUM A"
+  }, {
+    "attribute" : "キュート",
+    "name" : "cherry＊merry＊cherry",
+    "difficulty" : "MASTER+",
+    "level" : 28,
+    "notes" : 914,
+    "albumType" : "ALBUM A"
   } ]
 }
