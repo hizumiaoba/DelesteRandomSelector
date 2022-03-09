@@ -68,6 +68,7 @@ public class CrashHandler {
 				throw new NullPointerException("Cannot execute crash because throwable is null.");
 			LOG.error("Cannot keep up application! : {}", e.toString());
 			LOG.error(outputReport());
+			crashReportLines.outCrashReport();
 			System.exit(estimateExitCode);
 		}
 		

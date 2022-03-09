@@ -36,18 +36,20 @@ public class CrashReportList <E> extends ArrayList<E> {
 				str = (E) "\n";
 			builder.append(str).append("\n");
 		}
+		return builder.toString();
+	}
+	@SuppressWarnings("unchecked")
+	public boolean emptyLine() {
+		return store.add((E) EMPTY_LINE_PLACEHOLDER);
+	}
+	
+	public void outCrashReport() {
 		try {
 			FileWriter writer = new FileWriter(Paths.get("Crash-Report/" + FORMAT.format(new Date()) + ".txt").toFile());
-			writer.write(builder.toString());
+			writer.write(generateCrashReport());
 			writer.close();
 		} catch (IOException e) {
 			LoggerFactory.getLogger(CrashReportList.class).error("Cannot write crash report.", e);
 		}
-		return builder.toString();
-	}
-	
-	@SuppressWarnings("unchecked")
-	public boolean emptyLine() {
-		return store.add((E) EMPTY_LINE_PLACEHOLDER);
 	}
 }
