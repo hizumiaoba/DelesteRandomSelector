@@ -1,4 +1,4 @@
-package com.ranfa.lib;
+package com.ranfa.lib.calc;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
