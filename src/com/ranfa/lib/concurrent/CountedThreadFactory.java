@@ -17,7 +17,7 @@ public class CountedThreadFactory implements ThreadFactory {
 	}
 	
 	public CountedThreadFactory(Supplier<String> identifier, String specifier) {
-		this(() -> identifier.get() + " " + specifier, specifier, true);
+		this(identifier, specifier, true);
 	}
 	
 	public CountedThreadFactory(Supplier<String> identifier, String specifier, boolean isDaemon) {
