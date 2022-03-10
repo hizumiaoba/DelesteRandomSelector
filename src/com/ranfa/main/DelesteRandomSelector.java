@@ -258,6 +258,7 @@ public class DelesteRandomSelector extends JFrame {
 		this.logger.debug("Window Height: {}", this.property.getWindowHeight());
 		this.logger.debug("Song Limit: {}", this.property.getSongLimit());
 		this.logger.debug("SaveScoreLog: {}", this.property.isSaveScoreLog());
+		this.setBounds(100, 100, this.property.getWindowWidth(), this.property.getWindowHeight());
 		if(this.property.isCheckVersion()) {
 		    this.softwareUpdateFuture = CompletableFuture.runAsync(() -> CheckVersion.needToBeUpdated(), es);
 		}
@@ -287,7 +288,6 @@ public class DelesteRandomSelector extends JFrame {
 	}, es);
 	this.logger.debug("Version: {}", CheckVersion.getVersion());
 	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	this.setBounds(100, 100, this.property.getWindowWidth(), this.property.getWindowHeight());
 	// this.setBounds(100, 100, 960, 643);
 	this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 	this.setContentPane(this.contentPane);
