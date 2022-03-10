@@ -17,6 +17,8 @@ public class CheckVersion {
 	private final static String RELEASE_STRING = "https://github.com/hizumiaoba/DelesteRandomSelector/releases";
 
 	public static void needToBeUpdated() {
+		if(!getSuffix().equals(Suffix.STABLE))
+			return;
 		int latestMajor = 0;
 		int latestMinor = 0;
 		int latestPatch = 0;
@@ -48,7 +50,8 @@ public class CheckVersion {
 		String value = "v"
 				+ getMajorVersion() + "."
 				+ getMinorVersion() + "."
-				+ getPatchVersion();
+				+ getPatchVersion() + "-"
+				+ getSuffix().toString();
 		return value;
 	}
 
@@ -65,6 +68,11 @@ public class CheckVersion {
 	public static int getPatchVersion() {
 		Version version = DelesteRandomSelector.class.getAnnotation(Version.class);
 		return version.patch();
+	}
+	
+	public static Suffix getSuffix() {
+		Version version = DelesteRandomSelector.class.getAnnotation(Version.class);
+		return version.suffix();
 	}
 
 }

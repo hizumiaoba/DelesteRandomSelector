@@ -40,8 +40,20 @@ public enum Messages {
 	MSGCurrentAlbumType,
 	MSGManualUpdate,
 	MSGManualUpdateNotCompleteYet,
-	MSGConfigurations;
-
+	MSGConfigurations,
+	MSGAPIWaitAPIFetch,
+	MSGInfoPlayedSongs,
+	MSGInfoWait,
+	MSGInfoSongName,
+	MSGInfoLyricsBy,
+	MSGInfoSongAttribute,
+	MSGInfoComposedBy,
+	MSGInfoSongDifficulty,
+	MSGInfoArrangedBy,
+	MSGInfoSongLevel,
+	MSGInfoMember,
+	MSGInfoSongNotes,
+	MSGInfoOpenBrowser;
 
 	@Override
 	public String toString() {

@@ -64,7 +64,7 @@ public class Settings {
 	}
 
 	public static int getWindowWidth() {
-		int res = 640;
+		int res = 960;
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			JsonNode node = mapper.readTree(new File(FILEPATH));
@@ -76,7 +76,7 @@ public class Settings {
 	}
 
 	public static int getWindowHeight() {
-		int res = 360;
+		int res = 540;
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			JsonNode node = mapper.readTree(new File(FILEPATH));
@@ -116,8 +116,8 @@ public class Settings {
 		SettingJSONProperty property = new SettingJSONProperty();
 		property.setCheckVersion(true);
 		property.setCheckLibraryUpdates(true);
-		property.setWindowWidth(640);
-		property.setWindowHeight(360);
+		property.setWindowWidth(960);
+		property.setWindowHeight(540);
 		property.setSongLimit(3);
 		property.setSaveScoreLog(false);
 		ObjectWriter writer = new ObjectMapper().writer(new DefaultPrettyPrinter());

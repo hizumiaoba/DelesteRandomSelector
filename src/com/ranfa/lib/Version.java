@@ -11,4 +11,5 @@ public @interface Version {
 	int major();
 	int minor();
 	int patch();
+	Suffix suffix();
 }

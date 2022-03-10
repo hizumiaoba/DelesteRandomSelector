@@ -6,9 +6,9 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
-import com.ranfa.lib.EstimateAlbumTypeCycle;
-import com.ranfa.lib.Scraping;
-import com.ranfa.lib.Song;
+import com.ranfa.lib.database.EstimateAlbumTypeCycle;
+import com.ranfa.lib.database.Scraping;
+import com.ranfa.lib.database.Song;
 
 public class WebFetchingTest {
 
