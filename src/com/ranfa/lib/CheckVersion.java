@@ -17,6 +17,8 @@ public class CheckVersion {
 	private final static String RELEASE_STRING = "https://github.com/hizumiaoba/DelesteRandomSelector/releases";
 
 	public static void needToBeUpdated() {
+		if(!getSuffix().equals(Suffix.STABLE))
+			return;
 		int latestMajor = 0;
 		int latestMinor = 0;
 		int latestPatch = 0;
