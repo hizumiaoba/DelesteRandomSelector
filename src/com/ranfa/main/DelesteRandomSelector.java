@@ -59,7 +59,7 @@ import com.ranfa.lib.database.Song;
 import com.ranfa.lib.handler.CrashHandler;
 import com.ranfa.lib.songinfo.FetchFromAPI;
 
-@Version(major = 4, minor = 0, patch = 0, suffix = Suffix.BETA)
+@Version(major = 4, minor = 0, patch = 1, suffix = Suffix.BETA)
 public class DelesteRandomSelector extends JFrame {
 
     private static ArrayList<Song> selectedSongsList = new ArrayList<>();

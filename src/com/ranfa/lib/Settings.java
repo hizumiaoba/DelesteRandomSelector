@@ -122,6 +122,8 @@ public class Settings {
 		property.setSaveScoreLog(false);
 		ObjectWriter writer = new ObjectMapper().writer(new DefaultPrettyPrinter());
 		try {
+			if(Files.notExists(Paths.get("generated")))
+				Files.createDirectory(Paths.get("generated"));
 			writer.writeValue(Paths.get(FILEPATH).toFile(), property);
 		} catch (IOException e) {
 			logger.error("Couldn't write down setting file.", e);
