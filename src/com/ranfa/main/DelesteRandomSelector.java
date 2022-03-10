@@ -30,6 +30,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
@@ -45,15 +46,16 @@ import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.ranfa.lib.CheckVersion;
 import com.ranfa.lib.Easter;
-import com.ranfa.lib.EstimateAlbumTypeCycle;
 import com.ranfa.lib.ManualUpdateThreadImpl;
-import com.ranfa.lib.Scraping;
 import com.ranfa.lib.SettingJSONProperty;
 import com.ranfa.lib.Settings;
-import com.ranfa.lib.Song;
 import com.ranfa.lib.TwitterIntegration;
 import com.ranfa.lib.Version;
 import com.ranfa.lib.concurrent.CountedThreadFactory;
+import com.ranfa.lib.database.EstimateAlbumTypeCycle;
+import com.ranfa.lib.database.Scraping;
+import com.ranfa.lib.database.Song;
+import com.ranfa.lib.handler.CrashHandler;
 import com.ranfa.lib.songinfo.FetchFromAPI;
 
 @Version(major = 3, minor = 1, patch = 0)
@@ -104,7 +106,7 @@ public class DelesteRandomSelector extends JFrame {
     private JLabel labelSubToolTitle;
     private JLabel labelVersionTool;
     private JPanel panelCenterTool;
-    private JLabel lblNewLabel;
+    private JLabel labelInfoPlaySongs;
     private JLabel labelSongNameToolTitle;
     private JLabel labelSongNameToolTip;
     private JLabel labelAttributeToolTitle;
@@ -151,6 +153,14 @@ public class DelesteRandomSelector extends JFrame {
 	    this.btnImport.setEnabled(true);
 	    this.btnImport.setText(Messages.MSGNarrowingDownSongs.toString());
 	};
+	private JLabel labelToolProgress;
+	public static JProgressBar progressTool;
+	public static JLabel labelInfoProgressSongName;
+	private JPanel panelScore;
+	private JPanel panelScoreNorth;
+	private JPanel panelScoreCenter;
+	private JLabel labelScoreTitle;
+	private JLabel labelScoreVersion;
 
     /**
      * Launch the application.
@@ -178,6 +188,21 @@ public class DelesteRandomSelector extends JFrame {
     public DelesteRandomSelector() {
     ExecutorService es = Executors.newCachedThreadPool(new CountedThreadFactory(() -> "DRS", "AsyncEventInquerier", false));
 	this.contentPane = new JPanel();
+	// output system info phase
+	CompletableFuture.runAsync(() -> {
+		CrashHandler handle = new CrashHandler();
+		handle.outSystemInfo();
+	}, es).whenCompleteAsync((ret, ex) -> {
+		if(ex != null) {
+			logger.error("Exception was thrown during concurrent process", ex);
+			CrashHandler handle = new CrashHandler(ex);
+			if(ex instanceof NullPointerException) {
+				handle.execute();
+			}
+			handle = new CrashHandler(new IllegalStateException(ex));
+			handle.execute();
+		}
+	}, es);
 	boolean isFirst = !Scraping.databaseExists();
 	// database check phase
 	CompletableFuture.runAsync(() -> {
@@ -191,10 +216,12 @@ public class DelesteRandomSelector extends JFrame {
 	}, es).whenCompleteAsync((ret, ex) -> {
 		if(ex != null) {
 			logger.error("Exception was thrown during concurrent process", ex);
+			CrashHandler handle = new CrashHandler(ex);
 			if(ex instanceof NullPointerException) {
-				throw new RuntimeException(ex);
+				handle.execute();
 			}
-			throw new IllegalStateException(ex);
+			handle = new CrashHandler(new IllegalStateException(ex));
+			handle.execute();
 		}
 	}, es);
 	CompletableFuture<ArrayList<Song>> getFromJsonFuture = CompletableFuture.supplyAsync(() -> Scraping.getFromJson(), es);
@@ -202,16 +229,19 @@ public class DelesteRandomSelector extends JFrame {
 	// setting check phase
 	CompletableFuture.runAsync(() -> {
 		if(!Settings.fileExists() && !Settings.writeDownJSON()) {
-		    JOptionPane.showMessageDialog(this, "Exception:NullPointerException\nCannot Keep up! Please re-download this Application!");
-		    throw new NullPointerException("FATAL: cannot continue!");
+		    JOptionPane.showMessageDialog(this, "Exception:NullPointerException\nPlease see crash report for more detail.");
+		    CrashHandler handle = new CrashHandler("Failed to generate setting file.", new NullPointerException("FATAL: cannot continue!"));
+		    handle.execute();
 		}
 	}, es).whenCompleteAsync((ret, ex) -> {
 		if(ex != null) {
 			logger.error("Exception was thrown during concurrent process", ex);
+			CrashHandler handle = new CrashHandler(ex);
 			if(ex instanceof NullPointerException) {
-				throw new RuntimeException(ex);
+				handle.execute();
 			}
-			throw new IllegalStateException(ex);
+			handle = new CrashHandler(new IllegalStateException(ex));
+			handle.execute();
 		}
 		this.logger.debug("Loading settings...");
 		this.property.setCheckLibraryUpdates(Settings.needToCheckLibraryUpdates());
@@ -243,7 +273,8 @@ public class DelesteRandomSelector extends JFrame {
 	}, es).whenCompleteAsync((ret, ex) -> {
 		if(ex != null) {
 			logger.error("Exception was thrown during concurrent process", ex);
-			throw new IllegalStateException(ex);
+			CrashHandler handle = new CrashHandler(new IllegalStateException(ex));
+			handle.execute();
 		}
 	}, es);
 	getWholeDataFuture.thenAcceptAsync(list -> this.logger.info("Scraping data size:" + list.size()), es);
@@ -378,7 +409,8 @@ public class DelesteRandomSelector extends JFrame {
 		}, es).whenCompleteAsync((ret, ex) -> {
 			if(ex != null) {
 				logger.error("Exception was thrown during concurrent process", ex);
-				throw new IllegalStateException(ex);
+				CrashHandler handle = new CrashHandler(new IllegalStateException(ex));
+				handle.execute();
 			}
 		}, es);
 	});
@@ -393,14 +425,17 @@ public class DelesteRandomSelector extends JFrame {
 			try {
 				builder.start();
 			} catch (IOException e1) {
-				logger.error("Cannot start external jar file. maybe are you running this with mac or linux?", e);
+				logger.error("Exception was thrown during concurrent process", e1);
+				CrashHandler handle = new CrashHandler(new IllegalStateException(e1));
+				handle.execute();
 			}
-		}).whenCompleteAsync((ret, ex) -> {
+		}, es).whenCompleteAsync((ret, ex) -> {
 			if(ex != null) {
 				logger.error("Exception was thrown during concurrent process", ex);
-				throw new RuntimeException(ex);
+				CrashHandler handle = new CrashHandler(new IllegalStateException(ex));
+				handle.execute();
 			}
-		});
+		}, es);
 	});
 	panelEastMain.add(btnConfig, "2, 6, fill, fill");
 	
@@ -437,6 +472,7 @@ public class DelesteRandomSelector extends JFrame {
 			DelesteRandomSelector.this.integratorBool = true;
 			DelesteRandomSelector.this.logger.info("show up completed.");
 			labelCurrentSongOrderTool.setText("null");
+			progressTool.setValue(0);
 			listToolMapDataFuture = CompletableFuture.supplyAsync(() -> {
 				List<String> data = toolIntegrateList.stream()
 						.map(s -> s.getName())
@@ -448,6 +484,8 @@ public class DelesteRandomSelector extends JFrame {
 		}, es).whenCompleteAsync((ret, ex) -> {
 			if(ex != null) {
 				logger.error("Exception was thrown during concurrent process", ex);
+				CrashHandler handle = new CrashHandler(new IllegalStateException(ex));
+				handle.execute();
 			}
 		}, es);
 	});
@@ -459,7 +497,9 @@ public class DelesteRandomSelector extends JFrame {
 		impl = new ManualUpdateThreadImpl();
 		CompletableFuture.runAsync(impl, es).whenCompleteAsync((t, u) -> {
 			if(u != null) {
-				logger.warn("Exception while processing update manually.", e);
+				logger.warn("Exception while processing update manually.", u);
+				CrashHandler handle = new CrashHandler(new IllegalStateException(u));
+				handle.execute();
 				JOptionPane.showMessageDialog(null, "There was a problem during processing library update manually.\nIf this appears repeatedly, please contact developer with your app log.");
 			}
 		}, es);
@@ -515,7 +555,9 @@ public class DelesteRandomSelector extends JFrame {
 			}
 		}, es).whenCompleteAsync((ret, ex) -> {
 			if(ex != null) {
-				logger.error("Exception was thrown during concurrent process");
+				logger.error("Exception was thrown during concurrent process", ex);
+				CrashHandler handle = new CrashHandler(new IllegalStateException(ex));
+				handle.execute();
 			}
 		}, es);
 	});
@@ -551,10 +593,14 @@ public class DelesteRandomSelector extends JFrame {
 	tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 	tabbedPane.addChangeListener(e -> {
 		CompletableFuture.runAsync(() -> {
+			labelToolProgress.setText(Messages.MSGAPIWaitAPIFetch.toString());
 			String currentTabName = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
 			if(currentTabName.equals("SongInfo") && labelCurrentSongOrderTool.getText().equals("null")) {
 				logger.info("Detected switching tool tab");
 				listToolMapData = listToolMapDataFuture.join();
+				if(toolIntegrateList == null) {
+					return;
+				}
 				Song firstSong = toolIntegrateList.get(0);
 				Map<String, String> fetchMap = new HashMap<>();
 				for(Map<String, String> tmpMap : listToolMapData) {
@@ -574,11 +620,14 @@ public class DelesteRandomSelector extends JFrame {
 				labelLyricToolTip.setText(fetchMap.get("lyric"));
 				labelComposerToolTip.setText(fetchMap.get("composer"));
 				labelArrangeToolTip.setText(fetchMap.get("arrange"));
-				labelMemberToolTip.setText(fetchMap.get("member"));
+				labelMemberToolTip.setText("<html><body>" + fetchMap.get("member") + "</html></body>");
 			}
 		}, es).whenCompleteAsync((ret, ex) -> {
+			labelToolProgress.setText("Information parse Complete.");
 			if(ex != null) {
 				logger.error("Exception was thrown during concurrent process", ex);
+				CrashHandler handle = new CrashHandler(new IllegalStateException(ex));
+				handle.execute();
 			}
 		}, es);
 	});
@@ -678,79 +727,79 @@ public class DelesteRandomSelector extends JFrame {
 			FormSpecs.RELATED_GAP_ROWSPEC,
 			FormSpecs.DEFAULT_ROWSPEC,}));
 	
-	lblNewLabel = new JLabel("今回プレイした楽曲");
-	lblNewLabel.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
-	panelCenterTool.add(lblNewLabel, "2, 2, center, default");
+	labelInfoPlaySongs = new JLabel(Messages.MSGInfoPlayedSongs.toString());
+	labelInfoPlaySongs.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelCenterTool.add(labelInfoPlaySongs, "2, 2, center, default");
 	
-	labelSongNameToolTitle = new JLabel("Song Name");
+	labelSongNameToolTitle = new JLabel(Messages.MSGInfoSongName.toString());
 	labelSongNameToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelSongNameToolTitle, "2, 6, center, default");
 	
-	labelSongNameToolTip = new JLabel("Please wait...");
+	labelSongNameToolTip = new JLabel(Messages.MSGInfoWait.toString());
 	labelSongNameToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelSongNameToolTip, "10, 6, center, default");
 	
-	labelLyricToolTitle = new JLabel("Lyrics By");
+	labelLyricToolTitle = new JLabel(Messages.MSGInfoLyricsBy.toString());
 	labelLyricToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
-	panelCenterTool.add(labelLyricToolTitle, "18, 6, center, default");
+	panelCenterTool.add(labelLyricToolTitle, "17, 6, center, default");
 	
-	labelLyricToolTip = new JLabel("Please wait...");
+	labelLyricToolTip = new JLabel(Messages.MSGInfoWait.toString());
 	labelLyricToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
-	panelCenterTool.add(labelLyricToolTip, "26, 6, center, default");
+	panelCenterTool.add(labelLyricToolTip, "25, 6, center, default");
 	
-	labelAttributeToolTitle = new JLabel("Song Attribute");
+	labelAttributeToolTitle = new JLabel(Messages.MSGInfoSongAttribute.toString());
 	labelAttributeToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelAttributeToolTitle, "2, 10, center, default");
 	
-	labelAttributeToolTip = new JLabel("Please wait...");
+	labelAttributeToolTip = new JLabel(Messages.MSGInfoWait.toString());
 	labelAttributeToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelAttributeToolTip, "10, 10, center, default");
 	
-	labelComposerToolTitle = new JLabel("Composed By");
+	labelComposerToolTitle = new JLabel(Messages.MSGInfoComposedBy.toString());
 	labelComposerToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
-	panelCenterTool.add(labelComposerToolTitle, "18, 10, center, default");
+	panelCenterTool.add(labelComposerToolTitle, "17, 10, center, default");
 	
-	labelComposerToolTip = new JLabel("Please wait...");
+	labelComposerToolTip = new JLabel(Messages.MSGInfoWait.toString());
 	labelComposerToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
-	panelCenterTool.add(labelComposerToolTip, "26, 10, center, default");
+	panelCenterTool.add(labelComposerToolTip, "25, 10, center, default");
 	
-	labelDifficultyToolTitle = new JLabel("Difficulty");
+	labelDifficultyToolTitle = new JLabel(Messages.MSGInfoSongDifficulty.toString());
 	labelDifficultyToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelDifficultyToolTitle, "2, 14, center, default");
 	
-	labelDifficultyToolTip = new JLabel("Please wait...");
+	labelDifficultyToolTip = new JLabel(Messages.MSGInfoWait.toString());
 	labelDifficultyToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelDifficultyToolTip, "10, 14, center, default");
 	
-	labelArrangeToolTitle = new JLabel("Arranged By");
+	labelArrangeToolTitle = new JLabel(Messages.MSGInfoArrangedBy.toString());
 	labelArrangeToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
-	panelCenterTool.add(labelArrangeToolTitle, "18, 14, center, default");
+	panelCenterTool.add(labelArrangeToolTitle, "17, 14, center, default");
 	
-	labelArrangeToolTip = new JLabel("Please wait...");
+	labelArrangeToolTip = new JLabel(Messages.MSGInfoWait.toString());
 	labelArrangeToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
-	panelCenterTool.add(labelArrangeToolTip, "26, 14, center, default");
+	panelCenterTool.add(labelArrangeToolTip, "25, 14, center, default");
 	
-	labelLevelToolTitle = new JLabel("Song Level");
+	labelLevelToolTitle = new JLabel(Messages.MSGInfoSongLevel.toString());
 	labelLevelToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelLevelToolTitle, "2, 18, center, default");
 	
-	labelLevelToolTip = new JLabel("Please wait...");
+	labelLevelToolTip = new JLabel(Messages.MSGInfoWait.toString());
 	labelLevelToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelLevelToolTip, "10, 18, center, default");
 	
-	labelMemberToolTitle = new JLabel("Member");
+	labelMemberToolTitle = new JLabel(Messages.MSGInfoMember.toString());
 	labelMemberToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
-	panelCenterTool.add(labelMemberToolTitle, "18, 18, center, default");
+	panelCenterTool.add(labelMemberToolTitle, "17, 18, center, default");
 	
-	labelMemberToolTip = new JLabel("Please wait...");
+	labelMemberToolTip = new JLabel(Messages.MSGInfoWait.toString());
 	labelMemberToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
-	panelCenterTool.add(labelMemberToolTip, "26, 18, center, default");
+	panelCenterTool.add(labelMemberToolTip, "25, 18, center, default");
 	
-	labelNotesToolTitle = new JLabel("Notes");
+	labelNotesToolTitle = new JLabel(Messages.MSGInfoSongNotes.toString());
 	labelNotesToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelNotesToolTitle, "2, 22, center, default");
 	
-	labelNotesToolTip = new JLabel("Please wait...");
+	labelNotesToolTip = new JLabel(Messages.MSGInfoWait.toString());
 	labelNotesToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelNotesToolTip, "10, 22, center, default");
 	
@@ -780,13 +829,13 @@ public class DelesteRandomSelector extends JFrame {
 				labelLyricToolTip.setText(fetchMap.get("lyric"));
 				labelComposerToolTip.setText(fetchMap.get("composer"));
 				labelArrangeToolTip.setText(fetchMap.get("arrange"));
-				labelMemberToolTip.setText(fetchMap.get("member"));
+				labelMemberToolTip.setText("<html><body>" + fetchMap.get("member") + "</html></body>");
 			}
 		}, es).whenCompleteAsync((ret, ex) -> {
 			if(ex != null) {
 				logger.error("Exception was thrown during concurrent process", ex);
 			}
-		});
+		}, es);
 	});
 	
 	btnPrevSongTool = new JButton("prev");
@@ -815,7 +864,7 @@ public class DelesteRandomSelector extends JFrame {
 				labelLyricToolTip.setText(fetchMap.get("lyric"));
 				labelComposerToolTip.setText(fetchMap.get("composer"));
 				labelArrangeToolTip.setText(fetchMap.get("arrange"));
-				labelMemberToolTip.setText(fetchMap.get("member"));
+				labelMemberToolTip.setText("<html><body>" + fetchMap.get("member") + "</html></body>");
 			}
 		}, es).whenCompleteAsync((ret, ex) -> {
 			if(ex != null) {
@@ -833,11 +882,11 @@ public class DelesteRandomSelector extends JFrame {
 	panelCenterTool.add(labelSlashTool, "14, 28");
 	
 	labelSongLimitTool = new JLabel(String.valueOf(this.property.getSongLimit()));
-	panelCenterTool.add(labelSongLimitTool, "16, 28");
+	panelCenterTool.add(labelSongLimitTool, "15, 28");
 	btnNextSongTool.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
-	panelCenterTool.add(btnNextSongTool, "18, 28");
+	panelCenterTool.add(btnNextSongTool, "17, 28");
 	
-	btnMoreInfoTool = new JButton("More Information");
+	btnMoreInfoTool = new JButton(Messages.MSGInfoOpenBrowser.toString());
 	btnMoreInfoTool.addActionListener(e -> {
 		CompletableFuture.runAsync(() -> {
 			int currentIndex = Integer.parseInt(labelCurrentSongOrderTool.getText()) - 1;
@@ -869,7 +918,45 @@ public class DelesteRandomSelector extends JFrame {
 		}, es);
 	});
 	btnMoreInfoTool.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
-	panelCenterTool.add(btnMoreInfoTool, "26, 28");
+	panelCenterTool.add(btnMoreInfoTool, "25, 28");
+	
+	labelToolProgress = new JLabel(Messages.MSGAPIWaitAPIFetch.toString());
+	labelToolProgress.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelCenterTool.add(labelToolProgress, "10, 32, center, default");
+	
+	progressTool = new JProgressBar();
+	progressTool.setStringPainted(true);
+	progressTool.setValue(0);
+	progressTool.setMaximum(property.getSongLimit());
+	panelCenterTool.add(progressTool, "17, 32");
+	
+	labelInfoProgressSongName = new JLabel("Processing:");
+	labelInfoProgressSongName.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelCenterTool.add(labelInfoProgressSongName, "10, 34");
+	
+	panelScore = new JPanel();
+	tabbedPane.addTab("Scores", null, panelScore, null);
+	panelScore.setLayout(new BorderLayout(0, 0));
+	
+	panelScoreNorth = new JPanel();
+	panelScore.add(panelScoreNorth, BorderLayout.NORTH);
+	panelScoreNorth.setLayout(new FormLayout(new ColumnSpec[] {
+			ColumnSpec.decode("828px"),
+			FormSpecs.RELATED_GAP_COLSPEC,
+			ColumnSpec.decode("max(53dlu;default)"),},
+		new RowSpec[] {
+			RowSpec.decode("20px"),}));
+	
+	labelScoreTitle = new JLabel("スコア、ファン計算");
+	labelScoreTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 16));
+	panelScoreNorth.add(labelScoreTitle, "1, 1, center, center");
+	
+	labelScoreVersion = new JLabel(CheckVersion.getVersion());
+	labelScoreVersion.setFont(new Font("SansSerif", Font.BOLD, 12));
+	panelScoreNorth.add(labelScoreVersion, "3, 1, center, default");
+	
+	panelScoreCenter = new JPanel();
+	panelScore.add(panelScoreCenter, BorderLayout.CENTER);
 	if(isFirst || !this.property.isCheckLibraryUpdates()) {
 	    setEnabled.run();
 	}
