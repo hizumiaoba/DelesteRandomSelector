@@ -49,6 +49,7 @@ import com.ranfa.lib.Easter;
 import com.ranfa.lib.ManualUpdateThreadImpl;
 import com.ranfa.lib.SettingJSONProperty;
 import com.ranfa.lib.Settings;
+import com.ranfa.lib.Suffix;
 import com.ranfa.lib.TwitterIntegration;
 import com.ranfa.lib.Version;
 import com.ranfa.lib.concurrent.CountedThreadFactory;
@@ -58,7 +59,7 @@ import com.ranfa.lib.database.Song;
 import com.ranfa.lib.handler.CrashHandler;
 import com.ranfa.lib.songinfo.FetchFromAPI;
 
-@Version(major = 3, minor = 1, patch = 0)
+@Version(major = 3, minor = 1, patch = 0, suffix = Suffix.STABLE)
 public class DelesteRandomSelector extends JFrame {
 
     private static ArrayList<Song> selectedSongsList = new ArrayList<>();

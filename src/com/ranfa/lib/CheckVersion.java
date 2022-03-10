@@ -48,7 +48,8 @@ public class CheckVersion {
 		String value = "v"
 				+ getMajorVersion() + "."
 				+ getMinorVersion() + "."
-				+ getPatchVersion();
+				+ getPatchVersion() + "-"
+				+ getSuffix().toString();
 		return value;
 	}
 
@@ -65,6 +66,11 @@ public class CheckVersion {
 	public static int getPatchVersion() {
 		Version version = DelesteRandomSelector.class.getAnnotation(Version.class);
 		return version.patch();
+	}
+	
+	public static Suffix getSuffix() {
+		Version version = DelesteRandomSelector.class.getAnnotation(Version.class);
+		return version.suffix();
 	}
 
 }
