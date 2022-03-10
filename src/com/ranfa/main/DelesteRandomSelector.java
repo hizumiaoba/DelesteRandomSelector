@@ -59,7 +59,7 @@ import com.ranfa.lib.database.Song;
 import com.ranfa.lib.handler.CrashHandler;
 import com.ranfa.lib.songinfo.FetchFromAPI;
 
-@Version(major = 3, minor = 1, patch = 0, suffix = Suffix.STABLE)
+@Version(major = 4, minor = 0, patch = 0, suffix = Suffix.BETA)
 public class DelesteRandomSelector extends JFrame {
 
     private static ArrayList<Song> selectedSongsList = new ArrayList<>();
@@ -287,8 +287,8 @@ public class DelesteRandomSelector extends JFrame {
 	}, es);
 	this.logger.debug("Version: {}", CheckVersion.getVersion());
 	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	// this.setBounds(100, 100, this.property.getWindowWidth(), this.property.getWindowHeight());
-	this.setBounds(100, 100, 960, 643);
+	this.setBounds(100, 100, this.property.getWindowWidth(), this.property.getWindowHeight());
+	// this.setBounds(100, 100, 960, 643);
 	this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 	this.setContentPane(this.contentPane);
 	contentPane.setLayout(new CardLayout(0, 0));
