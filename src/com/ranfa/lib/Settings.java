@@ -116,8 +116,8 @@ public class Settings {
 		SettingJSONProperty property = new SettingJSONProperty();
 		property.setCheckVersion(true);
 		property.setCheckLibraryUpdates(true);
-		property.setWindowWidth(640);
-		property.setWindowHeight(360);
+		property.setWindowWidth(960);
+		property.setWindowHeight(540);
 		property.setSongLimit(3);
 		property.setSaveScoreLog(false);
 		ObjectWriter writer = new ObjectMapper().writer(new DefaultPrettyPrinter());
