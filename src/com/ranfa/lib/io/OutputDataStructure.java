@@ -1,45 +1,98 @@
 package com.ranfa.lib.io;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 public class OutputDataStructure implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
 	// fields
-	List<Map<String, String>> songList;
+	private String songname;
+	private int level;
+	private String difficulty;
+	private String attribute;
+	private int score;
 	
-	public OutputDataStructure(List<Map<String, String>> songList) {
-		this.songList = songList;
+	public OutputDataStructure() {
+		this(null, -1, null, null, -1);
+	}
+	
+	public OutputDataStructure(String songname, int level, String difficulty, String attribute, int score) {
+		this.songname = songname;
+		this.level = level;
+		this.difficulty = difficulty;
+		this.attribute = attribute;
+		this.score = score;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	/**
+	 * @return songname
+	 */
+	public String getSongname() {
+		return songname;
 	}
 
-	public List<Map<String, String>> getSongList() {
-		return songList;
+	/**
+	 * @param songname セットする songname
+	 */
+	public void setSongname(String songname) {
+		this.songname = songname;
 	}
 
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(songList);
+	/**
+	 * @return level
+	 */
+	public int getLevel() {
+		return level;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (!(obj instanceof OutputDataStructure)) {
-			return false;
-		}
-		OutputDataStructure other = (OutputDataStructure) obj;
-		return Objects.equals(songList, other.songList);
+	/**
+	 * @param level セットする level
+	 */
+	public void setLevel(int level) {
+		this.level = level;
+	}
+
+	/**
+	 * @return difficulty
+	 */
+	public String getDifficulty() {
+		return difficulty;
+	}
+
+	/**
+	 * @param difficulty セットする difficulty
+	 */
+	public void setDifficulty(String difficulty) {
+		this.difficulty = difficulty;
+	}
+
+	/**
+	 * @return attribute
+	 */
+	public String getAttribute() {
+		return attribute;
+	}
+
+	/**
+	 * @param attribute セットする attribute
+	 */
+	public void setAttribute(String attribute) {
+		this.attribute = attribute;
+	}
+
+	/**
+	 * @return score
+	 */
+	public int getScore() {
+		return score;
+	}
+
+	/**
+	 * @param score セットする score
+	 */
+	public void setScore(int score) {
+		this.score = score;
 	}
 	
 	
