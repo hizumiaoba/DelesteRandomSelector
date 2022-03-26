@@ -55,6 +55,7 @@ import com.ranfa.lib.Settings;
 import com.ranfa.lib.Suffix;
 import com.ranfa.lib.TwitterIntegration;
 import com.ranfa.lib.Version;
+import com.ranfa.lib.calc.FanCalc;
 import com.ranfa.lib.concurrent.CountedThreadFactory;
 import com.ranfa.lib.database.EstimateAlbumTypeCycle;
 import com.ranfa.lib.database.Scraping;
@@ -167,8 +168,8 @@ public class DelesteRandomSelector extends JFrame {
 	private JLabel labelScoreVersion;
 	private JLabel labelScoreUserPlayed;
 	private JTextField fieldScoreUserPlayed;
-	private JLabel labelScoreEstimatedFan;
-	private JTextField fieldScoreEstimatedFan;
+	private JLabel labelScoreEarnedFan;
+	private JTextField fieldScoreEarnedFan;
 	private JLabel lblSongname;
 	private JLabel labelScoreAttribute;
 	private JLabel labelScoreDifficulty;
@@ -184,6 +185,22 @@ public class DelesteRandomSelector extends JFrame {
 	private JLabel labelScoreCurrentSongOrder;
 	private JLabel labelScoreSlash;
 	private JLabel labelScoreOrderMax;
+	private JLabel labelPlayerScore;
+	private JLabel labelPlayerFan;
+	private JLabel labelPlayerPRP;
+	private JLabel labelPlayerScoreDynamic;
+	private JLabel labelPlayerFanDynamic;
+	private JLabel labelPlayerPRPDynamic;
+	private JTextField fieldScoreRoom;
+	private JTextField fieldScoreCenter;
+	private JTextField fieldScoreProduce;
+	private JTextField fieldScorePremium;
+	private JLabel label;
+	private JLabel lblRoom;
+	private JLabel lblCenter;
+	private JLabel lblProduce;
+	private JLabel lblPremium;
+	private JButton button;
 
     /**
      * Launch the application.
@@ -199,11 +216,6 @@ public class DelesteRandomSelector extends JFrame {
 
 	});
     }
-
-    /**
-     * log file prefix:
-     *  this.getClass() + ":[LEVEL]: " +
-     */
 
     /**
      * Create the frame.
@@ -620,10 +632,10 @@ public class DelesteRandomSelector extends JFrame {
 			String currentTabName = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
 			if(currentTabName.equals("SongInfo") && labelCurrentSongOrderTool.getText().equals("null")) {
 				logger.info("Detected switching tool tab");
-				listToolMapData = listToolMapDataFuture.join();
 				if(toolIntegrateList == null) {
 					return;
 				}
+				listToolMapData = listToolMapDataFuture.join();
 				Song firstSong = toolIntegrateList.get(0);
 				Map<String, String> fetchMap = new HashMap<>();
 				for(Map<String, String> tmpMap : listToolMapData) {
@@ -998,7 +1010,7 @@ public class DelesteRandomSelector extends JFrame {
 			FormSpecs.RELATED_GAP_COLSPEC,
 			ColumnSpec.decode("max(60dlu;default)"),
 			FormSpecs.RELATED_GAP_COLSPEC,
-			ColumnSpec.decode("max(60dlu;default)"),
+			ColumnSpec.decode("max(60dlu;default):grow"),
 			FormSpecs.RELATED_GAP_COLSPEC,
 			ColumnSpec.decode("max(68dlu;default)"),
 			FormSpecs.RELATED_GAP_COLSPEC,
@@ -1029,6 +1041,10 @@ public class DelesteRandomSelector extends JFrame {
 			FormSpecs.RELATED_GAP_ROWSPEC,
 			FormSpecs.DEFAULT_ROWSPEC,
 			FormSpecs.RELATED_GAP_ROWSPEC,
+			RowSpec.decode("max(13dlu;default)"),
+			FormSpecs.RELATED_GAP_ROWSPEC,
+			FormSpecs.DEFAULT_ROWSPEC,
+			FormSpecs.RELATED_GAP_ROWSPEC,
 			FormSpecs.DEFAULT_ROWSPEC,
 			FormSpecs.RELATED_GAP_ROWSPEC,
 			FormSpecs.DEFAULT_ROWSPEC,
@@ -1052,57 +1068,91 @@ public class DelesteRandomSelector extends JFrame {
 			RowSpec.decode("default:grow"),}));
 	
 	labelScoreUserPlayed = new JLabel("Your score");
-	panelScoreCenter.add(labelScoreUserPlayed, "2, 10, center, default");
-	
-	labelScoreEstimatedFan = new JLabel("Estimated Fan");
-	panelScoreCenter.add(labelScoreEstimatedFan, "6, 10, center, default");
+	panelScoreCenter.add(labelScoreUserPlayed, "4, 10, center, default");
 	
 	fieldScoreUserPlayed = new JTextField();
-	panelScoreCenter.add(fieldScoreUserPlayed, "2, 12, fill, default");
+	panelScoreCenter.add(fieldScoreUserPlayed, "6, 10, fill, default");
 	fieldScoreUserPlayed.setColumns(10);
 	
-	fieldScoreEstimatedFan = new JTextField();
-	panelScoreCenter.add(fieldScoreEstimatedFan, "6, 12, center, default");
-	fieldScoreEstimatedFan.setColumns(10);
-	
 	lblSongname = new JLabel("Songname");
-	panelScoreCenter.add(lblSongname, "10, 12, center, default");
+	panelScoreCenter.add(lblSongname, "10, 10, center, default");
 	
 	labelScoreSongnameDynamic = new JLabel("<dynamic>");
-	panelScoreCenter.add(labelScoreSongnameDynamic, "12, 12, center, default");
+	panelScoreCenter.add(labelScoreSongnameDynamic, "12, 10, center, default");
+	
+	labelScoreEarnedFan = new JLabel("Earned Fan");
+	panelScoreCenter.add(labelScoreEarnedFan, "4, 14, center, default");
+	
+	fieldScoreEarnedFan = new JTextField();
+	panelScoreCenter.add(fieldScoreEarnedFan, "6, 14, fill, default");
+	fieldScoreEarnedFan.setColumns(10);
 	
 	labelScoreAttribute = new JLabel("Attribute");
-	panelScoreCenter.add(labelScoreAttribute, "10, 16, center, default");
+	panelScoreCenter.add(labelScoreAttribute, "10, 14, center, default");
 	
 	labelScoreAttributeDynamic = new JLabel("<dynamic>");
-	panelScoreCenter.add(labelScoreAttributeDynamic, "12, 16");
+	panelScoreCenter.add(labelScoreAttributeDynamic, "12, 14");
+	
+	lblRoom = new JLabel("room");
+	panelScoreCenter.add(lblRoom, "4, 18, center, default");
+	
+	fieldScoreRoom = new JTextField();
+	panelScoreCenter.add(fieldScoreRoom, "6, 18, fill, default");
+	fieldScoreRoom.setColumns(10);
 	
 	labelScoreDifficulty = new JLabel("Difficulty");
-	panelScoreCenter.add(labelScoreDifficulty, "10, 20, center, default");
+	panelScoreCenter.add(labelScoreDifficulty, "10, 18, center, default");
 	
 	labelScoreDifficultyDynamic = new JLabel("<dynamic>");
-	panelScoreCenter.add(labelScoreDifficultyDynamic, "12, 20");
+	panelScoreCenter.add(labelScoreDifficultyDynamic, "12, 18");
+	
+	lblCenter = new JLabel("center");
+	panelScoreCenter.add(lblCenter, "4, 22, center, default");
+	
+	fieldScoreCenter = new JTextField();
+	panelScoreCenter.add(fieldScoreCenter, "6, 22, fill, default");
+	fieldScoreCenter.setColumns(10);
 	
 	labelScoreLevel = new JLabel("Level");
-	panelScoreCenter.add(labelScoreLevel, "10, 24, center, default");
+	panelScoreCenter.add(labelScoreLevel, "10, 22, center, default");
 	
 	labelScoreLevelDynamic = new JLabel("<dynamic>");
-	panelScoreCenter.add(labelScoreLevelDynamic, "12, 24");
+	panelScoreCenter.add(labelScoreLevelDynamic, "12, 22");
+	
+	lblProduce = new JLabel("produce");
+	panelScoreCenter.add(lblProduce, "4, 26, center, default");
+	
+	fieldScoreProduce = new JTextField();
+	panelScoreCenter.add(fieldScoreProduce, "6, 26, fill, default");
+	fieldScoreProduce.setColumns(10);
 	
 	labelScoreNotes = new JLabel("Notes");
-	panelScoreCenter.add(labelScoreNotes, "10, 28, center, default");
+	panelScoreCenter.add(labelScoreNotes, "10, 26, center, default");
 	
 	labelScoreNotesDynamic = new JLabel("<dynamic>");
-	panelScoreCenter.add(labelScoreNotesDynamic, "12, 28");
+	panelScoreCenter.add(labelScoreNotesDynamic, "12, 26");
+	
+	lblPremium = new JLabel("premium");
+	panelScoreCenter.add(lblPremium, "4, 30, center, default");
+	
+	fieldScorePremium = new JTextField();
+	panelScoreCenter.add(fieldScorePremium, "6, 30, fill, default");
+	fieldScorePremium.setColumns(10);
+	
+	labelPlayerScore = new JLabel("Estimated Score");
+	panelScoreCenter.add(labelPlayerScore, "10, 30, center, default");
+	
+	labelPlayerScoreDynamic = new JLabel("<dynamic>");
+	panelScoreCenter.add(labelPlayerScoreDynamic, "12, 30");
 	
 	labelScoreCurrentSongOrder = new JLabel("null");
-	panelScoreCenter.add(labelScoreCurrentSongOrder, "14, 28, center, default");
+	panelScoreCenter.add(labelScoreCurrentSongOrder, "14, 30, center, default");
 	
 	labelScoreSlash = new JLabel("/");
-	panelScoreCenter.add(labelScoreSlash, "16, 28, center, default");
+	panelScoreCenter.add(labelScoreSlash, "16, 30, center, default");
 	
 	labelScoreOrderMax = new JLabel(String.valueOf(property.getSongLimit()));
-	panelScoreCenter.add(labelScoreOrderMax, "18, 28, center, default");
+	panelScoreCenter.add(labelScoreOrderMax, "18, 30, center, default");
 	
 	btnScorePrev = new JButton("Prev");
 	btnScorePrev.addActionListener(new ActionListener() {
@@ -1124,7 +1174,7 @@ public class DelesteRandomSelector extends JFrame {
 			}, es);
 		}
 	});
-	panelScoreCenter.add(btnScorePrev, "14, 30");
+	panelScoreCenter.add(btnScorePrev, "14, 32");
 	
 	btnScoreNext = new JButton("Next");
 	btnScoreNext.addActionListener(new ActionListener() {
@@ -1146,7 +1196,69 @@ public class DelesteRandomSelector extends JFrame {
 			}, es);
 		}
 	});
-	panelScoreCenter.add(btnScoreNext, "18, 30");
+	panelScoreCenter.add(btnScoreNext, "18, 32");
+	
+	labelPlayerFan = new JLabel("Estimated Fan");
+	panelScoreCenter.add(labelPlayerFan, "10, 34, center, default");
+	
+	labelPlayerFanDynamic = new JLabel("<dynamic>");
+	panelScoreCenter.add(labelPlayerFanDynamic, "12, 34");
+	
+	button = new JButton("自動計算");
+	button.addActionListener(new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			CompletableFuture.runAsync(() -> {
+				String scoreStr = fieldScoreUserPlayed.getText();
+				String fanStr = fieldScoreEarnedFan.getText();
+				if(scoreStr.isEmpty() && fanStr.isEmpty()) {
+					logger.warn("there is no data to calculate.");
+					JOptionPane.showMessageDialog(null, "計算できるデータが存在しません。スコアかファン数のどちらかは必ず入力してください。");
+					return;
+				}
+				labelPlayerScoreDynamic.setText("Calculating...");
+				labelPlayerFanDynamic.setText("Calculating...");
+				String roomStr = fieldScoreRoom.getText();
+				String centerStr = fieldScoreCenter.getText();
+				String produceStr = fieldScoreProduce.getText();
+				String premiumStr = fieldScorePremium.getText();
+				if(!scoreStr.isEmpty()) {
+					int score = Integer.parseInt(scoreStr);
+					int room = roomStr.isEmpty() ? 100 : Integer.parseInt(roomStr);
+					int center = centerStr.isEmpty() ? 100 : Integer.parseInt(centerStr);
+					int produce = produceStr.isEmpty() ? 100 : Integer.parseInt(produceStr);
+					int premium = premiumStr.isEmpty() ? 100 : Integer.parseInt(premiumStr);
+					int res = FanCalc.fanAsync(score, room, center, produce, premium).join();
+					labelPlayerScoreDynamic.setText(String.valueOf(res));
+					labelPlayerFanDynamic.setText(scoreStr);
+				} else {
+					int fan = Integer.parseInt(fanStr);
+					int room = roomStr.isEmpty() ? 100 : Integer.parseInt(fanStr);
+					int center = centerStr.isEmpty() ? 100 : Integer.parseInt(centerStr);
+					int produce = produceStr.isEmpty() ? 100 : Integer.parseInt(produceStr);
+					int premium = premiumStr.isEmpty() ? 100 : Integer.parseInt(premiumStr);
+					int res = FanCalc.scoreAsync(fan, 1, room, center, produce, premium).join();
+					labelPlayerFanDynamic.setText(String.valueOf(res));
+					labelPlayerScoreDynamic.setText(scoreStr);
+				}
+			}, es).whenComplete((ret, ex) -> {
+				if(ex != null) {
+					logger.error("Exception was thrown during concurrent process.", ex);
+					JOptionPane.showMessageDialog(null, "イベント処理中に例外が発生しました。" + ex.getLocalizedMessage());
+				}
+			});
+		}
+	});
+	panelScoreCenter.add(button, "18, 36");
+	
+	labelPlayerPRP = new JLabel("Estimated PRP");
+	panelScoreCenter.add(labelPlayerPRP, "10, 38, center, default");
+	
+	labelPlayerPRPDynamic = new JLabel("<dynamic>");
+	panelScoreCenter.add(labelPlayerPRPDynamic, "12, 38");
+	
+	label = new JLabel("<html><body>デレステに表示されている百分率をそのまま入力してください</body></html>");
+	panelScoreCenter.add(label, "6, 40");
 	if(isFirst || !this.property.isCheckLibraryUpdates()) {
 	    setEnabled.run();
 	}
