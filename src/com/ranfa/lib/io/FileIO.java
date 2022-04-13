@@ -7,8 +7,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,15 +27,11 @@ public class FileIO {
 	 * attribute
 	 * score
 	 */
-	List<Map<String, String>> songList;
+	private OutputDataStructure data;
 	
 	
-	public FileIO(List<Map<String, String>> songList) {
-		this.songList = songList;
-	}
-	
-	public FileIO() {
-		this.songList = null;
+	public FileIO(OutputDataStructure data) {
+		this.data = data;
 	}
 	
 	public boolean write() {
@@ -45,9 +39,7 @@ public class FileIO {
 		builder.append(FILE_EXTENSION);
 		try {
 			ObjectOutputStream outStream = new ObjectOutputStream(new FileOutputStream(builder.toString()));
-			OutputDataStructure structure = new OutputDataStructure(songList);
-			outStream.writeObject(structure);
-			outStream.flush();
+			outStream.writeObject(data);
 			outStream.close();
 			return true;
 		} catch (IOException e) {

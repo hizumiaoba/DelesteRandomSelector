@@ -9,6 +9,7 @@ import lombok.NonNull;
 public class CountedThreadFactory implements ThreadFactory {
 
 	private final Supplier<String> identifier;
+	private String specifier;
 	private final AtomicLong count = new AtomicLong(1);
 	private final boolean isDaemon;
 	
@@ -21,13 +22,14 @@ public class CountedThreadFactory implements ThreadFactory {
 	}
 	
 	public CountedThreadFactory(Supplier<String> identifier, String specifier, boolean isDaemon) {
-		this.identifier = () -> identifier.get() + " " + specifier;
+		this.identifier = identifier;
+		this.specifier = specifier;
 		this.isDaemon = isDaemon;
 	}
 	
 	@Override
 	public Thread newThread(@NonNull Runnable r) {
-		final Thread thread = new Thread(r, identifier.get() + "-Worker " + count.getAndIncrement());
+		final Thread thread = new Thread(r, identifier.get() + " " + specifier + "-Worker " + count.getAndIncrement());
 		thread.setDaemon(isDaemon);
 		return thread;
 	}

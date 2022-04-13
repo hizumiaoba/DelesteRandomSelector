@@ -2,6 +2,7 @@ package com.ranfa.lib.handler;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,6 +46,8 @@ public class CrashReportList <E> extends ArrayList<E> {
 	
 	public void outCrashReport() {
 		try {
+			if(Files.notExists(Paths.get("Crash-Report")))
+				Files.createDirectory(Paths.get("Crash-Report"));
 			FileWriter writer = new FileWriter(Paths.get("Crash-Report/" + FORMAT.format(new Date()) + ".txt").toFile());
 			writer.write(generateCrashReport());
 			writer.close();

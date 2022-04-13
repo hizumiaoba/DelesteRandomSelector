@@ -9,7 +9,6 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -40,19 +39,6 @@ public class CrashReportTest {
 		assertEquals("Unexpected Error", handle.getDescription());
 		assertEquals(Integer.MIN_VALUE, handle.getEstimateExitCode());
 		assertEquals(handle.getThrowable().getClass(), RuntimeException.class);
-	}
-	
-	@AfterClass
-	public static void deleteReport() throws IOException {
-		List<Path> after = Arrays.asList(Files.list(Paths.get(INPUT_DIR)).toArray(Path[]::new));
-		after.removeAll(before);
-		after.stream().forEach(t -> {
-			try {
-				Files.delete(t);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		});
 	}
 
 }

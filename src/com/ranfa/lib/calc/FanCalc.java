@@ -22,7 +22,7 @@ import com.ranfa.lib.concurrent.CountedThreadFactory;
 public class FanCalc {
 	
 	private static final Logger logger = LoggerFactory.getLogger(FanCalc.class);
-	private static final ExecutorService async = Executors.newSingleThreadExecutor(new CountedThreadFactory(() -> "DRS", "FanCalcThread", false));
+	private static final ExecutorService async = Executors.newCachedThreadPool(new CountedThreadFactory(() -> "DRS", "FanCalcThread", false));
 	
 	/**
 	 * 計算式は
@@ -54,6 +54,10 @@ public class FanCalc {
 	resPremiumed = resPremiumed.setScale(0, RoundingMode.UP);
     	return (resPremiumed.compareTo(BigDecimal.ZERO) == 0) || (resPremiumed == null) ? 0 : Integer.parseInt(resPremiumed.toString());
     }
+	
+	public static CompletableFuture<Integer> fanAsync(int score, int room, int center, int produce, int premium) {
+		return CompletableFuture.supplyAsync(() -> fan(score, room, center, produce, premium), async);
+	}
 	
 	/**
 	 * 目標スコアを計算。
@@ -90,6 +94,7 @@ public class FanCalc {
                     flag.set(true);
                 }
             }
+			logger.info("Finished calculating. Estimated Fan value : {}", result.intValue());
 		return Integer.parseInt(result.toString());
 	}
 	
