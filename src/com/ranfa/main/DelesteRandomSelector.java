@@ -63,7 +63,7 @@ import com.ranfa.lib.database.Song;
 import com.ranfa.lib.handler.CrashHandler;
 import com.ranfa.lib.songinfo.FetchFromAPI;
 
-@Version(major = 4, minor = 0, patch = 2, suffix = Suffix.BETA)
+@Version(major = 4, minor = 0, patch = 3, suffix = Suffix.BETA)
 public class DelesteRandomSelector extends JFrame {
 
     private static ArrayList<Song> selectedSongsList = new ArrayList<>();
@@ -632,6 +632,10 @@ public class DelesteRandomSelector extends JFrame {
 			String currentTabName = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
 			if(currentTabName.equals("SongInfo") && labelCurrentSongOrderTool.getText().equals("null")) {
 				logger.info("Detected switching tool tab");
+				if(listToolMapDataFuture == null) {
+					logger.warn("Async task has not initialized yet. Aborting...");
+					return;
+				}
 				if(toolIntegrateList == null) {
 					return;
 				}
