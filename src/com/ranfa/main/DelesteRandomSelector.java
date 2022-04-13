@@ -632,6 +632,10 @@ public class DelesteRandomSelector extends JFrame {
 			String currentTabName = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
 			if(currentTabName.equals("SongInfo") && labelCurrentSongOrderTool.getText().equals("null")) {
 				logger.info("Detected switching tool tab");
+				if(listToolMapDataFuture == null) {
+					logger.warn("Async task has not initialized yet. Aborting...");
+					return;
+				}
 				if(toolIntegrateList == null) {
 					return;
 				}
