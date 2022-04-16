@@ -52,7 +52,7 @@ public class FanCalc {
 	resCorrected = resCorrected.setScale(0,RoundingMode.UP);
 	BigDecimal resPremiumed = resCorrected.multiply(premiumPercent);
 	resPremiumed = resPremiumed.setScale(0, RoundingMode.UP);
-    	return (resPremiumed.compareTo(BigDecimal.ZERO) == 0) || (resPremiumed == null) ? 0 : Integer.parseInt(resPremiumed.toString());
+    	return (resPremiumed.compareTo(BigDecimal.ZERO) == 0) ? 0 : Integer.parseInt(resPremiumed.toString());
     }
 	
 	public static CompletableFuture<Integer> fanAsync(int score, int room, int center, int produce, int premium) {
