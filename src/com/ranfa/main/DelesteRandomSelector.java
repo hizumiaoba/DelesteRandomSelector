@@ -444,6 +444,8 @@ public class DelesteRandomSelector extends JFrame {
 		}, es).whenCompleteAsync((ret, ex) -> {
 			if(ex != null) {
 				logger.error("Exception was thrown during concurrent process", ex);
+				if(ex instanceof IllegalArgumentException)
+					return; // ignore
 				CrashHandler handle = new CrashHandler(new IllegalStateException(ex));
 				handle.execute();
 			}
