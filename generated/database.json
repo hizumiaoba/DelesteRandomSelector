@@ -14499,10 +14499,10 @@
   }, {
     "attribute" : "全タイプ",
     "name" : "キセキの証",
-    "difficulty" : "MASTER+",
+    "difficulty" : "ⓁMASTER+",
     "level" : 27,
     "notes" : 500,
-    "albumType" : "Not-implemented"
+    "albumType" : "ALBUM B"
   }, {
     "attribute" : "キュート",
     "name" : "Secret Mirage",
@@ -14793,10 +14793,10 @@
   }, {
     "attribute" : "パッション",
     "name" : "CoCo夏夏夏 Holiday",
-    "difficulty" : "MASTER+",
+    "difficulty" : "ⓁMASTER+",
     "level" : 30,
     "notes" : 999,
-    "albumType" : "Not-implemented"
+    "albumType" : "ALBUM C"
   }, {
     "attribute" : "クール",
     "name" : "堕ちる果実",
@@ -14965,5 +14965,166 @@
     "level" : 28,
     "notes" : 914,
     "albumType" : "ALBUM A"
+  }, {
+    "attribute" : "キュート",
+    "name" : "ラビューダ♡トライアングル",
+    "difficulty" : "DEBUT",
+    "level" : 7,
+    "notes" : 79,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "ラビューダ♡トライアングル",
+    "difficulty" : "REGULAR",
+    "level" : 12,
+    "notes" : 148,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "ラビューダ♡トライアングル",
+    "difficulty" : "PRO",
+    "level" : 18,
+    "notes" : 423,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "ラビューダ♡トライアングル",
+    "difficulty" : "MASTER",
+    "level" : 25,
+    "notes" : 579,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "ラビューダ♡トライアングル",
+    "difficulty" : "MASTER+",
+    "level" : 28,
+    "notes" : 841,
+    "albumType" : "Not-implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "キセキの証",
+    "difficulty" : "MASTER+",
+    "level" : 27,
+    "notes" : 500,
+    "albumType" : "ALBUM B"
+  }, {
+    "attribute" : "クール",
+    "name" : "Nebula Sky",
+    "difficulty" : "MASTER+",
+    "level" : 28,
+    "notes" : 635,
+    "albumType" : "ALBUM B"
+  }, {
+    "attribute" : "キュート",
+    "name" : "Beat of the Night",
+    "difficulty" : "LIGHT",
+    "level" : 7,
+    "notes" : 127,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "Beat of the Night",
+    "difficulty" : "TRICK",
+    "level" : 15,
+    "notes" : 328,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "キミのそばでずっと",
+    "difficulty" : "LIGHT",
+    "level" : 5,
+    "notes" : 96,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "キミのそばでずっと",
+    "difficulty" : "TRICK",
+    "level" : 14,
+    "notes" : 243,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "ソウソウ",
+    "difficulty" : "DEBUT",
+    "level" : 7,
+    "notes" : 109,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "ソウソウ",
+    "difficulty" : "REGULAR",
+    "level" : 12,
+    "notes" : 170,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "ソウソウ",
+    "difficulty" : "PRO",
+    "level" : 18,
+    "notes" : 374,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "ソウソウ",
+    "difficulty" : "MASTER",
+    "level" : 26,
+    "notes" : 601,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "HARURUNRUN",
+    "difficulty" : "WITCH",
+    "level" : 27,
+    "notes" : 332,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "New bright stars",
+    "difficulty" : "DEBUT",
+    "level" : 7,
+    "notes" : 91,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "New bright stars",
+    "difficulty" : "REGULAR",
+    "level" : 13,
+    "notes" : 202,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "New bright stars",
+    "difficulty" : "PRO",
+    "level" : 18,
+    "notes" : 420,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "New bright stars",
+    "difficulty" : "MASTER",
+    "level" : 26,
+    "notes" : 648,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "New bright stars",
+    "difficulty" : "MASTER+",
+    "level" : 29,
+    "notes" : 948,
+    "albumType" : "Not-implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "CoCo夏夏夏 Holiday",
+    "difficulty" : "MASTER+",
+    "level" : 30,
+    "notes" : 999,
+    "albumType" : "ALBUM C"
+  }, {
+    "attribute" : "パッション",
+    "name" : "PANDEMIC ALONE",
+    "difficulty" : "MASTER+",
+    "level" : 30,
+    "notes" : 996,
+    "albumType" : "ALBUM C"
   } ]
 }
