@@ -477,6 +477,10 @@ public class DelesteRandomSelector extends JFrame {
 	btnStart = new JButton(Messages.MSGCalcStart.toString());
 	btnStart.addActionListener(e -> {
 		CompletableFuture.runAsync(() -> {
+			if(selectedSongsList.isEmpty()) {
+				logger.warn("User has not started playing yet.");
+				return;
+			}
 			Random random = new Random(System.currentTimeMillis());
 			toolIntegrateList = new ArrayList<>();
 			StringBuilder paneBuilder = new StringBuilder();
