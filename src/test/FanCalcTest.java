@@ -15,11 +15,5 @@ public class FanCalcTest {
 		int actual = FanCalc.fan(score, 100, 100, 100, 100);
 		assertEquals(1000, actual);
 	}
-	
-	@Test
-	public void fanToScoreTest() {
-		int score = FanCalc.scoreAsync(11, 1, 100, 100, 100, 100).join();
-		assertEquals(5000, score);
-	}
 
 }
