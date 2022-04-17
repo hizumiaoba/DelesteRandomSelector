@@ -1,3 +1,18 @@
+/*
+ * Copyright 2022 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ranfa.main;
 
 import java.awt.BorderLayout;
@@ -63,9 +78,23 @@ import com.ranfa.lib.database.Song;
 import com.ranfa.lib.handler.CrashHandler;
 import com.ranfa.lib.songinfo.FetchFromAPI;
 
+/**
+ * メイン処理クラス。
+ * <p>
+ * メインスレッドでは基本的に何もしない。
+ * 
+ * @author hizum
+ *
+ * @since 0.0.1
+ */
 @Version(major = 4, minor = 0, patch = 3, suffix = Suffix.BETA)
 public class DelesteRandomSelector extends JFrame {
 
+	/**
+	 * ランダムに選択された楽曲を格納するためのList。
+	 * <p>
+	 * 選ばれた楽曲を使用する処理は基本的に全てここから取得する。
+	 */
     private static ArrayList<Song> selectedSongsList = new ArrayList<>();
 
     private JPanel contentPane;
@@ -137,6 +166,11 @@ public class DelesteRandomSelector extends JFrame {
     private JLabel labelMemberToolTip;
     private JButton btnMoreInfoTool;
     
+    /**
+     * アップデート処理用の{@link BiConsumer}。
+     * <p>
+     * 実際は{@link CompletableFuture}によって使用される。
+     */
     BiConsumer<ArrayList<Song>, ArrayList<Song>> updateConsumer = (list1, list2) -> {
 	    this.logger.info("Checking database updates...");
 	    if(list1.size() > list2.size()) {
@@ -149,6 +183,16 @@ public class DelesteRandomSelector extends JFrame {
 		this.logger.info("database is up-to-date.");
 	    }
 	};
+	
+	/**
+	 * ライブラリ関連の処理完了後に{@link JButton}を有効化するための{@link Runnable}。
+	 * <p>
+	 * <ul>
+	 * <li>{@link JButton}の有効化</li>
+	 * <li>表示するテキストの更新</li>
+	 * </ul>
+	 * を行う
+	 */
 	Runnable setEnabled = () -> {
 	    try {
 		Thread.sleep(3 * 1000L);
