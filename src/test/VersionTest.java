@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.nio.file.Paths;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -14,6 +15,7 @@ import com.ranfa.lib.CheckVersion;
 public class VersionTest {
 	
 	@Test
+	@Ignore("Alpha, Betaバージョンはチェックを行わない")
 	public void matchJSONandAnnotations() {
 		String annotationVersion = CheckVersion.getVersion();
 		int major, minor, patch;

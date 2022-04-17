@@ -25,11 +25,10 @@ public class CrashHandler {
 		private String description;
 		private int estimateExitCode;
 		private CrashReportList<String> crashReportLines = new CrashReportList<>();
-		private Random random = new Random(System.currentTimeMillis());
+		private static Random random = new Random(System.currentTimeMillis());
 		
 		
 		// constants
-		private static final SimpleDateFormat FORMAT = new SimpleDateFormat("yy/MM/dd HH:mm");
 		private static final String DEFAULT_DESCRIPTION = "Unexpected Error";
 		private static final String[] EASTER_LINES = {
 				"// It will need to do more test?",
@@ -83,7 +82,8 @@ public class CrashHandler {
 		
 		private String outputReport() {
 			crashReportLines.emptyLine();
-			crashReportLines.add("Time: " + FORMAT.format(new Date()));
+			final SimpleDateFormat format = new SimpleDateFormat("yy/MM/dd HH:mm");
+			crashReportLines.add("Time: " + format.format(new Date()));
 			crashReportLines.add("Description: " + description);
 			crashReportLines.emptyLine();
 			LOG.debug("Gathering exception informations.");

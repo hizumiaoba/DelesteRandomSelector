@@ -444,6 +444,8 @@ public class DelesteRandomSelector extends JFrame {
 		}, es).whenCompleteAsync((ret, ex) -> {
 			if(ex != null) {
 				logger.error("Exception was thrown during concurrent process", ex);
+				if(ex instanceof IllegalArgumentException)
+					return; // ignore
 				CrashHandler handle = new CrashHandler(new IllegalStateException(ex));
 				handle.execute();
 			}
@@ -477,6 +479,10 @@ public class DelesteRandomSelector extends JFrame {
 	btnStart = new JButton(Messages.MSGCalcStart.toString());
 	btnStart.addActionListener(e -> {
 		CompletableFuture.runAsync(() -> {
+			if(selectedSongsList.isEmpty()) {
+				logger.warn("User has not started playing yet.");
+				return;
+			}
 			Random random = new Random(System.currentTimeMillis());
 			toolIntegrateList = new ArrayList<>();
 			StringBuilder paneBuilder = new StringBuilder();

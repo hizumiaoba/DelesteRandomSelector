@@ -126,7 +126,6 @@ public class PRPCalc {
 	 */
 	public static int calcPRPFromScore(int score) {
 		BigDecimal scoreDecimal = BigDecimal.valueOf(score);
-		scoreDecimal.divide(THAUSAND, RoundingMode.DOWN);
-		return scoreDecimal.intValueExact();
+		return scoreDecimal.divide(THAUSAND, RoundingMode.DOWN).intValueExact();
 	}
 }

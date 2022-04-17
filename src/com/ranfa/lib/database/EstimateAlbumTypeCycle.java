@@ -24,7 +24,6 @@ public class EstimateAlbumTypeCycle {
 
 	private final static String CYCLEPATH = "generated/albumCycle.json";
 	private final static String DATEFORMAT = "YYYY/MM/dd";
-	private final static SimpleDateFormat FORMAT = new SimpleDateFormat(DATEFORMAT);
 	private static Logger logger = LoggerFactory.getLogger(EstimateAlbumTypeCycle.class);
 
 	public final static String ALBUM_A = "ALBUM A";
@@ -43,7 +42,8 @@ public class EstimateAlbumTypeCycle {
 			return;
 		}
 		String inputDaysLeft = JOptionPane.showInputDialog("MASTER＋のALBUM切り替えまであと何日ですか？\n(残り時間が表示されている場合は0を入力してください)");
-		String dateDefinited = FORMAT.format(new Date());
+		final SimpleDateFormat format = new SimpleDateFormat(DATEFORMAT);
+		String dateDefinited = format.format(new Date());
 		property.setDateDefinited(dateDefinited);
 		property.setDaysLeft(Integer.parseInt(inputDaysLeft));
 		property.setType(inputType.equals("A") ? ALBUM_A : inputType.equals("B") ? ALBUM_B : ALBUM_C);
