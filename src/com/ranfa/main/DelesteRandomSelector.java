@@ -71,6 +71,7 @@ import com.ranfa.lib.Suffix;
 import com.ranfa.lib.TwitterIntegration;
 import com.ranfa.lib.Version;
 import com.ranfa.lib.calc.FanCalc;
+import com.ranfa.lib.calc.PRPCalc;
 import com.ranfa.lib.concurrent.CountedThreadFactory;
 import com.ranfa.lib.database.EstimateAlbumTypeCycle;
 import com.ranfa.lib.database.Scraping;
@@ -1297,8 +1298,8 @@ public class DelesteRandomSelector extends JFrame {
 					int produce = produceStr.isEmpty() ? 100 : Integer.parseInt(produceStr);
 					int premium = premiumStr.isEmpty() ? 100 : Integer.parseInt(premiumStr);
 					int res = FanCalc.fanAsync(score, room, center, produce, premium).join();
-					labelPlayerScoreDynamic.setText(String.valueOf(res));
-					labelPlayerFanDynamic.setText(scoreStr);
+					labelPlayerScoreDynamic.setText(scoreStr);
+					labelPlayerFanDynamic.setText(String.valueOf(res));
 				} else {
 					int fan = Integer.parseInt(fanStr);
 					int room = roomStr.isEmpty() ? 100 : Integer.parseInt(fanStr);
@@ -1306,9 +1307,14 @@ public class DelesteRandomSelector extends JFrame {
 					int produce = produceStr.isEmpty() ? 100 : Integer.parseInt(produceStr);
 					int premium = premiumStr.isEmpty() ? 100 : Integer.parseInt(premiumStr);
 					int res = FanCalc.scoreAsync(fan, 1, room, center, produce, premium).join();
-					labelPlayerFanDynamic.setText(String.valueOf(res));
-					labelPlayerScoreDynamic.setText(scoreStr);
+					labelPlayerFanDynamic.setText(fanStr);
+					labelPlayerScoreDynamic.setText(String.valueOf(res));
 				}
+				CompletableFuture.runAsync(() -> {
+					int labelScore = Integer.parseInt(labelPlayerScoreDynamic.getText());
+					int estimatedPRP = PRPCalc.calcPRPFromScore(labelScore);
+					labelPlayerPRPDynamic.setText(String.valueOf(estimatedPRP));
+				});
 			}, es).whenComplete((ret, ex) -> {
 				if(ex != null) {
 					logger.error("Exception was thrown during concurrent process.", ex);
