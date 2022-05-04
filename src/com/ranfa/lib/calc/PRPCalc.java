@@ -51,7 +51,7 @@ public class PRPCalc {
 	/**
 	 * 計算用のBigDecimal値
 	 */
-	private static final BigDecimal THAUSAND = BigDecimal.valueOf(1000);
+	private static final BigDecimal THAUSAND = BigDecimal.valueOf(10000);
 	
 	/**
 	 * 合計PRP値を計算するために保管しているPRPのList
