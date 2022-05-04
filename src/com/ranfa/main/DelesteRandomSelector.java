@@ -76,6 +76,8 @@ import com.ranfa.lib.database.EstimateAlbumTypeCycle;
 import com.ranfa.lib.database.Scraping;
 import com.ranfa.lib.database.Song;
 import com.ranfa.lib.handler.CrashHandler;
+import com.ranfa.lib.io.FileIO;
+import com.ranfa.lib.io.OutputDataStructure;
 import com.ranfa.lib.songinfo.FetchFromAPI;
 
 /**
@@ -96,6 +98,8 @@ public class DelesteRandomSelector extends JFrame {
 	 * 選ばれた楽曲を使用する処理は基本的に全てここから取得する。
 	 */
     private static ArrayList<Song> selectedSongsList = new ArrayList<>();
+    
+    private static boolean isDebugMode = false;
 
     private JPanel contentPane;
     private SettingJSONProperty property = new SettingJSONProperty();
@@ -245,11 +249,15 @@ public class DelesteRandomSelector extends JFrame {
 	private JLabel lblProduce;
 	private JLabel lblPremium;
 	private JButton button;
+	private JButton button_1;
 
     /**
      * Launch the application.
      */
     public static void main(String[] args) {
+    	if(args.length == 1) {
+    		isDebugMode = Boolean.valueOf(args[0]);
+    	}
 	EventQueue.invokeLater(() -> {
 	    try {
 		DelesteRandomSelector frame = new DelesteRandomSelector();
@@ -257,7 +265,6 @@ public class DelesteRandomSelector extends JFrame {
 	    } catch (Exception e) {
 		e.printStackTrace();
 	    }
-
 	});
     }
 
@@ -321,6 +328,9 @@ public class DelesteRandomSelector extends JFrame {
 			}
 			handle = new CrashHandler(new IllegalStateException(ex));
 			handle.execute();
+		}
+		if(isDebugMode) {
+			logger.debug("WARNING: This is the debug mode. you cannot use outside API services.");
 		}
 		this.logger.debug("Loading settings...");
 		this.property.setCheckLibraryUpdates(Settings.needToCheckLibraryUpdates());
@@ -556,6 +566,10 @@ public class DelesteRandomSelector extends JFrame {
 			DelesteRandomSelector.this.textArea.setText(paneBuilder.toString());
 			DelesteRandomSelector.this.integratorBool = true;
 			DelesteRandomSelector.this.logger.info("show up completed.");
+			if(isDebugMode) {
+				logger.warn("API publish will NOT be executed due to debug mode.");
+				return;
+			}
 			labelCurrentSongOrderTool.setText("null");
 			progressTool.setValue(0);
 			listToolMapDataFuture = CompletableFuture.supplyAsync(() -> {
@@ -1310,6 +1324,28 @@ public class DelesteRandomSelector extends JFrame {
 	
 	labelPlayerPRPDynamic = new JLabel("<dynamic>");
 	panelScoreCenter.add(labelPlayerPRPDynamic, "12, 38");
+	
+	button_1 = new JButton("ファイルへ保存");
+	button_1.addActionListener(e -> {
+		CompletableFuture.runAsync(() -> {
+			int currIndex = Integer.parseInt(labelScoreCurrentSongOrder.getText()) - 1;
+			Song curr = toolIntegrateList.get(currIndex);
+			String songname = curr.getName();
+			int level = curr.getLevel();
+			String difficulty = curr.getDifficulty();
+			String attribute = curr.getAttribute();
+			int score = Integer.parseInt(fieldScoreUserPlayed.getText());
+			FileIO ioOut = new FileIO(new OutputDataStructure(songname, level, difficulty, attribute, score));
+			try {
+				ioOut.write();
+				JOptionPane.showMessageDialog(null, "ファイルの生成が完了しました。");
+			} catch (IOException e1) {
+				logger.error("There was a problem during writing object file.", e1);
+				JOptionPane.showMessageDialog(null, "ファイル生成中にエラーが発生しました。この状況が頻発する場合は開発サイトへご連絡ください。");
+			}
+		}, es);
+	});
+	panelScoreCenter.add(button_1, "18, 38");
 	
 	label = new JLabel("<html><body>デレステに表示されている百分率をそのまま入力してください</body></html>");
 	panelScoreCenter.add(label, "6, 40");
