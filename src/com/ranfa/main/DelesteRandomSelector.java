@@ -302,11 +302,11 @@ public class DelesteRandomSelector extends JFrame {
 	}, es).whenCompleteAsync((ret, ex) -> {
 		if(ex != null) {
 			logger.error("Exception was thrown during concurrent process", ex);
-			CrashHandler handle = new CrashHandler(ex);
+			CrashHandler handle = new CrashHandler(ex.getMessage(), ex);
 			if(ex instanceof NullPointerException) {
 				handle.execute();
 			}
-			handle = new CrashHandler(new IllegalStateException(ex));
+			handle = new CrashHandler(ex.getMessage(), new IllegalStateException(ex));
 			handle.execute();
 		}
 	}, es);
@@ -322,11 +322,11 @@ public class DelesteRandomSelector extends JFrame {
 	}, es).whenCompleteAsync((ret, ex) -> {
 		if(ex != null) {
 			logger.error("Exception was thrown during concurrent process", ex);
-			CrashHandler handle = new CrashHandler(ex);
+			CrashHandler handle = new CrashHandler(ex.getMessage(), ex);
 			if(ex instanceof NullPointerException) {
 				handle.execute();
 			}
-			handle = new CrashHandler(new IllegalStateException(ex));
+			handle = new CrashHandler(ex.getMessage(), new IllegalStateException(ex));
 			handle.execute();
 		}
 		if(isDebugMode) {
@@ -363,7 +363,7 @@ public class DelesteRandomSelector extends JFrame {
 	}, es).whenCompleteAsync((ret, ex) -> {
 		if(ex != null) {
 			logger.error("Exception was thrown during concurrent process", ex);
-			CrashHandler handle = new CrashHandler(new IllegalStateException(ex));
+			CrashHandler handle = new CrashHandler(ex.getMessage(), new IllegalStateException(ex));
 			handle.execute();
 		}
 	}, es);
@@ -500,7 +500,7 @@ public class DelesteRandomSelector extends JFrame {
 				logger.error("Exception was thrown during concurrent process", ex);
 				if(ex instanceof IllegalArgumentException)
 					return; // ignore
-				CrashHandler handle = new CrashHandler(new IllegalStateException(ex));
+				CrashHandler handle = new CrashHandler(ex.getMessage(), new IllegalStateException(ex));
 				handle.execute();
 			}
 		}, es);
@@ -523,7 +523,7 @@ public class DelesteRandomSelector extends JFrame {
 		}, es).whenCompleteAsync((ret, ex) -> {
 			if(ex != null) {
 				logger.error("Exception was thrown during concurrent process", ex);
-				CrashHandler handle = new CrashHandler(new IllegalStateException(ex));
+				CrashHandler handle = new CrashHandler(ex.getMessage(), new IllegalStateException(ex));
 				handle.execute();
 			}
 		}, es);
@@ -583,7 +583,7 @@ public class DelesteRandomSelector extends JFrame {
 		}, es).whenCompleteAsync((ret, ex) -> {
 			if(ex != null) {
 				logger.error("Exception was thrown during concurrent process", ex);
-				CrashHandler handle = new CrashHandler(new IllegalStateException(ex));
+				CrashHandler handle = new CrashHandler(ex.getMessage(), new IllegalStateException(ex));
 				handle.execute();
 			}
 		}, es);
@@ -597,7 +597,7 @@ public class DelesteRandomSelector extends JFrame {
 		CompletableFuture.runAsync(impl, es).whenCompleteAsync((t, u) -> {
 			if(u != null) {
 				logger.warn("Exception while processing update manually.", u);
-				CrashHandler handle = new CrashHandler(new IllegalStateException(u));
+				CrashHandler handle = new CrashHandler(u.getMessage(), new IllegalStateException(u));
 				handle.execute();
 				JOptionPane.showMessageDialog(null, "There was a problem during processing library update manually.\nIf this appears repeatedly, please contact developer with your app log.");
 			}
@@ -655,7 +655,7 @@ public class DelesteRandomSelector extends JFrame {
 		}, es).whenCompleteAsync((ret, ex) -> {
 			if(ex != null) {
 				logger.error("Exception was thrown during concurrent process", ex);
-				CrashHandler handle = new CrashHandler(new IllegalStateException(ex));
+				CrashHandler handle = new CrashHandler(ex.getMessage(), new IllegalStateException(ex));
 				handle.execute();
 			}
 		}, es);
@@ -741,7 +741,7 @@ public class DelesteRandomSelector extends JFrame {
 			labelToolProgress.setText("Information parse Complete.");
 			if(ex != null) {
 				logger.error("Exception was thrown during concurrent process", ex);
-				CrashHandler handle = new CrashHandler(new IllegalStateException(ex));
+				CrashHandler handle = new CrashHandler(ex.getMessage(), new IllegalStateException(ex));
 				handle.execute();
 			}
 		}, es);
