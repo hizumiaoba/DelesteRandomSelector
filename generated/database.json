@@ -14625,10 +14625,10 @@
   }, {
     "attribute" : "全タイプ",
     "name" : "ココカラミライヘ！",
-    "difficulty" : "MASTER+",
+    "difficulty" : "ⓁMASTER+",
     "level" : 30,
     "notes" : 843,
-    "albumType" : "Not-implemented"
+    "albumType" : "ALBUM A"
   }, {
     "attribute" : "全タイプ",
     "name" : "ココカラミライヘ！",
@@ -15126,5 +15126,208 @@
     "level" : 30,
     "notes" : 996,
     "albumType" : "ALBUM C"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "ココカラミライヘ！",
+    "difficulty" : "MASTER+",
+    "level" : 30,
+    "notes" : 844,
+    "albumType" : "ALBUM A"
+  }, {
+    "attribute" : "キュート",
+    "name" : "まほうのまくら",
+    "difficulty" : "DEBUT",
+    "level" : 7,
+    "notes" : 85,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "まほうのまくら",
+    "difficulty" : "REGULAR",
+    "level" : 12,
+    "notes" : 144,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "まほうのまくら",
+    "difficulty" : "PRO",
+    "level" : 17,
+    "notes" : 299,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "まほうのまくら",
+    "difficulty" : "MASTER",
+    "level" : 26,
+    "notes" : 496,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "まほうのまくら",
+    "difficulty" : "MASTER+",
+    "level" : 28,
+    "notes" : 803,
+    "albumType" : "Not-implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "14平米にスーベニア",
+    "difficulty" : "LIGHT",
+    "level" : 5,
+    "notes" : 108,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "14平米にスーベニア",
+    "difficulty" : "TRICK",
+    "level" : 16,
+    "notes" : 372,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "キラッ！満開スマイル",
+    "difficulty" : "LIGHT",
+    "level" : 7,
+    "notes" : 161,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "キラッ！満開スマイル",
+    "difficulty" : "TRICK",
+    "level" : 17,
+    "notes" : 409,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "Packing Her Favorite",
+    "difficulty" : "DEBUT",
+    "level" : 8,
+    "notes" : 135,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "Packing Her Favorite",
+    "difficulty" : "REGULAR",
+    "level" : 13,
+    "notes" : 231,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "Packing Her Favorite",
+    "difficulty" : "PRO",
+    "level" : 17,
+    "notes" : 361,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "Packing Her Favorite",
+    "difficulty" : "MASTER",
+    "level" : 25,
+    "notes" : 598,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "メモリーブロッサム",
+    "difficulty" : "DEBUT",
+    "level" : 6,
+    "notes" : 93,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "メモリーブロッサム",
+    "difficulty" : "REGULAR",
+    "level" : 12,
+    "notes" : 183,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "メモリーブロッサム",
+    "difficulty" : "PRO",
+    "level" : 16,
+    "notes" : 323,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "メモリーブロッサム",
+    "difficulty" : "MASTER",
+    "level" : 25,
+    "notes" : 491,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "メモリーブロッサム",
+    "difficulty" : "MASTER+",
+    "level" : 28,
+    "notes" : 730,
+    "albumType" : "Not-implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "サラバ、愛しき悲しみたちよ",
+    "difficulty" : "DEBUT",
+    "level" : 7,
+    "notes" : 96,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "サラバ、愛しき悲しみたちよ",
+    "difficulty" : "REGULAR",
+    "level" : 13,
+    "notes" : 179,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "サラバ、愛しき悲しみたちよ",
+    "difficulty" : "PRO",
+    "level" : 16,
+    "notes" : 402,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "サラバ、愛しき悲しみたちよ",
+    "difficulty" : "MASTER",
+    "level" : 25,
+    "notes" : 628,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "サラバ、愛しき悲しみたちよ",
+    "difficulty" : "MASTER+",
+    "level" : 28,
+    "notes" : 992,
+    "albumType" : "Always"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "ピンキージョーンズ",
+    "difficulty" : "DEBUT",
+    "level" : 8,
+    "notes" : 124,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "ピンキージョーンズ",
+    "difficulty" : "REGULAR",
+    "level" : 13,
+    "notes" : 191,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "ピンキージョーンズ",
+    "difficulty" : "PRO",
+    "level" : 18,
+    "notes" : 406,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "ピンキージョーンズ",
+    "difficulty" : "MASTER",
+    "level" : 25,
+    "notes" : 605,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "ピンキージョーンズ",
+    "difficulty" : "MASTER+",
+    "level" : 28,
+    "notes" : 946,
+    "albumType" : "Always"
   } ]
 }
