@@ -150,8 +150,16 @@ public class CrashHandler {
 			return description;
 		}
 		
+		public void setDescription(String desc) {
+			this.description = desc;
+		}
+		
 		public Throwable getThrowable() {
 			return e;
+		}
+		
+		public void setCause(Throwable e) {
+			this.e = e;
 		}
 		
 		public int getEstimateExitCode() {
