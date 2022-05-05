@@ -93,6 +93,11 @@ public class Easter {
 		for(String element : res) {
 			builder.append(element);
 		}
+		if(builder.indexOf("氏家むつみ") != -1) {
+			builder.append(" 「お誕生日って、なんだかわくわくしますよねっ！」");
+		} else if(builder.indexOf("鷺沢文香") != -1) {
+			builder.append(" 「素敵な物語の1頁を、一緒に刻んでいきましょう…プロデューサーさん」");
+		}
 		return res.isEmpty() ? "" : builder.toString();
 	}
 
