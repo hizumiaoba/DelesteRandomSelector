@@ -66,6 +66,10 @@ public class LanguageTest {
 		assertEquals("登場メンバー", Messages.MSGInfoMember.toString());
 		assertEquals("ノート数", Messages.MSGInfoSongNotes.toString());
 		assertEquals("更に詳しい情報を見る", Messages.MSGInfoOpenBrowser.toString());
+		assertEquals("前", Messages.MSGPrev.toString());
+		assertEquals("次", Messages.MSGNext.toString());
+		assertEquals("情報取得完了", Messages.MSGCompleteInformationParse.toString());
+		assertEquals("楽曲情報", Messages.MSGInfoTab.toString());
 	}
 
 	@Test
@@ -118,6 +122,10 @@ public class LanguageTest {
 		assertEquals("Member", Messages.MSGInfoMember.toString());
 		assertEquals("Notes", Messages.MSGInfoSongNotes.toString());
 		assertEquals("More Information", Messages.MSGInfoOpenBrowser.toString());
+		assertEquals("Prev", Messages.MSGPrev.toString());
+		assertEquals("Next", Messages.MSGNext.toString());
+		assertEquals("Information parse Complete.", Messages.MSGCompleteInformationParse.toString());
+		assertEquals("Song Informations", Messages.MSGInfoTab.toString());
 	}
 
 	@After
