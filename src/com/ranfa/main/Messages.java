@@ -53,7 +53,11 @@ public enum Messages {
 	MSGInfoSongLevel,
 	MSGInfoMember,
 	MSGInfoSongNotes,
-	MSGInfoOpenBrowser;
+	MSGInfoOpenBrowser,
+	MSGPrev,
+	MSGNext,
+	MSGCompleteInformationParse,
+	MSGInfoTab;
 
 	@Override
 	public String toString() {

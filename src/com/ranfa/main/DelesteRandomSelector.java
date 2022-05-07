@@ -724,7 +724,7 @@ public class DelesteRandomSelector extends JFrame {
 				labelScoreNotesDynamic.setText(String.valueOf(firstSong.getNotes()));
 			}
 		}, es).whenCompleteAsync((ret, ex) -> {
-			labelToolProgress.setText("Information parse Complete.");
+			labelToolProgress.setText(Messages.MSGCompleteInformationParse.toString());
 			if(ex != null) {
 				logger.error("Exception was thrown during concurrent process", ex);
 				CrashHandler handle = new CrashHandler(new IllegalStateException(ex));
@@ -748,7 +748,7 @@ public class DelesteRandomSelector extends JFrame {
 		new RowSpec[] {
 			RowSpec.decode("max(16dlu;default)"),}));
 	
-	labelSubToolTitle = new JLabel("楽曲情報");
+	labelSubToolTitle = new JLabel(Messages.MSGInfoTab.toString());
 	labelSubToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 16));
 	panelNorthTool.add(labelSubToolTitle, "1, 1");
 	
@@ -904,7 +904,7 @@ public class DelesteRandomSelector extends JFrame {
 	labelNotesToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelNotesToolTip, "10, 22, center, default");
 	
-	btnNextSongTool = new JButton("next");
+	btnNextSongTool = new JButton(Messages.MSGNext.toString());
 	btnNextSongTool.addActionListener(e -> {
 		CompletableFuture.runAsync(() -> {
 			int currentIndex = Integer.parseInt(labelCurrentSongOrderTool.getText()) - 1;
@@ -939,7 +939,7 @@ public class DelesteRandomSelector extends JFrame {
 		}, es);
 	});
 	
-	btnPrevSongTool = new JButton("prev");
+	btnPrevSongTool = new JButton(Messages.MSGPrev.toString());
 	btnPrevSongTool.addActionListener(e -> {
 		CompletableFuture.runAsync(() -> {
 			int currentIndex = Integer.parseInt(labelCurrentSongOrderTool.getText()) - 1;
