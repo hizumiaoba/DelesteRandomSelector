@@ -15329,5 +15329,40 @@
     "level" : 28,
     "notes" : 946,
     "albumType" : "Always"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "ニッポン笑顔百景",
+    "difficulty" : "DEBUT",
+    "level" : 8,
+    "notes" : 138,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "ニッポン笑顔百景",
+    "difficulty" : "REGULAR",
+    "level" : 13,
+    "notes" : 225,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "ニッポン笑顔百景",
+    "difficulty" : "PRO",
+    "level" : 18,
+    "notes" : 468,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "ニッポン笑顔百景",
+    "difficulty" : "MASTER",
+    "level" : 26,
+    "notes" : 769,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "全タイプ",
+    "name" : "ニッポン笑顔百景",
+    "difficulty" : "MASTER+",
+    "level" : 29,
+    "notes" : 996,
+    "albumType" : "Always"
   } ]
 }
