@@ -99,6 +99,7 @@ public class CrashHandler {
 				crashReportLines.add("---------------------------------------------------------------------------------------");
 				crashReportLines.emptyLine();
 				crashReportLines.add("Stacktrace:");
+				crashReportLines.add(e.getMessage());
 				addLinesRecursively(e, crashReportLines);
 			}
 			LOG.debug("Gathering system informations.");
