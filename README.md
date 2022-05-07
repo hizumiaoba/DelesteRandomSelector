@@ -1,9 +1,6 @@
 # DelesteRandomSelector
 デレステの課題曲をよりスムーズに決定できます
 
-**このリポジトリはアーカイブされています。今後の開発は以下のURLで行います。**
-https://osdn.net/projects/delesterandomselector/scm/git/DelesteRandomSelector/
-
 THIS SOFTWARE DEPENDS ON APACHE LICENSE 2.0 BECAUSE THIS USED SOME LIBRARIES WHICH DEPENDS ON IT.
 
 ## 使用ライブラリ群 -Used Libraries-
