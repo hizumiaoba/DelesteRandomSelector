@@ -91,7 +91,7 @@ public class Easter {
 				.collect(Collectors.toList());
 		StringBuilder builder = new StringBuilder("Happy Birth Day! : ");
 		for(String element : res) {
-			builder.append(element);
+			builder.append(element).append(" ");
 		}
 		if(builder.indexOf("氏家むつみ") != -1) {
 			builder.append(" 「お誕生日って、なんだかわくわくしますよねっ！」");
