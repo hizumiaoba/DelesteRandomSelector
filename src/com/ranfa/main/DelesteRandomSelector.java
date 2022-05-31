@@ -179,7 +179,7 @@ public class DelesteRandomSelector extends JFrame {
      * <p>
      * 実際は{@link CompletableFuture}によって使用される。
      */
-    BiConsumer<ArrayList<Song>, ArrayList<Song>> updateConsumer = (list1, list2) -> {
+    BiConsumer<List<Song>, List<Song>> updateConsumer = (list1, list2) -> {
 	    this.logger.info("Checking database updates...");
 	    if(list1.size() > list2.size()) {
 		long time = System.currentTimeMillis();
@@ -315,8 +315,8 @@ public class DelesteRandomSelector extends JFrame {
 			handle.execute();
 		}
 	}, es);
-	CompletableFuture<ArrayList<Song>> getFromJsonFuture = CompletableFuture.supplyAsync(() -> Scraping.getFromJson(), es);
-	CompletableFuture<ArrayList<Song>> getWholeDataFuture = CompletableFuture.supplyAsync(() -> Scraping.getWholeData(), es);
+	CompletableFuture<List<Song>> getFromJsonFuture = CompletableFuture.supplyAsync(() -> Scraping.getFromJson(), es);
+	CompletableFuture<List<Song>> getWholeDataFuture = CompletableFuture.supplyAsync(() -> Scraping.getWholeData(), es);
 	// setting check phase
 	CompletableFuture.runAsync(() -> {
 		if(!Settings.fileExists() && !Settings.writeDownJSON()) {
@@ -489,11 +489,11 @@ public class DelesteRandomSelector extends JFrame {
 					JOptionPane.showMessageDialog(null, Messages.MSGManualUpdateNotCompleteYet.toString());
 				}
 			}
-			ArrayList<Song> fromJson = Scraping.getFromJson();
-			ArrayList<Song> specificlevelList = Scraping.getSpecificLevelSongs(fromJson, (Integer)DelesteRandomSelector.this.spinnerLevel.getValue(), DelesteRandomSelector.this.checkLessLv.isSelected(), DelesteRandomSelector.this.checkMoreLv.isSelected());
-			ArrayList<Song> specificDifficultyList = Scraping.getSpecificDifficultySongs(specificlevelList, DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().toString());
-			ArrayList<Song> specificAttributeList = Scraping.getSpecificAttributeSongs(specificDifficultyList, DelesteRandomSelector.this.comboAttribute.getSelectedItem().toString());
-			ArrayList<Song> specificTypeList = Scraping.getSpecificAlbumTypeSongs(specificAttributeList, EstimateAlbumTypeCycle.getCurrentCycle());
+			List<Song> fromJson = Scraping.getFromJson();
+			List<Song> specificlevelList = Scraping.getSpecificLevelSongs(fromJson, (Integer)DelesteRandomSelector.this.spinnerLevel.getValue(), DelesteRandomSelector.this.checkLessLv.isSelected(), DelesteRandomSelector.this.checkMoreLv.isSelected());
+			List<Song> specificDifficultyList = Scraping.getSpecificDifficultySongs(specificlevelList, DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().toString());
+			List<Song> specificAttributeList = Scraping.getSpecificAttributeSongs(specificDifficultyList, DelesteRandomSelector.this.comboAttribute.getSelectedItem().toString());
+			List<Song> specificTypeList = Scraping.getSpecificAlbumTypeSongs(specificAttributeList, EstimateAlbumTypeCycle.getCurrentCycle());
 			if(!selectedSongsList.isEmpty()) {
 				selectedSongsList.clear();
 			}

@@ -1,6 +1,6 @@
 package com.ranfa.lib;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -20,7 +20,7 @@ public class ManualUpdateThreadImpl implements Runnable {
 
 	//Declare Executor service
 	private Executor executor = Executors.newCachedThreadPool(new CountedThreadFactory(() -> "DRS", "ManualUpdateThread"));
-	private BiConsumer<ArrayList<Song>, ArrayList<Song>> updateConsumer = (list1, list2) -> {
+	private BiConsumer<List<Song>, List<Song>> updateConsumer = (list1, list2) -> {
 		this.logger.info("Checking database updates...");
 		if(list1.size() > list2.size()) {
 			long time = System.currentTimeMillis();
@@ -46,8 +46,8 @@ public class ManualUpdateThreadImpl implements Runnable {
 			flag = false;
 		}
 		this.logger.info("Checking database updates...");
-		CompletableFuture<ArrayList<Song>> webData = CompletableFuture.supplyAsync(Scraping::getWholeData, this.executor);
-		CompletableFuture<ArrayList<Song>> localData = CompletableFuture.supplyAsync(Scraping::getFromJson, this.executor);
+		CompletableFuture<List<Song>> webData = CompletableFuture.supplyAsync(Scraping::getWholeData, this.executor);
+		CompletableFuture<List<Song>> localData = CompletableFuture.supplyAsync(Scraping::getFromJson, this.executor);
 		CompletableFuture<Void> afterUpdateFuture = webData.thenAcceptBothAsync(localData, this.updateConsumer, this.executor);
 		afterUpdateFuture.whenCompleteAsync((ret, e) -> {
 			if(e != null) {

@@ -1,8 +1,9 @@
 package test;
 
-import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -13,8 +14,8 @@ import com.ranfa.lib.database.Song;
 public class WebFetchingTest {
 
 	private String wrongValueString = "Invaild Value";
-	private ArrayList<Song> emptyList = new ArrayList<>();
-	private ArrayList<Song> correctList = Scraping.getWholeData();
+	private List<Song> emptyList = new ArrayList<>();
+	private List<Song> correctList = Scraping.getWholeData();
 	private String emptyMessageString = "ArrayList must not empty.";
 
 	// Scraping.getSpecificAttributeSongs

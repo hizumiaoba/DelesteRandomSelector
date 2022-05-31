@@ -6,10 +6,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -57,7 +59,7 @@ public class Scraping {
 		return DBPATH;
 	}
 
-	public static ArrayList<Song> getWholeData() {
+	public static List<Song> getWholeData() {
 		long time = System.currentTimeMillis();
 		ExecutorService es = Executors.newCachedThreadPool(new CountedThreadFactory(() -> "DRS", "WebdataFetchThread"));
 		CompletableFuture<ArrayList<ArrayList<Album>>> typeFetchFuture = CompletableFuture.supplyAsync(() -> AlbumTypeEstimate.getAlbumType(), es);
@@ -119,7 +121,7 @@ public class Scraping {
 		return res;
 	}
 
-	public static ArrayList<Song> getSpecificAttributeSongs(ArrayList<Song> data, String attribute) {
+	public static List<Song> getSpecificAttributeSongs(List<Song> data, String attribute) {
 		if(!attribute.equals(ALL)
 				&& !attribute.equals(CUTE)
 				&& !attribute.equals(COOL)
@@ -131,18 +133,19 @@ public class Scraping {
 			JOptionPane.showMessageDialog(null, "指定された属性の曲は存在しません。\n条件を変えてみてください");
 			throw new IllegalArgumentException("ArrayList must not empty.");
 		}
-		ArrayList<Song> res = new ArrayList<>();
+		List<Song> res = new ArrayList<>();
 		if(attribute.equals(Messages.MSGNonSelected.toString())) {
 			res = data;
 		} else {
-			data.stream()
-			.filter(element -> element.getAttribute().equals(attribute))
-			.forEach(res::add);
+			res = data.stream()
+					.parallel()
+					.filter(element -> element.getAttribute().equals(attribute))
+					.collect(Collectors.toList());
 		}
 		return res;
 	}
 
-	public static  ArrayList<Song> getSpecificDifficultySongs(ArrayList<Song> data, String difficulty) {
+	public static  List<Song> getSpecificDifficultySongs(List<Song> data, String difficulty) {
 		if(!difficulty.equals(DEBUT)
 				&& !difficulty.equals(REGULAR)
 				&& !difficulty.equals(PRO)
@@ -160,18 +163,19 @@ public class Scraping {
 		if(data.isEmpty()) {
 			throw new IllegalArgumentException("ArrayList must not empty.");
 		}
-		ArrayList<Song> res = new ArrayList<>();
+		List<Song> res = new ArrayList<>();
 		if(difficulty.equals(Messages.MSGNonSelected.toString())) {
 			res = data;
 		} else {
-			data.stream()
-			.filter(element -> element.getDifficulty().equals(difficulty))
-			.forEach(res::add);
+			res = data.stream()
+					.parallel()
+					.filter(element -> element.getDifficulty().equals(difficulty))
+					.collect(Collectors.toList());
 		}
 		return res;
 	}
 
-	public static  ArrayList<Song> getSpecificLevelSongs(ArrayList<Song> data, int level, boolean isLess, boolean isMore) {
+	public static  List<Song> getSpecificLevelSongs(List<Song> data, int level, boolean isLess, boolean isMore) {
 		if(level <= 0) {
 			throw new IllegalArgumentException("Level must not negative.");
 		}
@@ -184,43 +188,42 @@ public class Scraping {
 		if(isLess && isMore) {
 			return getOnlyLevelSongs(data, level);
 		}
-		ArrayList<Song> res = new ArrayList<>();
+		List<Song> res = new ArrayList<>();
 		if(isLess) {
-			data.stream()
-			.filter(element -> element.getLevel() < level)
-			.forEach(res::add);
+			res = data.stream()
+					.parallel()
+					.filter(element -> element.getLevel() < level)
+					.collect(Collectors.toList());
 		} else if (isMore) {
-			data.stream()
-			.filter(element -> element.getLevel() > level)
-			.forEach(res::add);
+			res = data.stream()
+					.parallel()
+					.filter(element -> element.getLevel() > level)
+					.collect(Collectors.toList());
 		}
 		return res;
 	}
 
-	public static ArrayList<Song> getSpecificAlbumTypeSongs(ArrayList<Song> data, String type) {
+	public static List<Song> getSpecificAlbumTypeSongs(List<Song> data, String type) {
 		if(type == null) {
 			throw new IllegalArgumentException("type must not null.");
 		}
 		if(data.isEmpty()) {
 			throw new IllegalArgumentException("ArrayList must not empty");
 		}
-		ArrayList<Song> res = new ArrayList<>();
-		data.stream()
-		.filter(element -> element.getAlbumType().equals(type))
-		.forEach(res::add);
-		return res;
+		return data.stream()
+				.parallel()
+				.filter(element -> element.getAlbumType().equals(type))
+				.collect(Collectors.toList());
 	}
 
-	private static ArrayList<Song> getOnlyLevelSongs(ArrayList<Song> data, int level) {
-		ArrayList<Song> res = new ArrayList<>();
-		data.stream()
-		.filter(element -> element.getLevel() == level)
-		.forEach(res::add);
-		return res;
-
+	private static List<Song> getOnlyLevelSongs(List<Song> data, int level) {
+		return data.stream()
+				.parallel()
+				.filter(element -> element.getLevel() == level)
+				.collect(Collectors.toList());
 	}
 
-	public static ArrayList<Song> getFromJson() {
+	public static List<Song> getFromJson() {
 		long time = System.currentTimeMillis();
 		SongJSONProperty property = null;
 		try {
@@ -228,7 +231,7 @@ public class Scraping {
 		} catch (IOException e) {
 			logger.error("IOException was thrown during reading From JSON Database file.", e);
 		}
-		ArrayList<Song> res = new ArrayList<>();
+		List<Song> res = new ArrayList<>();
 		if(property != null) {
 			res.addAll(property.getList());
 		} else {
@@ -238,7 +241,7 @@ public class Scraping {
 		return res;
 	}
 
-	public static boolean writeToJson(ArrayList<Song> list) {
+	public static boolean writeToJson(List<Song> list) {
 		boolean res = true;
 		SongJSONProperty property = new SongJSONProperty();
 		property.setList(list);
