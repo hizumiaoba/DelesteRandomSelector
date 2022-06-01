@@ -14996,10 +14996,10 @@
   }, {
     "attribute" : "キュート",
     "name" : "ラビューダ♡トライアングル",
-    "difficulty" : "MASTER+",
+    "difficulty" : "ⓁMASTER+",
     "level" : 28,
     "notes" : 841,
-    "albumType" : "Not-implemented"
+    "albumType" : "ALBUM A"
   }, {
     "attribute" : "全タイプ",
     "name" : "キセキの証",
@@ -15455,5 +15455,54 @@
     "level" : 26,
     "notes" : 718,
     "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "ラビューダ♡トライアングル",
+    "difficulty" : "MASTER+",
+    "level" : 28,
+    "notes" : 844,
+    "albumType" : "ALBUM A"
+  }, {
+    "attribute" : "キュート",
+    "name" : "スローライフ・ファンタジー",
+    "difficulty" : "MASTER+",
+    "level" : 28,
+    "notes" : 693,
+    "albumType" : "ALBUM A"
+  }, {
+    "attribute" : "クール",
+    "name" : "No One Knows",
+    "difficulty" : "DEBUT",
+    "level" : 8,
+    "notes" : 119,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "No One Knows",
+    "difficulty" : "REGULAR",
+    "level" : 13,
+    "notes" : 179,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "No One Knows",
+    "difficulty" : "PRO",
+    "level" : 18,
+    "notes" : 376,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "No One Knows",
+    "difficulty" : "MASTER",
+    "level" : 27,
+    "notes" : 676,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "No One Knows",
+    "difficulty" : "MASTER+",
+    "level" : 30,
+    "notes" : 990,
+    "albumType" : "Not-implemented"
   } ]
 }
