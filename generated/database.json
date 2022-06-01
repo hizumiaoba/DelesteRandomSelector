@@ -14467,7 +14467,7 @@
     "difficulty" : "MASTER+",
     "level" : 29,
     "notes" : 988,
-    "albumType" : "Not-implemented"
+    "albumType" : "ALBUM C"
   }, {
     "attribute" : "全タイプ",
     "name" : "キセキの証",
@@ -14548,10 +14548,10 @@
   }, {
     "attribute" : "クール",
     "name" : "VOY＠GER",
-    "difficulty" : "MASTER+",
+    "difficulty" : "ⓁMASTER+",
     "level" : 30,
     "notes" : 999,
-    "albumType" : "Not-implemented"
+    "albumType" : "ALBUM B"
   }, {
     "attribute" : "パッション",
     "name" : "冬空プレシャス",
@@ -14870,10 +14870,10 @@
   }, {
     "attribute" : "パッション",
     "name" : "Demolish",
-    "difficulty" : "MASTER+",
+    "difficulty" : "ⓁMASTER+",
     "level" : 30,
     "notes" : 997,
-    "albumType" : "Not-implemented"
+    "albumType" : "ALBUM C"
   }, {
     "attribute" : "パッション",
     "name" : "トロピカルガール",
@@ -15364,5 +15364,96 @@
     "level" : 29,
     "notes" : 996,
     "albumType" : "Always"
+  }, {
+    "attribute" : "クール",
+    "name" : "VOY＠GER",
+    "difficulty" : "MASTER+",
+    "level" : 30,
+    "notes" : 999,
+    "albumType" : "ALBUM B"
+  }, {
+    "attribute" : "パッション",
+    "name" : "Demolish",
+    "difficulty" : "MASTER+",
+    "level" : 30,
+    "notes" : 998,
+    "albumType" : "ALBUM C"
+  }, {
+    "attribute" : "キュート",
+    "name" : "Blooming Days",
+    "difficulty" : "DEBUT",
+    "level" : 9,
+    "notes" : 138,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "Blooming Days",
+    "difficulty" : "REGULAR",
+    "level" : 14,
+    "notes" : 221,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "Blooming Days",
+    "difficulty" : "PRO",
+    "level" : 17,
+    "notes" : 382,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "Blooming Days",
+    "difficulty" : "MASTER",
+    "level" : 26,
+    "notes" : 692,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "Blooming Days",
+    "difficulty" : "MASTER+",
+    "level" : 29,
+    "notes" : 975,
+    "albumType" : "Not-implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "Spring Screaming",
+    "difficulty" : "LIGHT",
+    "level" : 6,
+    "notes" : 120,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "パッション",
+    "name" : "Spring Screaming",
+    "difficulty" : "TRICK",
+    "level" : 16,
+    "notes" : 323,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "トキメキは赤くて甘い",
+    "difficulty" : "DEBUT",
+    "level" : 6,
+    "notes" : 100,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "トキメキは赤くて甘い",
+    "difficulty" : "REGULAR",
+    "level" : 12,
+    "notes" : 181,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "トキメキは赤くて甘い",
+    "difficulty" : "PRO",
+    "level" : 17,
+    "notes" : 372,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "キュート",
+    "name" : "トキメキは赤くて甘い",
+    "difficulty" : "MASTER",
+    "level" : 26,
+    "notes" : 718,
+    "albumType" : "Not-Implemented"
   } ]
 }

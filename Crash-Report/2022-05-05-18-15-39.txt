@@ -1,0 +1,53 @@
+---- DelesteRandomSelector Crash Report ----
+// Shimamura Uzuki, I'll do my best!
+
+
+Time: 22/05/05 18:15
+Description: java.lang.IllegalArgumentException: Level must not negative.
+
+
+These are simplified stack trace. (shown up to 5 lines. Full Stack trace is below.)
+java.lang.IllegalStateException: java.util.concurrent.CompletionException: java.lang.IllegalArgumentException: Level must not negative.
+	at com.ranfa.main.DelesteRandomSelector.lambda$20(DelesteRandomSelector.java:508)
+	at java.base/java.util.concurrent.CompletableFuture.uniWhenComplete(CompletableFuture.java:859)
+	at java.base/java.util.concurrent.CompletableFuture$UniWhenComplete.tryFire(CompletableFuture.java:837)
+	at java.base/java.util.concurrent.CompletableFuture$Completion.run(CompletableFuture.java:478)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+
+Stacktrace:
+	at com.ranfa.main.DelesteRandomSelector.lambda$20(DelesteRandomSelector.java:508)
+	at java.base/java.util.concurrent.CompletableFuture.uniWhenComplete(CompletableFuture.java:859)
+	at java.base/java.util.concurrent.CompletableFuture$UniWhenComplete.tryFire(CompletableFuture.java:837)
+	at java.base/java.util.concurrent.CompletableFuture$Completion.run(CompletableFuture.java:478)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+Caused by: java.util.concurrent.CompletionException: java.lang.IllegalArgumentException: Level must not negative.
+	at java.base/java.util.concurrent.CompletableFuture.encodeThrowable(CompletableFuture.java:314)
+	at java.base/java.util.concurrent.CompletableFuture.completeThrowable(CompletableFuture.java:319)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1739)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+Caused by: java.lang.IllegalArgumentException: Level must not negative.
+	at com.ranfa.lib.database.Scraping.getSpecificLevelSongs(Scraping.java:176)
+	at com.ranfa.main.DelesteRandomSelector.lambda$19(DelesteRandomSelector.java:493)
+	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1736)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+
+-- System Details --
+Details:
+	DelesteRandomSelector Version: v4.0.3-Beta
+	Operating System: Windows 11 (amd64) version 10.0
+	Java Version: 11, Eclipse Adoptium
+	Java VM Version: OpenJDK 64-Bit Server VM, version 11.0.14.1+1
+	Memory: 75112704 bytes / 268435456 bytes up to 4273995776 bytes
+	JVM Flags: 1 total: [-Dfile.encoding=UTF-8]

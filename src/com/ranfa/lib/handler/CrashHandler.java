@@ -35,7 +35,7 @@ public class CrashHandler {
 				"// I may be so bad to code?",
 				"// Shimamura Uzuki, I'll do my best!",
 				"// This is also adventure!, isn't it?",
-				"// I... leave all books... behind... 'cause I want to talk... with you...",
+				"// I... left all books... behind... 'cause I want to talk... with you...",
 				"// This software was developed by @hizumiaoba",
 				"// These Easter sentences were inspired by Minecraft Crash Report!"
 		};
@@ -99,6 +99,7 @@ public class CrashHandler {
 				crashReportLines.add("---------------------------------------------------------------------------------------");
 				crashReportLines.emptyLine();
 				crashReportLines.add("Stacktrace:");
+				crashReportLines.add(e.getMessage());
 				addLinesRecursively(e, crashReportLines);
 			}
 			LOG.debug("Gathering system informations.");
@@ -150,8 +151,16 @@ public class CrashHandler {
 			return description;
 		}
 		
+		public void setDescription(String desc) {
+			this.description = desc;
+		}
+		
 		public Throwable getThrowable() {
 			return e;
+		}
+		
+		public void setCause(Throwable e) {
+			this.e = e;
 		}
 		
 		public int getEstimateExitCode() {

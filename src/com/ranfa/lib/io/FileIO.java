@@ -34,18 +34,12 @@ public class FileIO {
 		this.data = data;
 	}
 	
-	public boolean write() {
+	public void write() throws IOException {
 		StringBuilder builder = new StringBuilder(new SimpleDateFormat(FILE_NAME_PATTERN).format(new Date()));
 		builder.append(FILE_EXTENSION);
-		try {
 			ObjectOutputStream outStream = new ObjectOutputStream(new FileOutputStream(builder.toString()));
 			outStream.writeObject(data);
 			outStream.close();
-			return true;
-		} catch (IOException e) {
-			logger.error("Exception while output objects", e);
-			return false;
-		}
 	}
 	
 	public static OutputDataStructure read(String fileName) {
