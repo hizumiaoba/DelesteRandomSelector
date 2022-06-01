@@ -613,7 +613,6 @@ public class DelesteRandomSelector extends JFrame {
 	btnTwitterIntegration = new JButton(Messages.MSGTwitterIntegration.toString());
 	btnTwitterIntegration.addActionListener(e -> {
 		CompletableFuture.runAsync(() -> {
-			boolean authorizationStatus = TwitterIntegration.authorization();
 			String updatedStatus = Messages.MSGUsingThisAppPhrase.toString();
 			int lengthLimit = updatedStatus.length();
 			boolean isBroken = false;
@@ -630,13 +629,12 @@ public class DelesteRandomSelector extends JFrame {
 				}
 			}
 			if(isBroken) {
-				updatedStatus = updatedStatus + Messages.MSGTwitterPlayOtherwisePhrase.toString() + "\n#DelesteRandomSelector #デレステ ";
+				updatedStatus = updatedStatus + Messages.MSGTwitterPlayOtherwisePhrase.toString();
 			} else {
-				updatedStatus = updatedStatus + Messages.MSGTwitterPlayOnlyPhrase.toString() + "\n#DelesteRandomSelector #デレステ ";
+				updatedStatus = updatedStatus + Messages.MSGTwitterPlayOnlyPhrase.toString();
 			}
 			DelesteRandomSelector.this.logger.info("status message constructed.");
 			lengthLimit = updatedStatus.length();
-			if(authorizationStatus) {
 				int option = JOptionPane.showConfirmDialog(null, Messages.MSGTwitterIntegrationConfirm.toString() + updatedStatus + Messages.MSGStringLength.toString() + lengthLimit);
 				DelesteRandomSelector.this.logger.info("user seletced: " + option);
 				switch(option) {
@@ -654,9 +652,6 @@ public class DelesteRandomSelector extends JFrame {
 				default:
 					break;
 				}
-			} else {
-				DelesteRandomSelector.this.logger.info("seems to reject the permission.it should need try again.");
-			}
 		}, es).whenCompleteAsync((ret, ex) -> {
 			if(ex != null) {
 				logger.error("Exception was thrown during concurrent process", ex);
