@@ -1,8 +1,9 @@
 package test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 
 import com.ranfa.lib.database.Scraping;
@@ -10,7 +11,7 @@ import com.ranfa.lib.database.Song;
 
 public class FileIOTest {
 
-	private ArrayList<Song> webData = Scraping.getWholeData();
+	private List<Song> webData = Scraping.getWholeData();
 
 	// Local write test
 	@Test

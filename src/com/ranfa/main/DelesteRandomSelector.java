@@ -1,3 +1,18 @@
+/*
+ * Copyright 2022 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ranfa.main;
 
 import java.awt.BorderLayout;
@@ -7,6 +22,7 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -28,6 +44,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -56,17 +73,36 @@ import com.ranfa.lib.Suffix;
 import com.ranfa.lib.TwitterIntegration;
 import com.ranfa.lib.Version;
 import com.ranfa.lib.calc.FanCalc;
+import com.ranfa.lib.calc.PRPCalc;
 import com.ranfa.lib.concurrent.CountedThreadFactory;
 import com.ranfa.lib.database.EstimateAlbumTypeCycle;
 import com.ranfa.lib.database.Scraping;
 import com.ranfa.lib.database.Song;
 import com.ranfa.lib.handler.CrashHandler;
+import com.ranfa.lib.io.FileIO;
+import com.ranfa.lib.io.OutputDataStructure;
 import com.ranfa.lib.songinfo.FetchFromAPI;
 
+/**
+ * メイン処理クラス。
+ * <p>
+ * メインスレッドでは基本的に何もしない。
+ * 
+ * @author hizum
+ *
+ * @since 0.0.1
+ */
 @Version(major = 4, minor = 0, patch = 3, suffix = Suffix.BETA)
 public class DelesteRandomSelector extends JFrame {
 
+	/**
+	 * ランダムに選択された楽曲を格納するためのList。
+	 * <p>
+	 * 選ばれた楽曲を使用する処理は基本的に全てここから取得する。
+	 */
     private static ArrayList<Song> selectedSongsList = new ArrayList<>();
+    
+    private static boolean isDebugMode = false;
 
     private JPanel contentPane;
     private SettingJSONProperty property = new SettingJSONProperty();
@@ -137,7 +173,12 @@ public class DelesteRandomSelector extends JFrame {
     private JLabel labelMemberToolTip;
     private JButton btnMoreInfoTool;
     
-    BiConsumer<ArrayList<Song>, ArrayList<Song>> updateConsumer = (list1, list2) -> {
+    /**
+     * アップデート処理用の{@link BiConsumer}。
+     * <p>
+     * 実際は{@link CompletableFuture}によって使用される。
+     */
+    BiConsumer<List<Song>, List<Song>> updateConsumer = (list1, list2) -> {
 	    this.logger.info("Checking database updates...");
 	    if(list1.size() > list2.size()) {
 		long time = System.currentTimeMillis();
@@ -149,6 +190,16 @@ public class DelesteRandomSelector extends JFrame {
 		this.logger.info("database is up-to-date.");
 	    }
 	};
+	
+	/**
+	 * ライブラリ関連の処理完了後に{@link JButton}を有効化するための{@link Runnable}。
+	 * <p>
+	 * <ul>
+	 * <li>{@link JButton}の有効化</li>
+	 * <li>表示するテキストの更新</li>
+	 * </ul>
+	 * を行う
+	 */
 	Runnable setEnabled = () -> {
 	    try {
 		Thread.sleep(3 * 1000L);
@@ -201,11 +252,16 @@ public class DelesteRandomSelector extends JFrame {
 	private JLabel lblProduce;
 	private JLabel lblPremium;
 	private JButton button;
+	private JButton btnScoreFileOut;
+	private JButton btnScoreReadFile;
 
     /**
      * Launch the application.
      */
     public static void main(String[] args) {
+    	if(args.length == 1) {
+    		isDebugMode = Boolean.valueOf(args[0]);
+    	}
 	EventQueue.invokeLater(() -> {
 	    try {
 		DelesteRandomSelector frame = new DelesteRandomSelector();
@@ -213,7 +269,6 @@ public class DelesteRandomSelector extends JFrame {
 	    } catch (Exception e) {
 		e.printStackTrace();
 	    }
-
 	});
     }
 
@@ -251,16 +306,16 @@ public class DelesteRandomSelector extends JFrame {
 	}, es).whenCompleteAsync((ret, ex) -> {
 		if(ex != null) {
 			logger.error("Exception was thrown during concurrent process", ex);
-			CrashHandler handle = new CrashHandler(ex);
+			CrashHandler handle = new CrashHandler(ex.getMessage(), ex);
 			if(ex instanceof NullPointerException) {
 				handle.execute();
 			}
-			handle = new CrashHandler(new IllegalStateException(ex));
+			handle = new CrashHandler(ex.getMessage(), new IllegalStateException(ex));
 			handle.execute();
 		}
 	}, es);
-	CompletableFuture<ArrayList<Song>> getFromJsonFuture = CompletableFuture.supplyAsync(() -> Scraping.getFromJson(), es);
-	CompletableFuture<ArrayList<Song>> getWholeDataFuture = CompletableFuture.supplyAsync(() -> Scraping.getWholeData(), es);
+	CompletableFuture<List<Song>> getFromJsonFuture = CompletableFuture.supplyAsync(() -> Scraping.getFromJson(), es);
+	CompletableFuture<List<Song>> getWholeDataFuture = CompletableFuture.supplyAsync(() -> Scraping.getWholeData(), es);
 	// setting check phase
 	CompletableFuture.runAsync(() -> {
 		if(!Settings.fileExists() && !Settings.writeDownJSON()) {
@@ -271,12 +326,15 @@ public class DelesteRandomSelector extends JFrame {
 	}, es).whenCompleteAsync((ret, ex) -> {
 		if(ex != null) {
 			logger.error("Exception was thrown during concurrent process", ex);
-			CrashHandler handle = new CrashHandler(ex);
+			CrashHandler handle = new CrashHandler(ex.getMessage(), ex);
 			if(ex instanceof NullPointerException) {
 				handle.execute();
 			}
-			handle = new CrashHandler(new IllegalStateException(ex));
+			handle = new CrashHandler(ex.getMessage(), new IllegalStateException(ex));
 			handle.execute();
+		}
+		if(isDebugMode) {
+			logger.debug("WARNING: This is the debug mode. you cannot use outside API services.");
 		}
 		this.logger.debug("Loading settings...");
 		this.property.setCheckLibraryUpdates(Settings.needToCheckLibraryUpdates());
@@ -309,7 +367,7 @@ public class DelesteRandomSelector extends JFrame {
 	}, es).whenCompleteAsync((ret, ex) -> {
 		if(ex != null) {
 			logger.error("Exception was thrown during concurrent process", ex);
-			CrashHandler handle = new CrashHandler(new IllegalStateException(ex));
+			CrashHandler handle = new CrashHandler(ex.getMessage(), new IllegalStateException(ex));
 			handle.execute();
 		}
 	}, es);
@@ -430,11 +488,11 @@ public class DelesteRandomSelector extends JFrame {
 					JOptionPane.showMessageDialog(null, Messages.MSGManualUpdateNotCompleteYet.toString());
 				}
 			}
-			ArrayList<Song> fromJson = Scraping.getFromJson();
-			ArrayList<Song> specificlevelList = Scraping.getSpecificLevelSongs(fromJson, (Integer)DelesteRandomSelector.this.spinnerLevel.getValue(), DelesteRandomSelector.this.checkLessLv.isSelected(), DelesteRandomSelector.this.checkMoreLv.isSelected());
-			ArrayList<Song> specificDifficultyList = Scraping.getSpecificDifficultySongs(specificlevelList, DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().toString());
-			ArrayList<Song> specificAttributeList = Scraping.getSpecificAttributeSongs(specificDifficultyList, DelesteRandomSelector.this.comboAttribute.getSelectedItem().toString());
-			ArrayList<Song> specificTypeList = Scraping.getSpecificAlbumTypeSongs(specificAttributeList, EstimateAlbumTypeCycle.getCurrentCycle());
+			List<Song> fromJson = Scraping.getFromJson();
+			List<Song> specificlevelList = Scraping.getSpecificLevelSongs(fromJson, (Integer)DelesteRandomSelector.this.spinnerLevel.getValue(), DelesteRandomSelector.this.checkLessLv.isSelected(), DelesteRandomSelector.this.checkMoreLv.isSelected());
+			List<Song> specificDifficultyList = Scraping.getSpecificDifficultySongs(specificlevelList, DelesteRandomSelector.this.comboDifficultySelect.getSelectedItem().toString());
+			List<Song> specificAttributeList = Scraping.getSpecificAttributeSongs(specificDifficultyList, DelesteRandomSelector.this.comboAttribute.getSelectedItem().toString());
+			List<Song> specificTypeList = Scraping.getSpecificAlbumTypeSongs(specificAttributeList, EstimateAlbumTypeCycle.getCurrentCycle());
 			if(!selectedSongsList.isEmpty()) {
 				selectedSongsList.clear();
 			}
@@ -444,7 +502,9 @@ public class DelesteRandomSelector extends JFrame {
 		}, es).whenCompleteAsync((ret, ex) -> {
 			if(ex != null) {
 				logger.error("Exception was thrown during concurrent process", ex);
-				CrashHandler handle = new CrashHandler(new IllegalStateException(ex));
+				if(ex instanceof IllegalArgumentException)
+					return; // ignore
+				CrashHandler handle = new CrashHandler(ex.getMessage(), new IllegalStateException(ex));
 				handle.execute();
 			}
 		}, es);
@@ -467,7 +527,7 @@ public class DelesteRandomSelector extends JFrame {
 		}, es).whenCompleteAsync((ret, ex) -> {
 			if(ex != null) {
 				logger.error("Exception was thrown during concurrent process", ex);
-				CrashHandler handle = new CrashHandler(new IllegalStateException(ex));
+				CrashHandler handle = new CrashHandler(ex.getMessage(), new IllegalStateException(ex));
 				handle.execute();
 			}
 		}, es);
@@ -477,6 +537,10 @@ public class DelesteRandomSelector extends JFrame {
 	btnStart = new JButton(Messages.MSGCalcStart.toString());
 	btnStart.addActionListener(e -> {
 		CompletableFuture.runAsync(() -> {
+			if(selectedSongsList.isEmpty()) {
+				logger.warn("User has not started playing yet.");
+				return;
+			}
 			Random random = new Random(System.currentTimeMillis());
 			toolIntegrateList = new ArrayList<>();
 			StringBuilder paneBuilder = new StringBuilder();
@@ -506,6 +570,10 @@ public class DelesteRandomSelector extends JFrame {
 			DelesteRandomSelector.this.textArea.setText(paneBuilder.toString());
 			DelesteRandomSelector.this.integratorBool = true;
 			DelesteRandomSelector.this.logger.info("show up completed.");
+			if(isDebugMode) {
+				logger.warn("API publish will NOT be executed due to debug mode.");
+				return;
+			}
 			labelCurrentSongOrderTool.setText("null");
 			progressTool.setValue(0);
 			listToolMapDataFuture = CompletableFuture.supplyAsync(() -> {
@@ -519,7 +587,7 @@ public class DelesteRandomSelector extends JFrame {
 		}, es).whenCompleteAsync((ret, ex) -> {
 			if(ex != null) {
 				logger.error("Exception was thrown during concurrent process", ex);
-				CrashHandler handle = new CrashHandler(new IllegalStateException(ex));
+				CrashHandler handle = new CrashHandler(ex.getMessage(), new IllegalStateException(ex));
 				handle.execute();
 			}
 		}, es);
@@ -533,7 +601,7 @@ public class DelesteRandomSelector extends JFrame {
 		CompletableFuture.runAsync(impl, es).whenCompleteAsync((t, u) -> {
 			if(u != null) {
 				logger.warn("Exception while processing update manually.", u);
-				CrashHandler handle = new CrashHandler(new IllegalStateException(u));
+				CrashHandler handle = new CrashHandler(u.getMessage(), new IllegalStateException(u));
 				handle.execute();
 				JOptionPane.showMessageDialog(null, "There was a problem during processing library update manually.\nIf this appears repeatedly, please contact developer with your app log.");
 			}
@@ -544,7 +612,6 @@ public class DelesteRandomSelector extends JFrame {
 	btnTwitterIntegration = new JButton(Messages.MSGTwitterIntegration.toString());
 	btnTwitterIntegration.addActionListener(e -> {
 		CompletableFuture.runAsync(() -> {
-			boolean authorizationStatus = TwitterIntegration.authorization();
 			String updatedStatus = Messages.MSGUsingThisAppPhrase.toString();
 			int lengthLimit = updatedStatus.length();
 			boolean isBroken = false;
@@ -561,13 +628,12 @@ public class DelesteRandomSelector extends JFrame {
 				}
 			}
 			if(isBroken) {
-				updatedStatus = updatedStatus + Messages.MSGTwitterPlayOtherwisePhrase.toString() + "\n#DelesteRandomSelector #デレステ ";
+				updatedStatus = updatedStatus + Messages.MSGTwitterPlayOtherwisePhrase.toString();
 			} else {
-				updatedStatus = updatedStatus + Messages.MSGTwitterPlayOnlyPhrase.toString() + "\n#DelesteRandomSelector #デレステ ";
+				updatedStatus = updatedStatus + Messages.MSGTwitterPlayOnlyPhrase.toString();
 			}
 			DelesteRandomSelector.this.logger.info("status message constructed.");
 			lengthLimit = updatedStatus.length();
-			if(authorizationStatus) {
 				int option = JOptionPane.showConfirmDialog(null, Messages.MSGTwitterIntegrationConfirm.toString() + updatedStatus + Messages.MSGStringLength.toString() + lengthLimit);
 				DelesteRandomSelector.this.logger.info("user seletced: " + option);
 				switch(option) {
@@ -585,13 +651,10 @@ public class DelesteRandomSelector extends JFrame {
 				default:
 					break;
 				}
-			} else {
-				DelesteRandomSelector.this.logger.info("seems to reject the permission.it should need try again.");
-			}
 		}, es).whenCompleteAsync((ret, ex) -> {
 			if(ex != null) {
 				logger.error("Exception was thrown during concurrent process", ex);
-				CrashHandler handle = new CrashHandler(new IllegalStateException(ex));
+				CrashHandler handle = new CrashHandler(ex.getMessage(), new IllegalStateException(ex));
 				handle.execute();
 			}
 		}, es);
@@ -674,10 +737,10 @@ public class DelesteRandomSelector extends JFrame {
 				labelScoreNotesDynamic.setText(String.valueOf(firstSong.getNotes()));
 			}
 		}, es).whenCompleteAsync((ret, ex) -> {
-			labelToolProgress.setText("Information parse Complete.");
+			labelToolProgress.setText(Messages.MSGInfoCompletedSongInformationParsing.toString());
 			if(ex != null) {
 				logger.error("Exception was thrown during concurrent process", ex);
-				CrashHandler handle = new CrashHandler(new IllegalStateException(ex));
+				CrashHandler handle = new CrashHandler(ex.getMessage(), new IllegalStateException(ex));
 				handle.execute();
 			}
 		}, es);
@@ -698,7 +761,7 @@ public class DelesteRandomSelector extends JFrame {
 		new RowSpec[] {
 			RowSpec.decode("max(16dlu;default)"),}));
 	
-	labelSubToolTitle = new JLabel("楽曲情報");
+	labelSubToolTitle = new JLabel(Messages.MSGInfoSongInformations.toString());
 	labelSubToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 16));
 	panelNorthTool.add(labelSubToolTitle, "1, 1");
 	
@@ -854,7 +917,7 @@ public class DelesteRandomSelector extends JFrame {
 	labelNotesToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelNotesToolTip, "10, 22, center, default");
 	
-	btnNextSongTool = new JButton("next");
+	btnNextSongTool = new JButton(Messages.MSGNext.toString());
 	btnNextSongTool.addActionListener(e -> {
 		CompletableFuture.runAsync(() -> {
 			int currentIndex = Integer.parseInt(labelCurrentSongOrderTool.getText()) - 1;
@@ -882,14 +945,10 @@ public class DelesteRandomSelector extends JFrame {
 				labelArrangeToolTip.setText(fetchMap.get("arrange"));
 				labelMemberToolTip.setText("<html><body>" + fetchMap.get("member") + "</html></body>");
 			}
-		}, es).whenCompleteAsync((ret, ex) -> {
-			if(ex != null) {
-				logger.error("Exception was thrown during concurrent process", ex);
-			}
-		}, es);
+		}, es).whenCompleteAsync(this::whenCompleteProcess, es);
 	});
 	
-	btnPrevSongTool = new JButton("prev");
+	btnPrevSongTool = new JButton(Messages.MSGPrev.toString());
 	btnPrevSongTool.addActionListener(e -> {
 		CompletableFuture.runAsync(() -> {
 			int currentIndex = Integer.parseInt(labelCurrentSongOrderTool.getText()) - 1;
@@ -917,11 +976,7 @@ public class DelesteRandomSelector extends JFrame {
 				labelArrangeToolTip.setText(fetchMap.get("arrange"));
 				labelMemberToolTip.setText("<html><body>" + fetchMap.get("member") + "</html></body>");
 			}
-		}, es).whenCompleteAsync((ret, ex) -> {
-			if(ex != null) {
-				logger.error("Exception was thrown during concurrent process", ex);
-			}
-		}, es);
+		}, es).whenCompleteAsync(this::whenCompleteProcess, es);
 	});
 	btnPrevSongTool.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(btnPrevSongTool, "10, 28");
@@ -962,11 +1017,7 @@ public class DelesteRandomSelector extends JFrame {
 				JOptionPane.showMessageDialog(null, "このメッセージは仮です。Exception : " + e1.getClass().getSimpleName());
 				logger.error("Exception while opening default browser.", e1);
 			}
-		}, es).whenCompleteAsync((ret, ex) -> {
-			if(ex != null) {
-				logger.warn("Exception was thrown during action events.", ex);
-			}
-		}, es);
+		}, es).whenCompleteAsync(this::whenCompleteProcess, es);
 	});
 	btnMoreInfoTool.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(btnMoreInfoTool, "25, 28");
@@ -1071,116 +1122,115 @@ public class DelesteRandomSelector extends JFrame {
 			FormSpecs.RELATED_GAP_ROWSPEC,
 			RowSpec.decode("default:grow"),}));
 	
-	labelScoreUserPlayed = new JLabel("Your score");
+	labelScoreUserPlayed = new JLabel(Messages.MSGActual.toString() + " " + Messages.MSGToolScore.toString());
+	labelScoreUserPlayed.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelScoreUserPlayed, "4, 10, center, default");
 	
 	fieldScoreUserPlayed = new JTextField();
 	panelScoreCenter.add(fieldScoreUserPlayed, "6, 10, fill, default");
 	fieldScoreUserPlayed.setColumns(10);
 	
-	lblSongname = new JLabel("Songname");
+	lblSongname = new JLabel(Messages.MSGInfoSongName.toString());
+	lblSongname.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(lblSongname, "10, 10, center, default");
 	
 	labelScoreSongnameDynamic = new JLabel("<dynamic>");
+	labelScoreSongnameDynamic.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelScoreSongnameDynamic, "12, 10, center, default");
 	
-	labelScoreEarnedFan = new JLabel("Earned Fan");
+	labelScoreEarnedFan = new JLabel(Messages.MSGEstimated.toString() + " " + Messages.MSGToolFan.toString());
+	labelScoreEarnedFan.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelScoreEarnedFan, "4, 14, center, default");
 	
 	fieldScoreEarnedFan = new JTextField();
 	panelScoreCenter.add(fieldScoreEarnedFan, "6, 14, fill, default");
 	fieldScoreEarnedFan.setColumns(10);
 	
-	labelScoreAttribute = new JLabel("Attribute");
+	labelScoreAttribute = new JLabel(Messages.MSGInfoSongAttribute.toString());
+	labelScoreAttribute.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelScoreAttribute, "10, 14, center, default");
 	
 	labelScoreAttributeDynamic = new JLabel("<dynamic>");
+	labelScoreAttributeDynamic.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelScoreAttributeDynamic, "12, 14");
 	
-	lblRoom = new JLabel("room");
+	lblRoom = new JLabel(Messages.MSGRoom.toString());
+	lblRoom.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(lblRoom, "4, 18, center, default");
 	
 	fieldScoreRoom = new JTextField();
 	panelScoreCenter.add(fieldScoreRoom, "6, 18, fill, default");
 	fieldScoreRoom.setColumns(10);
 	
-	labelScoreDifficulty = new JLabel("Difficulty");
+	labelScoreDifficulty = new JLabel(Messages.MSGInfoSongDifficulty.toString());
+	labelScoreDifficulty.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelScoreDifficulty, "10, 18, center, default");
 	
 	labelScoreDifficultyDynamic = new JLabel("<dynamic>");
+	labelScoreDifficultyDynamic.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelScoreDifficultyDynamic, "12, 18");
 	
-	lblCenter = new JLabel("center");
+	lblCenter = new JLabel(Messages.MSGCenter.toString());
+	lblCenter.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(lblCenter, "4, 22, center, default");
 	
 	fieldScoreCenter = new JTextField();
 	panelScoreCenter.add(fieldScoreCenter, "6, 22, fill, default");
 	fieldScoreCenter.setColumns(10);
 	
-	labelScoreLevel = new JLabel("Level");
+	labelScoreLevel = new JLabel(Messages.MSGInfoSongLevel.toString());
+	labelScoreLevel.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelScoreLevel, "10, 22, center, default");
 	
 	labelScoreLevelDynamic = new JLabel("<dynamic>");
+	labelScoreLevelDynamic.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelScoreLevelDynamic, "12, 22");
 	
-	lblProduce = new JLabel("produce");
+	lblProduce = new JLabel(Messages.MSGProducer.toString());
+	lblProduce.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(lblProduce, "4, 26, center, default");
 	
 	fieldScoreProduce = new JTextField();
 	panelScoreCenter.add(fieldScoreProduce, "6, 26, fill, default");
 	fieldScoreProduce.setColumns(10);
 	
-	labelScoreNotes = new JLabel("Notes");
+	labelScoreNotes = new JLabel(Messages.MSGInfoSongNotes.toString());
+	labelScoreNotes.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelScoreNotes, "10, 26, center, default");
 	
 	labelScoreNotesDynamic = new JLabel("<dynamic>");
+	labelScoreNotesDynamic.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelScoreNotesDynamic, "12, 26");
 	
-	lblPremium = new JLabel("premium");
+	labelScoreCurrentSongOrder = new JLabel("null");
+	labelScoreCurrentSongOrder.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelScoreCenter.add(labelScoreCurrentSongOrder, "14, 28, center, default");
+	
+	labelScoreSlash = new JLabel("/");
+	labelScoreSlash.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelScoreCenter.add(labelScoreSlash, "16, 28, center, default");
+	
+	labelScoreOrderMax = new JLabel(String.valueOf(property.getSongLimit()));
+	labelScoreOrderMax.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelScoreCenter.add(labelScoreOrderMax, "18, 28, center, default");
+	
+	lblPremium = new JLabel(Messages.MSGPremium.toString());
+	lblPremium.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(lblPremium, "4, 30, center, default");
 	
 	fieldScorePremium = new JTextField();
 	panelScoreCenter.add(fieldScorePremium, "6, 30, fill, default");
 	fieldScorePremium.setColumns(10);
 	
-	labelPlayerScore = new JLabel("Estimated Score");
+	labelPlayerScore = new JLabel(Messages.MSGEstimated.toString() + " " + Messages.MSGToolScore.toString());
+	labelPlayerScore.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelPlayerScore, "10, 30, center, default");
 	
 	labelPlayerScoreDynamic = new JLabel("<dynamic>");
+	labelPlayerScoreDynamic.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelPlayerScoreDynamic, "12, 30");
 	
-	labelScoreCurrentSongOrder = new JLabel("null");
-	panelScoreCenter.add(labelScoreCurrentSongOrder, "14, 30, center, default");
-	
-	labelScoreSlash = new JLabel("/");
-	panelScoreCenter.add(labelScoreSlash, "16, 30, center, default");
-	
-	labelScoreOrderMax = new JLabel(String.valueOf(property.getSongLimit()));
-	panelScoreCenter.add(labelScoreOrderMax, "18, 30, center, default");
-	
-	btnScorePrev = new JButton("Prev");
-	btnScorePrev.addActionListener(new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			CompletableFuture.runAsync(() -> {
-				int currentIndex = Integer.parseInt(labelScoreCurrentSongOrder.getText()) - 1;
-				if(currentIndex != 0) {
-					Song prevSong = toolIntegrateList.get(currentIndex - 1);
-					logger.info("currently : {} Next: {}", currentIndex + 1, currentIndex);
-					logger.info("prevSong: {}", prevSong);
-					labelScoreSongnameDynamic.setText("<html><body>" + prevSong.getName() + "</body></html>");
-					labelScoreAttributeDynamic.setText(prevSong.getAttribute());
-					labelScoreDifficultyDynamic.setText(prevSong.getDifficulty());
-					labelScoreLevelDynamic.setText(String.valueOf(prevSong.getLevel()));
-					labelScoreNotesDynamic.setText(String.valueOf(prevSong.getNotes()));
-					labelScoreCurrentSongOrder.setText(String.valueOf(currentIndex));
-				}
-			}, es);
-		}
-	});
-	panelScoreCenter.add(btnScorePrev, "14, 32");
-	
-	btnScoreNext = new JButton("Next");
+	btnScoreNext = new JButton(Messages.MSGNext.toString());
 	btnScoreNext.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -1200,66 +1250,99 @@ public class DelesteRandomSelector extends JFrame {
 			}, es);
 		}
 	});
-	panelScoreCenter.add(btnScoreNext, "18, 32");
 	
-	labelPlayerFan = new JLabel("Estimated Fan");
-	panelScoreCenter.add(labelPlayerFan, "10, 34, center, default");
-	
-	labelPlayerFanDynamic = new JLabel("<dynamic>");
-	panelScoreCenter.add(labelPlayerFanDynamic, "12, 34");
-	
-	button = new JButton("自動計算");
-	button.addActionListener(new ActionListener() {
+	btnScorePrev = new JButton(Messages.MSGPrev.toString());
+	btnScorePrev.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			CompletableFuture.runAsync(() -> {
-				String scoreStr = fieldScoreUserPlayed.getText();
-				String fanStr = fieldScoreEarnedFan.getText();
-				if(scoreStr.isEmpty() && fanStr.isEmpty()) {
-					logger.warn("there is no data to calculate.");
-					JOptionPane.showMessageDialog(null, "計算できるデータが存在しません。スコアかファン数のどちらかは必ず入力してください。");
-					return;
+				int currentIndex = Integer.parseInt(labelScoreCurrentSongOrder.getText()) - 1;
+				if(currentIndex != 0) {
+					Song prevSong = toolIntegrateList.get(currentIndex - 1);
+					logger.info("currently : {} Next: {}", currentIndex + 1, currentIndex);
+					logger.info("prevSong: {}", prevSong);
+					labelScoreSongnameDynamic.setText("<html><body>" + prevSong.getName() + "</body></html>");
+					labelScoreAttributeDynamic.setText(prevSong.getAttribute());
+					labelScoreDifficultyDynamic.setText(prevSong.getDifficulty());
+					labelScoreLevelDynamic.setText(String.valueOf(prevSong.getLevel()));
+					labelScoreNotesDynamic.setText(String.valueOf(prevSong.getNotes()));
+					labelScoreCurrentSongOrder.setText(String.valueOf(currentIndex));
 				}
-				labelPlayerScoreDynamic.setText("Calculating...");
-				labelPlayerFanDynamic.setText("Calculating...");
-				String roomStr = fieldScoreRoom.getText();
-				String centerStr = fieldScoreCenter.getText();
-				String produceStr = fieldScoreProduce.getText();
-				String premiumStr = fieldScorePremium.getText();
-				if(!scoreStr.isEmpty()) {
-					int score = Integer.parseInt(scoreStr);
-					int room = roomStr.isEmpty() ? 100 : Integer.parseInt(roomStr);
-					int center = centerStr.isEmpty() ? 100 : Integer.parseInt(centerStr);
-					int produce = produceStr.isEmpty() ? 100 : Integer.parseInt(produceStr);
-					int premium = premiumStr.isEmpty() ? 100 : Integer.parseInt(premiumStr);
-					int res = FanCalc.fanAsync(score, room, center, produce, premium).join();
-					labelPlayerScoreDynamic.setText(String.valueOf(res));
-					labelPlayerFanDynamic.setText(scoreStr);
-				} else {
-					int fan = Integer.parseInt(fanStr);
-					int room = roomStr.isEmpty() ? 100 : Integer.parseInt(fanStr);
-					int center = centerStr.isEmpty() ? 100 : Integer.parseInt(centerStr);
-					int produce = produceStr.isEmpty() ? 100 : Integer.parseInt(produceStr);
-					int premium = premiumStr.isEmpty() ? 100 : Integer.parseInt(premiumStr);
-					int res = FanCalc.scoreAsync(fan, 1, room, center, produce, premium).join();
-					labelPlayerFanDynamic.setText(String.valueOf(res));
-					labelPlayerScoreDynamic.setText(scoreStr);
-				}
-			}, es).whenComplete((ret, ex) -> {
-				if(ex != null) {
-					logger.error("Exception was thrown during concurrent process.", ex);
-					JOptionPane.showMessageDialog(null, "イベント処理中に例外が発生しました。" + ex.getLocalizedMessage());
-				}
-			});
+			}, es);
 		}
 	});
-	panelScoreCenter.add(button, "18, 36");
+	panelScoreCenter.add(btnScorePrev, "14, 30");
+	panelScoreCenter.add(btnScoreNext, "18, 30");
 	
-	labelPlayerPRP = new JLabel("Estimated PRP");
+	labelPlayerFan = new JLabel(Messages.MSGEstimated.toString() + " " + Messages.MSGToolFan.toString());
+	labelPlayerFan.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelScoreCenter.add(labelPlayerFan, "10, 34, center, default");
+	
+	labelPlayerFanDynamic = new JLabel("<dynamic>");
+	labelPlayerFanDynamic.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
+	panelScoreCenter.add(labelPlayerFanDynamic, "12, 34");
+	
+	btnScoreFileOut = new JButton("ファイルへ保存");
+	btnScoreFileOut.addActionListener(e -> {
+		CompletableFuture.runAsync(() -> {
+			int currIndex = Integer.parseInt(labelScoreCurrentSongOrder.getText()) - 1;
+			Song curr = toolIntegrateList.get(currIndex);
+			String songname = curr.getName();
+			int level = curr.getLevel();
+			String difficulty = curr.getDifficulty();
+			String attribute = curr.getAttribute();
+			int score = Integer.parseInt(fieldScoreUserPlayed.getText());
+			FileIO ioOut = new FileIO(new OutputDataStructure(songname, level, difficulty, attribute, score));
+			try {
+				ioOut.write();
+				JOptionPane.showMessageDialog(null, "ファイルの生成が完了しました。");
+			} catch (IOException e1) {
+				logger.error("There was a problem during writing object file.", e1);
+				JOptionPane.showMessageDialog(null, "ファイル生成中にエラーが発生しました。この状況が頻発する場合は開発サイトへご連絡ください。");
+			}
+		}, es).whenCompleteAsync(this::whenCompleteProcess, es);
+	});
+	
+	button = new JButton("自動計算");
+	button.addActionListener(e -> {
+			CompletableFuture.runAsync(() -> scoreCalcDetail(), es).whenCompleteAsync(this::whenCompleteProcess, es);
+	});
+	panelScoreCenter.add(button, "18, 34");
+	panelScoreCenter.add(btnScoreFileOut, "18, 36");
+	
+	labelPlayerPRP = new JLabel(Messages.MSGEstimated.toString() + " " + Messages.MSGPRP.toString());
+	labelPlayerPRP.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelPlayerPRP, "10, 38, center, default");
 	
 	labelPlayerPRPDynamic = new JLabel("<dynamic>");
+	labelPlayerPRPDynamic.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelPlayerPRPDynamic, "12, 38");
+	
+	btnScoreReadFile = new JButton("ファイル読込…");
+	btnScoreReadFile.addActionListener(e -> {
+		CompletableFuture.runAsync(() -> {
+			JFileChooser chooser = new JFileChooser(Paths.get("").toFile());
+			int option = chooser.showOpenDialog(this);
+			logger.info("user selected : {}", option);
+			switch (option) {
+			case JFileChooser.APPROVE_OPTION:
+				File file = chooser.getSelectedFile();
+				OutputDataStructure s = FileIO.read(file);
+				labelScoreSongnameDynamic.setText(s.getSongname());
+				labelScoreLevelDynamic.setText(String.valueOf(s.getLevel()));
+				labelScoreDifficultyDynamic.setText(s.getDifficulty());
+				labelScoreAttributeDynamic.setText(s.getAttribute());
+				fieldScoreUserPlayed.setText(String.valueOf(s.getScore()));
+				logger.info("Selected file: {}", file);
+				logger.info("infomations: {}", s);
+				CompletableFuture.runAsync(() -> scoreCalcDetail(), es);
+				break;
+			default:
+				logger.warn("There is no options we can do");
+			}
+		}, es).whenCompleteAsync(this::whenCompleteProcess, es);
+	});
+	panelScoreCenter.add(btnScoreReadFile, "18, 38");
 	
 	label = new JLabel("<html><body>デレステに表示されている百分率をそのまま入力してください</body></html>");
 	panelScoreCenter.add(label, "6, 40");
@@ -1267,4 +1350,63 @@ public class DelesteRandomSelector extends JFrame {
 	    setEnabled.run();
 	}
     }
+    
+    /**
+     * 非同期処理完了後の例外発生確認用のメソッド
+     * <p>
+     * 使用箇所が複数に渡るため抽出
+     * @param ret 前非同期処理での戻り値
+     * @param ex （存在するならば）スローされた例外
+     */
+    private void whenCompleteProcess(Void ret, Throwable ex) {
+    	if(ex != null) {
+			logger.error("Exception was thrown during concurrent process.", ex);
+			JOptionPane.showMessageDialog(null, "イベント処理中に例外が発生しました。" + ex.getLocalizedMessage(), "内部処理エラー", ERROR);
+		}
+    }
+
+	/**
+	 * score表示部において詳細情報を計算し表示するメソッド
+	 * <p>
+	 * 複数の{@link ActionEvent}で使用するため抽出
+	 */
+	private void scoreCalcDetail() {
+		String scoreStr = fieldScoreUserPlayed.getText();
+		String fanStr = fieldScoreEarnedFan.getText();
+		if(scoreStr.isEmpty() && fanStr.isEmpty()) {
+			logger.warn("there is no data to calculate.");
+			JOptionPane.showMessageDialog(null, "計算できるデータが存在しません。スコアかファン数のどちらかは必ず入力してください。");
+			return;
+		}
+		labelPlayerScoreDynamic.setText("Calculating...");
+		labelPlayerFanDynamic.setText("Calculating...");
+		String roomStr = fieldScoreRoom.getText();
+		String centerStr = fieldScoreCenter.getText();
+		String produceStr = fieldScoreProduce.getText();
+		String premiumStr = fieldScorePremium.getText();
+		if(!scoreStr.isEmpty()) {
+			int score = Integer.parseInt(scoreStr);
+			int room = roomStr.isEmpty() ? 100 : Integer.parseInt(roomStr);
+			int center = centerStr.isEmpty() ? 100 : Integer.parseInt(centerStr);
+			int produce = produceStr.isEmpty() ? 100 : Integer.parseInt(produceStr);
+			int premium = premiumStr.isEmpty() ? 100 : Integer.parseInt(premiumStr);
+			int res = FanCalc.fanAsync(score, room, center, produce, premium).join();
+			labelPlayerScoreDynamic.setText(scoreStr);
+			labelPlayerFanDynamic.setText(String.valueOf(res));
+		} else {
+			int fan = Integer.parseInt(fanStr);
+			int room = roomStr.isEmpty() ? 100 : Integer.parseInt(fanStr);
+			int center = centerStr.isEmpty() ? 100 : Integer.parseInt(centerStr);
+			int produce = produceStr.isEmpty() ? 100 : Integer.parseInt(produceStr);
+			int premium = premiumStr.isEmpty() ? 100 : Integer.parseInt(premiumStr);
+			int res = FanCalc.scoreAsync(fan, 1, room, center, produce, premium).join();
+			labelPlayerFanDynamic.setText(fanStr);
+			labelPlayerScoreDynamic.setText(String.valueOf(res));
+		}
+		CompletableFuture.runAsync(() -> {
+			int labelScore = Integer.parseInt(labelPlayerScoreDynamic.getText());
+			int estimatedPRP = PRPCalc.calcPRPFromScore(labelScore);
+			labelPlayerPRPDynamic.setText(String.valueOf(estimatedPRP));
+		});
+	}
 }

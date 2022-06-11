@@ -11,3 +11,6 @@ logs/
 twitterToken.json
 TwitterIntegration.java
 TwitterToken.java
+
+#Ignore local-generated record files
+*.drs

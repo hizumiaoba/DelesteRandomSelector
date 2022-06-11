@@ -4,6 +4,23 @@ import java.io.Serializable;
 
 public class OutputDataStructure implements Serializable {
 	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("OutputDataStructure [songname=");
+		builder.append(songname);
+		builder.append(", level=");
+		builder.append(level);
+		builder.append(", difficulty=");
+		builder.append(difficulty);
+		builder.append(", attribute=");
+		builder.append(attribute);
+		builder.append(", score=");
+		builder.append(score);
+		builder.append("]");
+		return builder.toString();
+	}
+
 	private static final long serialVersionUID = 1L;
 	
 	// fields

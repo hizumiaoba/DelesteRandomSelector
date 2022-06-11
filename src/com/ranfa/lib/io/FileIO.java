@@ -1,5 +1,6 @@
 package com.ranfa.lib.io;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -34,24 +35,18 @@ public class FileIO {
 		this.data = data;
 	}
 	
-	public boolean write() {
+	public void write() throws IOException {
 		StringBuilder builder = new StringBuilder(new SimpleDateFormat(FILE_NAME_PATTERN).format(new Date()));
 		builder.append(FILE_EXTENSION);
-		try {
 			ObjectOutputStream outStream = new ObjectOutputStream(new FileOutputStream(builder.toString()));
 			outStream.writeObject(data);
 			outStream.close();
-			return true;
-		} catch (IOException e) {
-			logger.error("Exception while output objects", e);
-			return false;
-		}
 	}
 	
-	public static OutputDataStructure read(String fileName) {
+	public static OutputDataStructure read(File file) {
 		FileInputStream fileInputStream;
 		try {
-			fileInputStream = new FileInputStream(fileName);
+			fileInputStream = new FileInputStream(file);
 			ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
 	        OutputDataStructure structure = (OutputDataStructure) objectInputStream.readObject();
 	        objectInputStream.close();
