@@ -738,7 +738,7 @@ public class DelesteRandomSelector extends JFrame {
 				labelScoreNotesDynamic.setText(String.valueOf(firstSong.getNotes()));
 			}
 		}, es).whenCompleteAsync((ret, ex) -> {
-			labelToolProgress.setText("Information parse Complete.");
+			labelToolProgress.setText(Messages.MSGInfoCompletedSongInformationParsing.toString());
 			if(ex != null) {
 				logger.error("Exception was thrown during concurrent process", ex);
 				CrashHandler handle = new CrashHandler(ex.getMessage(), new IllegalStateException(ex));
@@ -762,7 +762,7 @@ public class DelesteRandomSelector extends JFrame {
 		new RowSpec[] {
 			RowSpec.decode("max(16dlu;default)"),}));
 	
-	labelSubToolTitle = new JLabel("楽曲情報");
+	labelSubToolTitle = new JLabel(Messages.MSGInfoSongInformations.toString());
 	labelSubToolTitle.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 16));
 	panelNorthTool.add(labelSubToolTitle, "1, 1");
 	
@@ -918,7 +918,7 @@ public class DelesteRandomSelector extends JFrame {
 	labelNotesToolTip.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelCenterTool.add(labelNotesToolTip, "10, 22, center, default");
 	
-	btnNextSongTool = new JButton("next");
+	btnNextSongTool = new JButton(Messages.MSGNext.toString());
 	btnNextSongTool.addActionListener(e -> {
 		CompletableFuture.runAsync(() -> {
 			int currentIndex = Integer.parseInt(labelCurrentSongOrderTool.getText()) - 1;
@@ -949,7 +949,7 @@ public class DelesteRandomSelector extends JFrame {
 		}, es).whenCompleteAsync(this::whenCompleteProcess, es);
 	});
 	
-	btnPrevSongTool = new JButton("prev");
+	btnPrevSongTool = new JButton(Messages.MSGPrev.toString());
 	btnPrevSongTool.addActionListener(e -> {
 		CompletableFuture.runAsync(() -> {
 			int currentIndex = Integer.parseInt(labelCurrentSongOrderTool.getText()) - 1;
@@ -1123,94 +1123,115 @@ public class DelesteRandomSelector extends JFrame {
 			FormSpecs.RELATED_GAP_ROWSPEC,
 			RowSpec.decode("default:grow"),}));
 	
-	labelScoreUserPlayed = new JLabel("Your score");
+	labelScoreUserPlayed = new JLabel(Messages.MSGActual.toString() + " " + Messages.MSGToolScore.toString());
+	labelScoreUserPlayed.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelScoreUserPlayed, "4, 10, center, default");
 	
 	fieldScoreUserPlayed = new JTextField();
 	panelScoreCenter.add(fieldScoreUserPlayed, "6, 10, fill, default");
 	fieldScoreUserPlayed.setColumns(10);
 	
-	lblSongname = new JLabel("Songname");
+	lblSongname = new JLabel(Messages.MSGInfoSongName.toString());
+	lblSongname.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(lblSongname, "10, 10, center, default");
 	
 	labelScoreSongnameDynamic = new JLabel("<dynamic>");
+	labelScoreSongnameDynamic.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelScoreSongnameDynamic, "12, 10, center, default");
 	
-	labelScoreEarnedFan = new JLabel("Earned Fan");
+	labelScoreEarnedFan = new JLabel(Messages.MSGEstimated.toString() + " " + Messages.MSGToolFan.toString());
+	labelScoreEarnedFan.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelScoreEarnedFan, "4, 14, center, default");
 	
 	fieldScoreEarnedFan = new JTextField();
 	panelScoreCenter.add(fieldScoreEarnedFan, "6, 14, fill, default");
 	fieldScoreEarnedFan.setColumns(10);
 	
-	labelScoreAttribute = new JLabel("Attribute");
+	labelScoreAttribute = new JLabel(Messages.MSGInfoSongAttribute.toString());
+	labelScoreAttribute.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelScoreAttribute, "10, 14, center, default");
 	
 	labelScoreAttributeDynamic = new JLabel("<dynamic>");
+	labelScoreAttributeDynamic.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelScoreAttributeDynamic, "12, 14");
 	
-	lblRoom = new JLabel("room");
+	lblRoom = new JLabel(Messages.MSGRoom.toString());
+	lblRoom.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(lblRoom, "4, 18, center, default");
 	
 	fieldScoreRoom = new JTextField();
 	panelScoreCenter.add(fieldScoreRoom, "6, 18, fill, default");
 	fieldScoreRoom.setColumns(10);
 	
-	labelScoreDifficulty = new JLabel("Difficulty");
+	labelScoreDifficulty = new JLabel(Messages.MSGInfoSongDifficulty.toString());
+	labelScoreDifficulty.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelScoreDifficulty, "10, 18, center, default");
 	
 	labelScoreDifficultyDynamic = new JLabel("<dynamic>");
+	labelScoreDifficultyDynamic.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelScoreDifficultyDynamic, "12, 18");
 	
-	lblCenter = new JLabel("center");
+	lblCenter = new JLabel(Messages.MSGCenter.toString());
+	lblCenter.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(lblCenter, "4, 22, center, default");
 	
 	fieldScoreCenter = new JTextField();
 	panelScoreCenter.add(fieldScoreCenter, "6, 22, fill, default");
 	fieldScoreCenter.setColumns(10);
 	
-	labelScoreLevel = new JLabel("Level");
+	labelScoreLevel = new JLabel(Messages.MSGInfoSongLevel.toString());
+	labelScoreLevel.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelScoreLevel, "10, 22, center, default");
 	
 	labelScoreLevelDynamic = new JLabel("<dynamic>");
+	labelScoreLevelDynamic.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelScoreLevelDynamic, "12, 22");
 	
-	lblProduce = new JLabel("produce");
+	lblProduce = new JLabel(Messages.MSGProducer.toString());
+	lblProduce.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(lblProduce, "4, 26, center, default");
 	
 	fieldScoreProduce = new JTextField();
 	panelScoreCenter.add(fieldScoreProduce, "6, 26, fill, default");
 	fieldScoreProduce.setColumns(10);
 	
-	labelScoreNotes = new JLabel("Notes");
+	labelScoreNotes = new JLabel(Messages.MSGInfoSongNotes.toString());
+	labelScoreNotes.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelScoreNotes, "10, 26, center, default");
 	
 	labelScoreNotesDynamic = new JLabel("<dynamic>");
+	labelScoreNotesDynamic.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelScoreNotesDynamic, "12, 26");
 	
 	labelScoreCurrentSongOrder = new JLabel("null");
+	labelScoreCurrentSongOrder.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelScoreCurrentSongOrder, "14, 28, center, default");
 	
 	labelScoreSlash = new JLabel("/");
+	labelScoreSlash.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelScoreSlash, "16, 28, center, default");
 	
 	labelScoreOrderMax = new JLabel(String.valueOf(property.getSongLimit()));
+	labelScoreOrderMax.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelScoreOrderMax, "18, 28, center, default");
 	
-	lblPremium = new JLabel("premium");
+	lblPremium = new JLabel(Messages.MSGPremium.toString());
+	lblPremium.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(lblPremium, "4, 30, center, default");
 	
 	fieldScorePremium = new JTextField();
 	panelScoreCenter.add(fieldScorePremium, "6, 30, fill, default");
 	fieldScorePremium.setColumns(10);
 	
-	labelPlayerScore = new JLabel("Estimated Score");
+	labelPlayerScore = new JLabel(Messages.MSGEstimated.toString() + " " + Messages.MSGToolScore.toString());
+	labelPlayerScore.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelPlayerScore, "10, 30, center, default");
 	
 	labelPlayerScoreDynamic = new JLabel("<dynamic>");
+	labelPlayerScoreDynamic.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelPlayerScoreDynamic, "12, 30");
 	
-	btnScoreNext = new JButton("Next");
+	btnScoreNext = new JButton(Messages.MSGNext.toString());
 	btnScoreNext.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -1231,7 +1252,7 @@ public class DelesteRandomSelector extends JFrame {
 		}
 	});
 	
-	btnScorePrev = new JButton("Prev");
+	btnScorePrev = new JButton(Messages.MSGPrev.toString());
 	btnScorePrev.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -1254,10 +1275,12 @@ public class DelesteRandomSelector extends JFrame {
 	panelScoreCenter.add(btnScorePrev, "14, 30");
 	panelScoreCenter.add(btnScoreNext, "18, 30");
 	
-	labelPlayerFan = new JLabel("Estimated Fan");
+	labelPlayerFan = new JLabel(Messages.MSGEstimated.toString() + " " + Messages.MSGToolFan.toString());
+	labelPlayerFan.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelPlayerFan, "10, 34, center, default");
 	
 	labelPlayerFanDynamic = new JLabel("<dynamic>");
+	labelPlayerFanDynamic.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelPlayerFanDynamic, "12, 34");
 	
 	btnScoreFileOut = new JButton("ファイルへ保存");
@@ -1288,10 +1311,12 @@ public class DelesteRandomSelector extends JFrame {
 	panelScoreCenter.add(button, "18, 34");
 	panelScoreCenter.add(btnScoreFileOut, "18, 36");
 	
-	labelPlayerPRP = new JLabel("Estimated PRP");
+	labelPlayerPRP = new JLabel(Messages.MSGEstimated.toString() + " " + Messages.MSGPRP.toString());
+	labelPlayerPRP.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelPlayerPRP, "10, 38, center, default");
 	
 	labelPlayerPRPDynamic = new JLabel("<dynamic>");
+	labelPlayerPRPDynamic.setFont(new Font("UD デジタル 教科書体 NP-B", Font.PLAIN, 12));
 	panelScoreCenter.add(labelPlayerPRPDynamic, "12, 38");
 	
 	btnScoreReadFile = new JButton("ファイル読込…");
