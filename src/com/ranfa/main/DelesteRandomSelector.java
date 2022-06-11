@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.Normalizer;
 import java.util.ArrayList;
@@ -1303,14 +1302,14 @@ public class DelesteRandomSelector extends JFrame {
 			switch (option) {
 			case JFileChooser.APPROVE_OPTION:
 				File file = chooser.getSelectedFile();
-				Path current = Paths.get("");
-				Path path = Path.of(file.getAbsolutePath());
-				path.relativize(current);
-				OutputDataStructure s = FileIO.read(path.normalize().toString());
+				OutputDataStructure s = FileIO.read(file);
 				labelScoreSongnameDynamic.setText(s.getSongname());
 				labelScoreLevelDynamic.setText(String.valueOf(s.getLevel()));
 				labelScoreDifficultyDynamic.setText(s.getDifficulty());
 				labelScoreAttributeDynamic.setText(s.getAttribute());
+				fieldScoreUserPlayed.setText(String.valueOf(s.getScore()));
+				logger.info("Selected file: {}", file);
+				logger.info("infomations: {}", s);
 				CompletableFuture.runAsync(() -> scoreCalcDetail(), es);
 				break;
 			default:

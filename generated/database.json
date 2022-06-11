@@ -15504,5 +15504,33 @@
     "level" : 30,
     "notes" : 990,
     "albumType" : "Not-implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "Frozen Tears",
+    "difficulty" : "DEBUT",
+    "level" : 7,
+    "notes" : 112,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "Frozen Tears",
+    "difficulty" : "REGULAR",
+    "level" : 13,
+    "notes" : 172,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "Frozen Tears",
+    "difficulty" : "PRO",
+    "level" : 16,
+    "notes" : 307,
+    "albumType" : "Not-Implemented"
+  }, {
+    "attribute" : "クール",
+    "name" : "Frozen Tears",
+    "difficulty" : "MASTER",
+    "level" : 26,
+    "notes" : 607,
+    "albumType" : "Not-Implemented"
   } ]
 }

@@ -1,5 +1,6 @@
 package com.ranfa.lib.io;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -42,10 +43,10 @@ public class FileIO {
 			outStream.close();
 	}
 	
-	public static OutputDataStructure read(String fileName) {
+	public static OutputDataStructure read(File file) {
 		FileInputStream fileInputStream;
 		try {
-			fileInputStream = new FileInputStream(fileName);
+			fileInputStream = new FileInputStream(file);
 			ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
 	        OutputDataStructure structure = (OutputDataStructure) objectInputStream.readObject();
 	        objectInputStream.close();
